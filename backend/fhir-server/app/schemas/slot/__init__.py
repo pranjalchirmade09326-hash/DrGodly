@@ -1,0 +1,41 @@
+from app.schemas.slot.input import (
+    SlotCreateSchema,
+    SlotPatchSchema,
+    SlotGenerateSchema,
+    SlotIdentifierInput,
+    SlotServiceCategoryInput,
+    SlotServiceTypeInput,
+    SlotSpecialtyInput,
+)
+from app.schemas.slot.response import (
+    FHIRSlotSchema,
+    FHIRSlotBundleEntry,
+    FHIRSlotBundle,
+    PlainSlotResponse,
+    PaginatedSlotResponse,
+    SlotGenerateResponse,
+    PlainSlotIdentifier,
+    PlainSlotServiceCategory,
+    PlainSlotServiceType,
+    PlainSlotSpecialty,
+)
+
+__all__ = [
+    "SlotCreateSchema",
+    "SlotPatchSchema",
+    "SlotGenerateSchema",
+    "SlotIdentifierInput",
+    "SlotServiceCategoryInput",
+    "SlotServiceTypeInput",
+    "SlotSpecialtyInput",
+    "FHIRSlotSchema",
+    "FHIRSlotBundleEntry",
+    "FHIRSlotBundle",
+    "PlainSlotResponse",
+    "PaginatedSlotResponse",
+    "SlotGenerateResponse",
+    "PlainSlotIdentifier",
+    "PlainSlotServiceCategory",
+    "PlainSlotServiceType",
+    "PlainSlotSpecialty",
+]
