@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from typing import Any, cast
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError, ResponseValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from sqlalchemy import text
 
@@ -78,6 +79,13 @@ app.add_exception_handler(HTTPException, http_exception_handler)
 app.container = container
 
 # app.add_middleware(RateLimitMiddleware)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.middleware("http")(request_context_middleware)
 
 app.include_router(
