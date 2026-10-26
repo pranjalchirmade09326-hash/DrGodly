@@ -21,6 +21,7 @@ import { Clock, Loader2, MessageSquare, MessageSquareOff } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { RoomControlUI } from "@/modules/client/telemedicine/shared/components/online-consultation/RoomControl";
+import { PatientCarePanel } from "./PatientCarePanel";
 import {
   TranscriptionPanel,
   type TranscriptLine,
@@ -212,42 +213,49 @@ export function PatientConsult({
               </span>
             </div>
 
-            {/* Transcript toggle */}
+            {/* View toggle (Care Info vs Transcript) */}
             <Button
               size="sm"
-              variant="secondary"
+              variant={showTranscript ? "default" : "outline"}
               onClick={() => setShowTranscript((v) => !v)}
-              className="gap-1.5"
+              className="gap-1.5 text-xs h-8"
             >
               {showTranscript ? (
-                <MessageSquareOff className="h-4 w-4" />
+                <MessageSquareOff className="h-3.5 w-3.5" />
               ) : (
-                <MessageSquare className="h-4 w-4" />
+                <MessageSquare className="h-3.5 w-3.5" />
               )}
-              {showTranscript ? "Hide Transcript" : "Live Transcript"}
+              {showTranscript ? "Doctor Care Panel" : "Live Transcript"}
             </Button>
 
-            <Button size="sm" variant="destructive" onClick={handleLeave}>
+            <Button size="sm" variant="destructive" onClick={handleLeave} className="h-8 text-xs">
               Leave
             </Button>
           </div>
         </div>
 
         {/* ── Body ── */}
-        <div className="flex flex-1 gap-2 min-h-0">
+        <div className="flex flex-1 gap-3 min-h-0">
           <div className="flex-1 min-h-0 h-full">
             <RoomControlUI />
           </div>
 
-          {showTranscript && (
-            <aside className="w-[380px] min-h-0 overflow-auto">
-              <TranscriptionPanel
-                roomId={roomId}
-                transcripts={transcripts}
-                onTranscript={handleTranscript}
+          <aside className="w-[360px] min-h-0 h-full shrink-0">
+            {showTranscript ? (
+              <div className="h-full overflow-auto rounded-2xl border border-slate-200/80 bg-white">
+                <TranscriptionPanel
+                  roomId={roomId}
+                  transcripts={transcripts}
+                  onTranscript={handleTranscript}
+                />
+              </div>
+            ) : (
+              <PatientCarePanel
+                doctorName={details.doctor.name || "Dr. Priya Sharma"}
+                specialty={details.doctor.speciality || "Cardiologist & General Physician"}
               />
-            </aside>
-          )}
+            )}
+          </aside>
         </div>
       </div>
     </LiveKitRoom>

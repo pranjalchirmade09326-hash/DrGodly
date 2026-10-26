@@ -22,7 +22,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp, FileText } from "lucide-react";
+import { ChevronDown, ChevronUp, FileText, Sparkles, AlertCircle, ShieldCheck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -204,14 +204,23 @@ export function IntakeInsights({
   const report = safeParseReport(intake.report);
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
-          <FileText className="size-4 text-muted-foreground" />
-          AI Intake Summary
-          <Badge variant="outline" className="text-[10px] ml-auto">
-            {intake.mode === "VOICE" ? "Voice" : "Text"}
-          </Badge>
+    <Card className="rounded-2xl border-slate-200/80 shadow-xs overflow-hidden">
+      <CardHeader className="pb-3 border-b border-slate-100 bg-gradient-to-r from-teal-50/40 via-white to-emerald-50/30">
+        <CardTitle className="text-sm font-bold flex items-center justify-between gap-2 text-slate-900">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-teal-50 text-teal-600">
+              <Sparkles className="size-4" />
+            </div>
+            <span>Pre-Visit Clinical Intake Synthesis</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-semibold py-0">
+              ABHA Verified
+            </Badge>
+            <Badge variant="outline" className="text-[10px] text-slate-600">
+              {intake.mode === "VOICE" ? "Voice Intake" : "Text Intake"}
+            </Badge>
+          </div>
         </CardTitle>
       </CardHeader>
 

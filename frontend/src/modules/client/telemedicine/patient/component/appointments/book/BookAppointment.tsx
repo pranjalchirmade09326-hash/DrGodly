@@ -44,6 +44,12 @@ import {
   Loader2,
   CheckCircle2,
   MapPin,
+  Sunrise,
+  Sun,
+  Sunset,
+  Video,
+  ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -406,6 +412,23 @@ export function BookAppointment({
       .sort((a, b) => (a.start ?? "").localeCompare(b.start ?? ""));
   }, [slotsForSelectedDate, selectedDate, now]);
 
+  // Group slots into Morning, Afternoon, Evening
+  const groupedSlots = useMemo(() => {
+    const morning: TSlotResponse[] = [];
+    const afternoon: TSlotResponse[] = [];
+    const evening: TSlotResponse[] = [];
+
+    slotsForDate.forEach((slot) => {
+      if (!slot.start) return;
+      const hour = new Date(slot.start).getHours();
+      if (hour < 12) morning.push(slot);
+      else if (hour < 17) afternoon.push(slot);
+      else evening.push(slot);
+    });
+
+    return { morning, afternoon, evening };
+  }, [slotsForDate]);
+
   // ── Handlers ────────────────────────────────────────────────────────────────
 
   /** Advances from step 1 → 2. */
@@ -739,9 +762,13 @@ export function BookAppointment({
                       Available Times
                     </h3>
                     {!selectedDate ? (
-                      <p className="text-sm text-muted-foreground py-4">
-                        Pick a date to see available times.
-                      </p>
+                      <div className="flex flex-col items-center justify-center p-8 border border-dashed rounded-xl text-center">
+                        <Calendar className="w-8 h-8 text-teal-600 mb-2 opacity-60" />
+                        <p className="text-sm font-medium text-slate-800">No Date Selected</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Pick a date from the calendar to view morning, afternoon, and evening slots.
+                        </p>
+                      </div>
                     ) : isLoadingSlots ? (
                       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                         {Array.from({ length: 8 }).map((_, i) => (
@@ -749,35 +776,110 @@ export function BookAppointment({
                         ))}
                       </div>
                     ) : slotsForDate.length === 0 ? (
-                      <p className="text-sm text-muted-foreground py-4">
-                        No available slots for this day. Please pick another
-                        date.
-                      </p>
+                      <div className="flex flex-col items-center justify-center p-8 border border-dashed rounded-xl text-center">
+                        <Clock className="w-8 h-8 text-amber-500 mb-2 opacity-60" />
+                        <p className="text-sm font-medium text-slate-800">No Open Slots on this Date</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Please select another day from the calendar to find available consultation times.
+                        </p>
+                      </div>
                     ) : (
-                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                        {slotsForDate.map((slot) => {
-                          const isSelected = selectedSlot?.id === slot.id;
-                          const time = getSlotTime(slot);
-                          const duration = getSlotDuration(slot);
-                          return (
-                            <Button
-                              key={slot.id}
-                              variant={isSelected ? "default" : "outline"}
-                              onClick={() => setSelectedSlot(slot)}
-                              className="flex flex-col items-center gap-0 h-auto py-1"
-                            >
-                              <span className="flex items-center gap-1 text-xs">
-                                <Clock className="w-3 h-3" />
-                                {time}
-                              </span>
-                              {duration && (
-                                <span className="text-[9px] opacity-70">
-                                  {duration} min
-                                </span>
-                              )}
-                            </Button>
-                          );
-                        })}
+                      <div className="space-y-4 max-h-[380px] overflow-y-auto pr-1">
+                        {/* Morning Slots */}
+                        {groupedSlots.morning.length > 0 && (
+                          <div className="space-y-2">
+                            <span className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                              <Sunrise className="w-3.5 h-3.5 text-amber-500" />
+                              Morning Slots (Before 12:00 PM)
+                            </span>
+                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                              {groupedSlots.morning.map((slot) => {
+                                const isSelected = selectedSlot?.id === slot.id;
+                                const time = getSlotTime(slot);
+                                const duration = getSlotDuration(slot);
+                                return (
+                                  <Button
+                                    key={slot.id}
+                                    variant={isSelected ? "default" : "outline"}
+                                    onClick={() => setSelectedSlot(slot)}
+                                    className={`flex flex-col items-center gap-0 h-auto py-1.5 rounded-xl text-xs transition ${
+                                      isSelected
+                                        ? "bg-teal-600 text-white border-teal-600 shadow-xs"
+                                        : "border-slate-200 hover:border-teal-500 hover:bg-teal-50/50"
+                                    }`}
+                                  >
+                                    <span className="font-semibold text-xs">{time}</span>
+                                    {duration && <span className="text-[9px] opacity-75">{duration} min</span>}
+                                  </Button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Afternoon Slots */}
+                        {groupedSlots.afternoon.length > 0 && (
+                          <div className="space-y-2">
+                            <span className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                              <Sun className="w-3.5 h-3.5 text-orange-500" />
+                              Afternoon Slots (12:00 PM – 5:00 PM)
+                            </span>
+                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                              {groupedSlots.afternoon.map((slot) => {
+                                const isSelected = selectedSlot?.id === slot.id;
+                                const time = getSlotTime(slot);
+                                const duration = getSlotDuration(slot);
+                                return (
+                                  <Button
+                                    key={slot.id}
+                                    variant={isSelected ? "default" : "outline"}
+                                    onClick={() => setSelectedSlot(slot)}
+                                    className={`flex flex-col items-center gap-0 h-auto py-1.5 rounded-xl text-xs transition ${
+                                      isSelected
+                                        ? "bg-teal-600 text-white border-teal-600 shadow-xs"
+                                        : "border-slate-200 hover:border-teal-500 hover:bg-teal-50/50"
+                                    }`}
+                                  >
+                                    <span className="font-semibold text-xs">{time}</span>
+                                    {duration && <span className="text-[9px] opacity-75">{duration} min</span>}
+                                  </Button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Evening Slots */}
+                        {groupedSlots.evening.length > 0 && (
+                          <div className="space-y-2">
+                            <span className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                              <Sunset className="w-3.5 h-3.5 text-indigo-500" />
+                              Evening Slots (After 5:00 PM)
+                            </span>
+                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                              {groupedSlots.evening.map((slot) => {
+                                const isSelected = selectedSlot?.id === slot.id;
+                                const time = getSlotTime(slot);
+                                const duration = getSlotDuration(slot);
+                                return (
+                                  <Button
+                                    key={slot.id}
+                                    variant={isSelected ? "default" : "outline"}
+                                    onClick={() => setSelectedSlot(slot)}
+                                    className={`flex flex-col items-center gap-0 h-auto py-1.5 rounded-xl text-xs transition ${
+                                      isSelected
+                                        ? "bg-teal-600 text-white border-teal-600 shadow-xs"
+                                        : "border-slate-200 hover:border-teal-500 hover:bg-teal-50/50"
+                                    }`}
+                                  >
+                                    <span className="font-semibold text-xs">{time}</span>
+                                    {duration && <span className="text-[9px] opacity-75">{duration} min</span>}
+                                  </Button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -875,6 +977,17 @@ export function BookAppointment({
                         <p className="font-semibold text-sm">{slotTime}</p>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Telemedicine & Digital Care Guarantee */}
+                  <div className="mt-3 p-3.5 rounded-xl bg-teal-50/60 border border-teal-200/80 space-y-1.5 text-xs text-teal-900">
+                    <div className="flex items-center gap-1.5 font-semibold text-teal-800">
+                      <ShieldCheck className="size-4 text-teal-600 shrink-0" />
+                      Telemedicine & ABHA Health Locker Integration
+                    </div>
+                    <p className="text-[11px] text-teal-800/80 leading-relaxed">
+                      This consultation includes HD encrypted WebRTC video, autonomous pre-visit AI intake correlation, and an MCI-registered digitally signed e-prescription with tamper-evident QR code synced to your ABHA profile.
+                    </p>
                   </div>
                 </div>
               </Card>

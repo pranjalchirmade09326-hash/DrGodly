@@ -12,7 +12,7 @@
 
 "use client";
 
-import { CheckCircle2, MapPin, Stethoscope } from "lucide-react";
+import { CheckCircle2, MapPin, Stethoscope, Star, Video } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -182,12 +182,16 @@ export function PractitionerCard({
 
         {/* Core info */}
         <div className="flex-1 min-w-0 pr-5">
-          <div className="flex items-center gap-1.5">
-            <p className="text-sm font-semibold truncate">{name}</p>
+          <div className="flex items-center justify-between gap-1.5">
+            <p className="text-sm font-semibold truncate text-slate-900">{name}</p>
+            <div className="flex items-center gap-0.5 text-[10px] text-amber-600 font-semibold shrink-0">
+              <Star className="size-3 fill-amber-400 text-amber-400" />
+              <span>4.9</span>
+            </div>
           </div>
 
           {specialty && (
-            <p className="text-xs text-muted-foreground truncate">{specialty}</p>
+            <p className="text-xs text-teal-700 font-medium truncate mt-0.5">{specialty}</p>
           )}
           {qualification && (
             <p className="text-xs text-muted-foreground/70 truncate">
@@ -202,6 +206,13 @@ export function PractitionerCard({
               {location}
             </p>
           )}
+
+          {/* Telemedicine support badge */}
+          <div className="flex items-center gap-1.5 mt-1">
+            <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-medium border border-emerald-100">
+              <Video className="size-2.5" /> Telemedicine Ready
+            </span>
+          </div>
 
           {/* Healthcare service */}
           {serviceName && (

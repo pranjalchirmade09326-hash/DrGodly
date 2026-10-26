@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ChatTopbar component.
  *
  * Layer: client / emr-chat / components
@@ -93,6 +93,9 @@ export function ChatTopbar({
         <h1 className="text-sm font-semibold truncate max-w-[160px]">
           {title ?? defaultTitle}
         </h1>
+        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-semibold py-0 hidden sm:inline-flex">
+          FHIR R4 Core
+        </Badge>
         {hasActiveWorkflow && workflowName && (
           <Badge variant="secondary" className="text-xs shrink-0">
             {workflowName}

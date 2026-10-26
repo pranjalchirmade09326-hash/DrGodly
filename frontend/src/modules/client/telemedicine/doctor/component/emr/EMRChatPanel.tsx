@@ -21,7 +21,8 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { Bot, LayoutGrid } from "lucide-react";
+import { Bot, LayoutGrid, Sparkles, Activity, ShieldCheck, Database } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { UISchemaPreview } from "./UISchemaPreview";
 
 /**
@@ -60,47 +61,79 @@ export function EMRChatPanel({ role }: EMRChatPanelProps) {
   return (
     <div className="flex flex-col w-full h-[calc(100vh-156px)]">
       {/* ── Header with tab toggle ── */}
-      <div className="flex items-center justify-between px-6 py-3 border-b bg-background shrink-0">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10">
-            <Bot className="h-4 w-4 text-primary" />
+      <div className="flex items-center justify-between px-6 py-3 border-b bg-white shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-500/10 text-teal-600">
+            <Bot className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold leading-tight">EMR Assistant</p>
-            <p className="text-xs text-muted-foreground leading-tight">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-bold text-slate-900 leading-tight">EMR Intelligence Assistant</p>
+              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-semibold py-0">
+                FastMCP :8002 Live
+              </Badge>
+              <Badge className="bg-teal-50 text-teal-700 border-teal-200 text-[10px] font-semibold py-0">
+                FHIR R4 Core
+              </Badge>
+            </div>
+            <p className="text-xs text-slate-500 leading-tight mt-0.5">
               {role === "doctor"
-                ? "Electronic Medical Records — guided clinical workflows"
-                : "Your health records — ask anything about your care"}
+                ? "Autonomous Clinical Workflow Engine — Grounded in Patient EHR & ABHA"
+                : "Your verified health records — ask anything about your diagnosis, meds, or care"}
             </p>
           </div>
         </div>
 
-        {/* Pill-style tab toggle (no shadcn Tabs — keeps the header compact) */}
-        <div className="flex items-center gap-1 bg-muted rounded-md p-0.5">
-          <button
-            onClick={() => setTab("chat")}
-            className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded transition-colors ${
-              tab === "chat"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <Bot className="h-3 w-3" />
-            AI Chat
-          </button>
-          <button
-            onClick={() => setTab("preview")}
-            className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded transition-colors ${
-              tab === "preview"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <LayoutGrid className="h-3 w-3" />
-            UI Browser
-          </button>
+        {/* Pill-style tab toggle */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 bg-slate-100 rounded-xl p-1 border border-slate-200/60">
+            <button
+              onClick={() => setTab("chat")}
+              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${
+                tab === "chat"
+                  ? "bg-white text-slate-900 shadow-2xs font-semibold"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Bot className="h-3.5 w-3.5 text-teal-600" />
+              Clinical AI Chat
+            </button>
+            <button
+              onClick={() => setTab("preview")}
+              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${
+                tab === "preview"
+                  ? "bg-white text-slate-900 shadow-2xs font-semibold"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <LayoutGrid className="h-3.5 w-3.5 text-teal-600" />
+              A2UI Schema Registry
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* ── Clinical Intelligence Prompt Shortcut Ribbon ── */}
+      {tab === "chat" && (
+        <div className="px-6 py-2 bg-slate-50/80 border-b border-slate-200/80 flex items-center gap-2 overflow-x-auto text-xs shrink-0">
+          <span className="font-semibold text-slate-600 flex items-center gap-1 shrink-0 text-[11px]">
+            <Sparkles className="size-3.5 text-teal-600" />
+            Clinical Prompts:
+          </span>
+          <span className="px-2.5 py-0.5 rounded-full bg-white border border-slate-200 text-slate-700 font-medium text-[11px] shrink-0">
+            Show Encounter History
+          </span>
+          <span className="px-2.5 py-0.5 rounded-full bg-white border border-slate-200 text-slate-700 font-medium text-[11px] shrink-0">
+            Check RxNorm Interactions
+          </span>
+          <span className="px-2.5 py-0.5 rounded-full bg-white border border-slate-200 text-slate-700 font-medium text-[11px] shrink-0">
+            Synthesize Lab Panels (HbA1c/Lipids)
+          </span>
+          <span className="px-2.5 py-0.5 rounded-full bg-white border border-slate-200 text-slate-700 font-medium text-[11px] shrink-0">
+            Draft SOAP Progress Note
+          </span>
+        </div>
+      )}
 
       {/* ── Body: swap between tabs without unmounting the inactive one ── */}
       {/* Note: conditional rendering (not hidden) — A2UIChat resets on tab switch,
