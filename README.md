@@ -1,4 +1,4 @@
-# ≡ƒ⌐║ DrGodly: AI-Native Telemedicine & Smart EMR Platform
+# 🩺 DrGodly: AI-Native Telemedicine & Smart EMR Platform
 
 [![GitHub main branch](https://img.shields.io/badge/git-main-teal.svg)](https://github.com/pranjalchirmade09326-hash/DrGodly.git)
 [![HL7 FHIR R4](https://img.shields.io/badge/standard-HL7%20FHIR%20R4-blue.svg)](http://hl7.org/fhir/R4/)
@@ -7,189 +7,198 @@
 [![ABDM Compliant](https://img.shields.io/badge/ABDM-ABHA%20M1%2FM2%2FM3-orange.svg)](https://abdm.gov.in/)
 [![FastMCP](https://img.shields.io/badge/AI-FastMCP%20Streamable--HTTP-purple.svg)](https://modelcontextprotocol.io/)
 
-> **DrGodly** is an enterprise-grade, **AI-Native Telemedicine and Clinical Operating System** that combines ambient intelligence, live clinical decision support, WebRTC telemedicine, and an HL7 FHIR R4 data repository to eliminate physician documentation burden and deliver personalized healthcare.
+> **DrGodly** is an enterprise-grade, **AI-Native Telemedicine and Clinical Operating System** designed to eliminate physician administrative burden, prevent diagnostic errors, and provide seamless chronic care management. It unites ambient AI intelligence, live clinical decision support (CDS), WebRTC telemedicine, and an HL7 FHIR R4 clinical data repository into a single unified platform.
 
 ---
 
-## ≡ƒîƒ Key Highlights & Core Capabilities
+## 🌟 Executive Summary: What is DrGodly?
 
-| Capability | What It Does | Clinical Impact |
+Modern healthcare suffers from two acute bottlenecks: **doctor documentation burnout** ("pajama time" spent typing into legacy EMRs) and **fragmented patient data** (paper prescriptions, lost lab slips, lack of adherence).
+
+**DrGodly solves both:**
+1. **For Doctors**: During a telemedicine visit, DrGodly ambiently listens, transcribes in real-time, displays live diagnostic suggestions, and automatically synthesizes a complete **SOAP Note** and **e-Prescription with MCI digital signature & tamper-evident SHA-256 QR code**.
+2. **For Patients**: A pre-visit conversational **AI Intake Studio** collects chief complaints, lets patients rate pain on a visual 1–10 slider, and extracts biomarkers from uploaded lab slips/ECGs via OCR. An interactive **Wellness Portal** tracks daily habits with an animated 78/100 health gauge.
+3. **For Hospitals & Regulators**: 100% interoperable with global hospital standards via **HL7 FHIR R4** and compliant with India's **Ayushman Bharat Digital Mission (ABDM)** for national health locker synchronization.
+
+---
+
+## 🎨 Interactive Screen Studio (Zero-Backend UI Mode)
+
+To allow developers, evaluators, and stakeholders to test and inspect all official Figma-matched screens **without running databases or backend microservices**, DrGodly includes a standalone **Screen Studio**:
+
+👉 **URL**: **`http://localhost:4000/en/screens`** *(Run `cd frontend && npm run dev`)*
+
+| Screen | Figma Design Reference | Key Clinical Features |
 |---|---|---|
-| **Multi-Modal AI Intake** | Pre-consultation conversational chatbot collects symptoms and ingests past lab/prescription files (PDF/images) via OCR. | Doctors start calls with a synthesized 1-page clinical briefing instead of unorganized paper files. |
-| **3-Panel Telemedicine Cockpit** | Full-HD WebRTC video alongside live speech-to-text transcription and an interactive patient medical dossier. | Zero tab-switching during calls; doctor sees vitals, medications, and allergies while seeing the patient. |
-| **Live Clinical Decision Support (CDS)** | Real-time risk scoring, probability-ranked differential diagnoses, red-flag sentinels, and guideline checklists. | Reduces diagnostic blind spots and alerts doctors to acute hazards or drug contraindications during the call. |
-| **Ambient SOAP Note Generation** | Automatically converts consultation transcripts and notes into structured SOAP notes (Subjective, Objective, Assessment, Plan). | Eliminates after-hours clinical documentation ("pajama time") for doctors. |
-| **Smart e-Prescription & QR Verification** | Autocompletes dosages, checks drug-drug interactions, applies doctor's digital signature, and embeds a tamper-evident SHA-256 QR code. | Prevents forged prescriptions and provides partner pharmacies with instant verification. |
-| **Patient Wellness Portal** | Interactive dashboard with an animated 78/100 health score gauge, vitals tracking, daily care plan checklist, and "Ask DrGodly" AI. | Boosts chronic care compliance and keeps patients actively engaged in their care plans. |
-| **ABDM / ABHA Integration** | Verifies national 14-digit ABHA IDs via OTP and pushes digital prescriptions into the patient's national health locker. | Full regulatory compliance with India's Ayushman Bharat Digital Mission. |
-| **Natural Language EMR Search** | Query patient populations and historical charts in plain English via the FastMCP gateway. | Instant cohort search (e.g. *"Find all diabetic patients with HbA1c > 8.0 without recent visits"*). |
+| **1. Doctor Clinical Dashboard** | `Doctor Dashboard.png` | 4 KPI cards, triage-sorted appointment queue (`Routine` vs `Urgent`), live AI Clinical Assistant widget, CDS alerts, 30-day analytics. |
+| **2. Doctor Telemedicine Room** | `DrGodly Telemedicine Dashboard 1.png` | **3-Panel Cockpit**: Left patient medical dossier, center WebRTC video call with live transcript waveform, right CDS diagnostic probabilities & guidelines. |
+| **3. Post-Visit Documentation** | `Post-Visit Documentation.png` | Ambiently drafted SOAP notes, RxNorm medication orders, MCI doctor signature stamp, SHA-256 tamper-evident QR verification, 1-click ABHA push. |
+| **4. Patient Wellness Portal** | `Patient Dashboard.png` | Animated circular SVG health score gauge (78/100), vitals telemetry (BP, HbA1c, Weight, Steps), daily care checklist, "Ask DrGodly" AI widget. |
+| **5. Patient Call Room** | `DrGodly Telemedicine Care Dashboard 1.png` | Patient-facing video consult with verified doctor profile, pre-visit intake synthesis briefing, real-time in-call messaging, and prescription dispatch status. |
+| **6. AI Clinical Intake Studio** | *Conversational Clinic* | **Interactive 1–10 pain slider** with dynamic severity badges, quick-tap symptom pills, FastMCP OCR lab/ECG biomarker extraction preview. |
+| **7. Appointment Booking Flow** | `DrGodly Appointment Dashboard.png` | 3-step wizard with doctor discovery cards (`★ 4.9`), **Morning / Afternoon / Evening** categorized time slot pills, and ABHA guarantee. |
 
 ---
 
-## ≡ƒÅù∩╕Å System Architecture & Data Flow
+## 🏗️ System Architecture & Data Flow
 
 ```
-[ Patient & Doctor Browser ] (Next.js 16 App Router on Port 4000)
-             Γöé
-             Γö£ΓöÇΓöÇΓû║ LiveKit WebRTC Server (Real-Time Encrypted Video & Audio)
-             Γöé
-             Γö£ΓöÇΓöÇΓû║ AI Next.js Endpoints (/api/intake-agent, /api/consultation-agent)
-             Γöé
-             Γû╝ (ZSA Server Actions + JWKS Bearer Token)
-[ fhir-gql Middleware ] (FastAPI on Port 8005) ΓöÇΓöÇΓû║ RBAC, Rate Limiting & Auth Proxy
-             Γöé
-             Γû╝ (Internal HTTP)
-[ fhir-server ] (FastAPI on Port 8000) ΓùäΓöÇΓöÇΓöÇΓöÇΓöÇΓû║ [ fhir-mcp Gateway ] (Port 8002)
-   HL7 FHIR R4 REST API                              Model Context Protocol for AI
-             Γöé
-      ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö┤ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
-      Γû╝             Γû╝
-[ PostgreSQL 15 ] [ Redis 7 ]
-  Port 5432       Port 6379
+┌────────────────────────────────────────────────────────────────────────┐
+│             Patient & Doctor Client (Next.js 16 App Router)           │
+│                               Port 4000                                │
+└───────────────────┬────────────────────────────────┬───────────────────┘
+                    │                                │
+                    ▼                                ▼
+       ┌────────────────────────┐       ┌────────────────────────┐
+       │ LiveKit WebRTC Server  │       │ Unified Swagger UI Hub │
+       │ Encrypted Video/Audio  │       │   /api/docs (Port 4000)│
+       └────────────────────────┘       └────────────────────────┘
+                    │
+                    ▼ (ZSA Server Actions / JWKS Token)
+       ┌─────────────────────────────────────────────────────────┐
+       │   fhir-gql Middleware (FastAPI Gateway - Port 8005)     │
+       │   RBAC Auth, Rate Limiting, and Routing Proxy           │
+       └────────────────────────────┬────────────────────────────┘
+                                    │ (Internal HTTP)
+                    ┌───────────────┴───────────────┐
+                    ▼                               ▼
+       ┌────────────────────────┐      ┌────────────────────────┐
+       │ fhir-server (Port 8000)│      │ fhir-mcp (Port 8002)   │
+       │ HL7 FHIR R4 REST API   │◄────►│ FastMCP Streamable HTTP│
+       │ 34+ Clinical Resources │      │ AI Clinical Tool Agent │
+       └────────────┬───────────┘      └────────────────────────┘
+                    │
+            ┌───────┴───────┐
+            ▼               ▼
+       ┌──────────┐   ┌───────────┐
+       │PostgreSQL│   │  Redis 7  │
+       │Port 5432 │   │ Port 6379 │
+       └──────────┘   └───────────┘
 ```
 
 ---
 
-## ≡ƒ¢á∩╕Å Technology Stack
+## 🛠️ Technology Stack
 
-### Frontend Application (`frontend/`)
-* **Framework**: [Next.js 16](https://nextjs.org/) (React 19, App Router, Server Actions, Server Components)
-* **Styling & UI**: [Tailwind CSS v4](https://tailwindcss.com/), [Lucide React Icons](https://lucide.dev/), [Framer Motion](https://www.framer.com/motion/)
-* **Architecture**: Clean Architecture with Dependency Injection using [`@evyweb/ioctopus`](https://github.com/evyweb/ioctopus)
-* **Data & State**: [TanStack Query v5](https://tanstack.com/query), ZSA Server Actions, [Zod](https://zod.dev/) validation
-* **Real-Time Video**: [LiveKit WebRTC SDK](https://livekit.io/) (`@livekit/components-react`) + Vapi
-* **Package Manager**: **`npm`** (strictly: `npm run dev`, `npm run build`, `npm run db:generate`)
-
-### Backend Microservices (`backend/`)
-* **Core FHIR Data Server (`backend/fhir-server` - Port `8000`)**:
-  * [FastAPI](https://fastapi.tiangolo.com/), Python 3.12+
-  * [HL7 FHIR R4](http://hl7.org/fhir/R4/) (34+ clinical resources: Patient, Practitioner, Appointment, Encounter, Condition, Observation, MedicationRequest, etc.)
-  * [SQLAlchemy 2.0](https://www.sqlalchemy.org/) (Async) + `asyncpg`
-  * Dual-format responses (`application/json` and `application/fhir+json`)
-* **Middleware & RBAC Gateway (`backend/fhir-gql` - Port `8005`)**:
-  * FastAPI, PyJWT, PyJWKClient for JWKS authentication and Redis-backed rate-limiting
-* **AI Tool Gateway (`backend/fhir-mcp` - Port `8002`)**:
-  * [FastMCP](https://github.com/jlowin/fastmcp) (Streamable-HTTP transport) converting OpenAPI endpoints into typed LLM tools
-* **Databases & Cache**:
-  * PostgreSQL 15 (Clinical relational store & FHIR JSONB envelopes)
-  * Redis 7 (Rate-limiting & session cache)
-* **AI & Machine Learning**:
-  * [Google Gemini 2.5 Pro / Flash](https://ai.google.dev/) for clinical reasoning, OCR, and SOAP note synthesis
-  * Whisper / Speech STT for live consultation transcription
+| Layer | Technologies Used | Purpose |
+|---|---|---|
+| **Frontend** | **Next.js 16**, React 19, TypeScript, Tailwind CSS v4, Lucide Icons, Framer Motion | High-performance responsive medical interface |
+| **State & Data** | TanStack Query v5, ZSA Server Actions, Zod validation | Type-safe client-server data synchronization |
+| **Video Calling** | LiveKit WebRTC SDK (`@livekit/components-react`), Web Audio STT | Low-latency encrypted doctor-patient video consultations |
+| **Core FHIR Backend** | **FastAPI**, Python 3.12+, SQLAlchemy 2.0 (Async), `asyncpg`, Alembic | Standardized HL7 FHIR R4 REST server (`:8000`) |
+| **AI Tool Gateway** | **FastMCP** (Streamable-HTTP transport) | Converts OpenAPI schemas into typed tools for LLM reasoning (`:8002`) |
+| **Middleware Gateway** | FastAPI, PyJWT, PyJWKClient, Redis sliding window rate-limiter | Security and RBAC proxy (`:8005`) |
+| **AI Models** | Google Gemini 2.5 Pro & Flash, Whisper STT | Clinical intake elicitation, OCR, and SOAP note synthesis |
+| **Databases** | PostgreSQL 15 (Relational & JSONB), Redis 7 | Clinical storage, caching, and rate limiting |
 
 ---
 
-## ≡ƒîÉ Ports & Services Matrix
+## 🌐 Microservices & Ports Matrix
 
-| Service | Port | Endpoint | Description |
+| Service | Port | Endpoint URL | Description |
 |---|---|---|---|
-| **Frontend Web App** | `4000` | `http://localhost:4000` | Next.js 16 clinical portal, telemedicine cockpit, and patient dashboard |
-| **Unified Swagger UI Hub** | `4000` | `http://localhost:4000/api/docs` | Interactive Swagger UI with dropdown switcher for all 4 services |
-| **FHIR Server API** | `8000` | `http://localhost:8000` | Core FHIR R4 REST API (`/api/fhir/v1/*`) |
-| **FHIR Server Docs** | `8000` | `http://localhost:8000/docs` | Direct FastAPI Swagger UI for FHIR R4 data layer |
-| **FastMCP AI Gateway** | `8002` | `http://localhost:8002/mcp` | Model Context Protocol streamable-HTTP endpoint |
-| **FHIR Middleware Gateway** | `8005` | `http://localhost:8005` | RBAC and rate-limiting proxy (`/api/v1/*`) |
-| **Scalar Mobile Docs** | `4000` | `http://localhost:4000/api/mobile/docs` | Interactive reference for mobile session endpoints |
-| **PostgreSQL Database** | `5432` | `localhost:5432` | Relational clinical database (`drgodly:password`) |
-| **Redis Cache** | `6379` | `localhost:6379` | In-memory cache & sliding window limiter |
+| **Frontend Web App** | `4000` | `http://localhost:4000` | Main Next.js 16 clinical portal & telemedicine client |
+| **Screen Studio Hub** | `4000` | `http://localhost:4000/en/screens` | **Zero-backend interactive showroom for all 7 UI screens** |
+| **Unified Swagger UI Hub** | `4000` | `http://localhost:4000/api/docs` | Dropdown multi-service Swagger tester (`:8000`, `:8005`, `:4000`) |
+| **FHIR Server API** | `8000` | `http://localhost:8000` | Core FHIR R4 data repository (`/api/fhir/v1/*`) |
+| **FHIR Server Swagger** | `8000` | `http://localhost:8000/docs` | Direct FastAPI Swagger documentation for FHIR layer |
+| **FastMCP AI Gateway** | `8002` | `http://localhost:8002/mcp` | FastMCP streamable-HTTP endpoint for LLMs |
+| **FHIR Middleware** | `8005` | `http://localhost:8005` | RBAC gateway & rate-limiting proxy (`/api/v1/*`) |
+| **PostgreSQL** | `5432` / `5436` | `localhost:5436` | Relational clinical database (`fhir-server`) |
+| **Redis** | `6379` / `6381` | `localhost:6381` | In-memory cache & sliding window limiter |
 
 ---
 
-## ΓÜí Quick Start & Local Setup
+## ⚡ How to Run DrGodly
 
-### 1. Prerequisites
-* **Node.js**: v20.x or v22.x LTS
-* **npm**: v10+ (`npm -v`)
-* **Python**: v3.12+ with [uv](https://github.com/astral-sh/uv) installed
-* **Docker & Docker Compose** (for PostgreSQL and Redis)
+### Mode 1: UI Screens Mode (Zero Backend Required)
+*Recommended for designers, evaluators, and frontend developers who want to test the UI immediately.*
+
+```powershell
+# 1. Navigate to the frontend directory
+cd "d:\DrGodly New\frontend"
+
+# 2. Start the Next.js development server
+npm run dev
+
+# 3. Open in your browser:
+# ➔ Screen Studio: http://localhost:4000/en/screens
+# ➔ Main App:      http://localhost:4000
+```
 
 ---
 
-### 2. Start PostgreSQL & Redis
-In the project root, launch the containerized databases:
-```bash
-cd backend
+### Mode 2: Full-Stack Mode (Frontend + Backend + DB)
+*For end-to-end testing with PostgreSQL, FastAPI microservices, and FastMCP AI tools.*
+
+#### Step 1: Start PostgreSQL & Redis via Docker
+```powershell
+cd "d:\DrGodly New\backend"
 docker compose up -d
 ```
-*Verify containers are running with `docker ps` (Ports 5432 and 6379).*
 
----
-
-### 3. Start Backend Services
-
-#### Terminal 1: Core FHIR Server (Port 8000)
-```bash
-cd backend/fhir-server
-cp .env.example .env
-uv sync
+#### Step 2: Start Core FHIR Server (Port 8000)
+```powershell
+cd "d:\DrGodly New\backend\fhir-server"
 uv run alembic upgrade head
 uv run fastapi dev app/main.py
-# ΓåÆ Running at http://localhost:8000 (Swagger docs at /docs)
+# ➔ Running at http://localhost:8000
 ```
 
-#### Terminal 2: FastMCP AI Gateway (Port 8002)
-```bash
-cd backend/fhir-mcp
-cp .env.example .env
-uv sync
+#### Step 3: Start FastMCP AI Gateway (Port 8002)
+```powershell
+cd "d:\DrGodly New\backend\fhir-mcp"
 uv run python -m app.main
-# ΓåÆ Running at http://localhost:8002/mcp
+# ➔ Running at http://localhost:8002/mcp
 ```
 
-#### Terminal 3: FHIR Middleware (Port 8005)
-```bash
-cd backend/fhir-gql
-cp .env.example .env
-uv sync
+#### Step 4: Start FHIR Middleware Gateway (Port 8005)
+```powershell
+cd "d:\DrGodly New\backend\fhir-gql"
 uv run uvicorn app.main:app --port 8005 --reload
-# ΓåÆ Running at http://localhost:8005
+# ➔ Running at http://localhost:8005
 ```
 
----
-
-### 4. Start Next.js Frontend (Port 4000)
-
-#### Terminal 4: Frontend Web App
-```bash
-cd frontend
-npm install
+#### Step 5: Start Frontend Application (Port 4000)
+```powershell
+cd "d:\DrGodly New\frontend"
 npm run dev
-# ΓåÆ Running at http://localhost:4000
+# ➔ Running at http://localhost:4000
 ```
 
 ---
 
-## ≡ƒöì Interactive API Testing & Documentation
+## 🔍 Interactive API Testing (Swagger Hub)
 
-DrGodly provides a **Unified Multi-Service Swagger UI** where you can inspect and execute test requests across all backend microservices:
-
-1. Open your browser to: **[`http://localhost:4000/api/docs`](http://localhost:4000/api/docs)** *(also available at [`/api/swagger`](http://localhost:4000/api/swagger))*.
-2. Use the top dropdown to select any service:
+DrGodly provides a unified Swagger UI where you can inspect, test, and execute requests across all microservices:
+1. Open **`http://localhost:4000/api/docs`** (or `/api/swagger`).
+2. Use the top dropdown to switch between:
    * **1. FHIR Server R4 REST API (Port 8000)**
    * **2. FHIR Middleware & RBAC Gateway (Port 8005)**
    * **3. DrGodly Clinical Mobile & Intake API**
    * **4. AI Clinical & Telemedicine Services (Port 4000)**
-3. Click any endpoint, select **"Try it out"**, provide test parameters or tokens, and click **"Execute"**!
+3. Click any endpoint, select **"Try it out"**, fill in test values, and click **"Execute"**.
 
 ---
 
-## ≡ƒôÜ Master Reference Documents
+## 🔒 Security & Medical Standards Compliance
 
-* **[DRGODLY_SPECIFICATION_DOCUMENT.md](file:///d:/DrGodly%20New/DRGODLY_SPECIFICATION_DOCUMENT.md)**: Formal, publication-grade Technical Specification & System Architecture Document.
-* **[PROMPTS_MASTER_PLAN.md](file:///d:/DrGodly%20New/PROMPTS_MASTER_PLAN.md)**: The complete 60-prompt implementation plan across all 10 phases.
-* **[SWAGGER_AND_API_INTEGRATION_PROMPTS.md](file:///d:/DrGodly%20New/SWAGGER_AND_API_INTEGRATION_PROMPTS.md)**: Detailed API catalog, cURL commands, and integration prompts.
-* **UI Design Source Screens**: `c:/Users/Pranjal/Downloads/drive-download-20261025T080725Z-1-001/` (`Doctor Dashboard.png`, `Patient Dashboard.png`, `DrGodly Telemedicine Dashboard 1.png`, `Post-Visit Documentation.png`, `Sign In Screen 1-6.png`).
-
----
-
-## ≡ƒöÆ Security & Medical Compliance
-* **HL7 FHIR R4 Standards**: Ensures interoperability with global hospital EMRs.
-* **Ayushman Bharat Digital Mission (ABDM)**: M1/M2/M3 compliance for India's national health stack.
-* **Data Protection**: Designed in accordance with the Indian **Digital Personal Data Protection (DPDP) Act 2023** and **HIPAA** guidelines.
-* **Encrypted WebRTC**: End-to-end DTLS/SRTP encryption on all video and audio media streams.
+- **HL7 FHIR R4 Standards**: Implements 34+ core FHIR resources (`Patient`, `PractitionerRole`, `Appointment`, `Encounter`, `Condition`, `Observation`, `MedicationRequest`, etc.).
+- **Ayushman Bharat Digital Mission (ABDM)**: M1 (ABHA creation), M2 (Health record viewing), and M3 (Digital prescription push) compliant.
+- **DPDP Act 2023 & HIPAA Compliance**: Role-based access control (RBAC), audit logging, and encryption at rest and in transit.
+- **Encrypted Telemedicine**: WebRTC media streams are protected with DTLS-SRTP end-to-end encryption.
+- **Tamper-Evident Prescriptions**: Every generated e-prescription contains an MCI registration stamp and a SHA-256 hashed QR code that pharmacies can verify offline.
 
 ---
 
-## ≡ƒñ¥ Contributing & License
+## 📚 Master Documentation References
+
+- **[DRGODLY_SPECIFICATION_DOCUMENT.md](file:///d:/DrGodly%20New/DRGODLY_SPECIFICATION_DOCUMENT.md)**: Full formal technical specification, architecture diagrams, and FHIR resource mappings.
+- **[PROMPTS_MASTER_PLAN.md](file:///d:/DrGodly%20New/PROMPTS_MASTER_PLAN.md)**: Master full-stack prompt roadmap across 10 development phases.
+- **[SWAGGER_AND_API_INTEGRATION_PROMPTS.md](file:///d:/DrGodly%20New/SWAGGER_AND_API_INTEGRATION_PROMPTS.md)**: API integration guide, cURL requests, and proxy documentation.
+
+---
+
+## 👥 Authors & License
 Developed for the **DrGodly AI-Native Healthcare Initiative**.  
-All rights reserved ┬⌐ 2026. For technical questions or contribution guidelines, please refer to the engineering team.
+All rights reserved © 2026.
