@@ -64,6 +64,7 @@ import {
   Building2,
 } from "lucide-react";
 import { AddPharmacyWebModal } from "@/modules/client/telemedicine/shared/components/pharmacy/AddPharmacyWebModal";
+import { DigitalSignatureAndQrCard } from "./DigitalSignatureAndQrCard";
 import { BackButton } from "@/modules/client/telemedicine/shared/components/BackButton";
 import { SoapEditor } from "./soap/SoapEditor";
 import { ClinicalExtractionPanel } from "./clinical/ClinicalExtractionPanel";
@@ -992,6 +993,14 @@ export function AppointmentReview({
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
+
+      <div className="pt-3 border-t border-slate-200">
+        <DigitalSignatureAndQrCard
+          doctorName={doctorName}
+          patientName={patientName}
+          appointmentId={appointmentId}
+        />
+      </div>
 
       <AddPharmacyWebModal
         open={isPharmacyModalOpen}

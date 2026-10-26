@@ -1,4 +1,4 @@
-# 🩺 DrGodly: AI-Native Telemedicine & Smart EMR Platform
+# ≡ƒ⌐║ DrGodly: AI-Native Telemedicine & Smart EMR Platform
 
 [![GitHub main branch](https://img.shields.io/badge/git-main-teal.svg)](https://github.com/pranjalchirmade09326-hash/DrGodly.git)
 [![HL7 FHIR R4](https://img.shields.io/badge/standard-HL7%20FHIR%20R4-blue.svg)](http://hl7.org/fhir/R4/)
@@ -11,7 +11,7 @@
 
 ---
 
-## 🌟 Key Highlights & Core Capabilities
+## ≡ƒîƒ Key Highlights & Core Capabilities
 
 | Capability | What It Does | Clinical Impact |
 |---|---|---|
@@ -26,31 +26,31 @@
 
 ---
 
-## 🏗️ System Architecture & Data Flow
+## ≡ƒÅù∩╕Å System Architecture & Data Flow
 
 ```
 [ Patient & Doctor Browser ] (Next.js 16 App Router on Port 4000)
-             │
-             ├──► LiveKit WebRTC Server (Real-Time Encrypted Video & Audio)
-             │
-             ├──► AI Next.js Endpoints (/api/intake-agent, /api/consultation-agent)
-             │
-             ▼ (ZSA Server Actions + JWKS Bearer Token)
-[ fhir-gql Middleware ] (FastAPI on Port 8005) ──► RBAC, Rate Limiting & Auth Proxy
-             │
-             ▼ (Internal HTTP)
-[ fhir-server ] (FastAPI on Port 8000) ◄─────► [ fhir-mcp Gateway ] (Port 8002)
+             Γöé
+             Γö£ΓöÇΓöÇΓû║ LiveKit WebRTC Server (Real-Time Encrypted Video & Audio)
+             Γöé
+             Γö£ΓöÇΓöÇΓû║ AI Next.js Endpoints (/api/intake-agent, /api/consultation-agent)
+             Γöé
+             Γû╝ (ZSA Server Actions + JWKS Bearer Token)
+[ fhir-gql Middleware ] (FastAPI on Port 8005) ΓöÇΓöÇΓû║ RBAC, Rate Limiting & Auth Proxy
+             Γöé
+             Γû╝ (Internal HTTP)
+[ fhir-server ] (FastAPI on Port 8000) ΓùäΓöÇΓöÇΓöÇΓöÇΓöÇΓû║ [ fhir-mcp Gateway ] (Port 8002)
    HL7 FHIR R4 REST API                              Model Context Protocol for AI
-             │
-      ┌──────┴──────┐
-      ▼             ▼
+             Γöé
+      ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö┤ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+      Γû╝             Γû╝
 [ PostgreSQL 15 ] [ Redis 7 ]
   Port 5432       Port 6379
 ```
 
 ---
 
-## 🛠️ Technology Stack
+## ≡ƒ¢á∩╕Å Technology Stack
 
 ### Frontend Application (`frontend/`)
 * **Framework**: [Next.js 16](https://nextjs.org/) (React 19, App Router, Server Actions, Server Components)
@@ -79,7 +79,7 @@
 
 ---
 
-## 🌐 Ports & Services Matrix
+## ≡ƒîÉ Ports & Services Matrix
 
 | Service | Port | Endpoint | Description |
 |---|---|---|---|
@@ -95,7 +95,7 @@
 
 ---
 
-## ⚡ Quick Start & Local Setup
+## ΓÜí Quick Start & Local Setup
 
 ### 1. Prerequisites
 * **Node.js**: v20.x or v22.x LTS
@@ -124,7 +124,7 @@ cp .env.example .env
 uv sync
 uv run alembic upgrade head
 uv run fastapi dev app/main.py
-# → Running at http://localhost:8000 (Swagger docs at /docs)
+# ΓåÆ Running at http://localhost:8000 (Swagger docs at /docs)
 ```
 
 #### Terminal 2: FastMCP AI Gateway (Port 8002)
@@ -133,7 +133,7 @@ cd backend/fhir-mcp
 cp .env.example .env
 uv sync
 uv run python -m app.main
-# → Running at http://localhost:8002/mcp
+# ΓåÆ Running at http://localhost:8002/mcp
 ```
 
 #### Terminal 3: FHIR Middleware (Port 8005)
@@ -142,7 +142,7 @@ cd backend/fhir-gql
 cp .env.example .env
 uv sync
 uv run uvicorn app.main:app --port 8005 --reload
-# → Running at http://localhost:8005
+# ΓåÆ Running at http://localhost:8005
 ```
 
 ---
@@ -154,12 +154,12 @@ uv run uvicorn app.main:app --port 8005 --reload
 cd frontend
 npm install
 npm run dev
-# → Running at http://localhost:4000
+# ΓåÆ Running at http://localhost:4000
 ```
 
 ---
 
-## 🔍 Interactive API Testing & Documentation
+## ≡ƒöì Interactive API Testing & Documentation
 
 DrGodly provides a **Unified Multi-Service Swagger UI** where you can inspect and execute test requests across all backend microservices:
 
@@ -173,7 +173,7 @@ DrGodly provides a **Unified Multi-Service Swagger UI** where you can inspect an
 
 ---
 
-## 📚 Master Reference Documents
+## ≡ƒôÜ Master Reference Documents
 
 * **[DRGODLY_SPECIFICATION_DOCUMENT.md](file:///d:/DrGodly%20New/DRGODLY_SPECIFICATION_DOCUMENT.md)**: Formal, publication-grade Technical Specification & System Architecture Document.
 * **[PROMPTS_MASTER_PLAN.md](file:///d:/DrGodly%20New/PROMPTS_MASTER_PLAN.md)**: The complete 60-prompt implementation plan across all 10 phases.
@@ -182,7 +182,7 @@ DrGodly provides a **Unified Multi-Service Swagger UI** where you can inspect an
 
 ---
 
-## 🔒 Security & Medical Compliance
+## ≡ƒöÆ Security & Medical Compliance
 * **HL7 FHIR R4 Standards**: Ensures interoperability with global hospital EMRs.
 * **Ayushman Bharat Digital Mission (ABDM)**: M1/M2/M3 compliance for India's national health stack.
 * **Data Protection**: Designed in accordance with the Indian **Digital Personal Data Protection (DPDP) Act 2023** and **HIPAA** guidelines.
@@ -190,6 +190,6 @@ DrGodly provides a **Unified Multi-Service Swagger UI** where you can inspect an
 
 ---
 
-## 🤝 Contributing & License
+## ≡ƒñ¥ Contributing & License
 Developed for the **DrGodly AI-Native Healthcare Initiative**.  
-All rights reserved © 2026. For technical questions or contribution guidelines, please refer to the engineering team.
+All rights reserved ┬⌐ 2026. For technical questions or contribution guidelines, please refer to the engineering team.

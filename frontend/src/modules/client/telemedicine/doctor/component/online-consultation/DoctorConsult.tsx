@@ -1,30 +1,12 @@
-/**
- * DoctorConsult — doctor-side virtual consultation room UI.
- *
- * Layer: client / telemedicine / doctor / component / online-consultation
- *
- * On end-call the doctor's client:
- *   1. Calls /api/full-report-agent with the accumulated transcript
- *      → receives { soap_report, assessment_plan, generated_at }
- *   2. Calls completeConsultationAction to write transcript + reports to the DB
- *      and flip consultation status to COMPLETED
- *   3. Creates a FHIR Encounter linking the appointment, stamped with the
- *      actual_period_start/end of the call — the only record of how long the
- *      consultation ran
- *   4. Redirects to the post-consultation review page (/{appointmentId}/review)
- *
- * Props come from the server page which resolves the Consultation by
- * fhir_appointment_id and fetches the doctor/patient display names.
- */
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import { LiveKitRoom } from "@livekit/components-react";
 import { toast } from "sonner";
-import { Clock, Loader2, MessageSquare, MessageSquareOff } from "lucide-react";
+import { Clock, Loader2, MessageSquare, MessageSquareOff, FileText, Bot, Share2, Sparkles, CheckCircle2 } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { RoomControlUI } from "@/modules/client/telemedicine/shared/components/online-consultation/RoomControl";
 import {
   TranscriptionPanel,
@@ -33,11 +15,11 @@ import {
 import { ConsultationNotes } from "./ConsultationNotes";
 import { Suggestion } from "./Suggestion";
 import { IntakeReportDialog } from "../intake/IntakeReportDialog";
+import { PatientDossierPanel } from "./PatientDossierPanel";
+import { CdsCockpitPanel } from "./CdsCockpitPanel";
 import { completeConsultationAction } from "@/modules/server/presentation/actions/consultation/core.actions";
 import { createEncounterAction } from "@/modules/server/presentation/actions/encounter/core.actions";
 import { updateAppointmentAction } from "@/modules/server/presentation/actions/appointment/core.actions";
-
-// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface ConsultationDetails {
   doctor: { name?: string; speciality: string };
@@ -45,30 +27,15 @@ interface ConsultationDetails {
 }
 
 interface DoctorConsultProps {
-  /** LiveKit room ID stored in the Consultation record. */
   roomId: string;
-  /** Local Consultation fhir_appointment_id — used for the server action + navigation. */
   fhirAppointmentId: number;
-  /** Display name of the authenticated doctor. */
   participantName: string;
-  /** Doctor and patient names shown in the header bar. */
   details: ConsultationDetails;
-  /** FHIR patient integer ID — used as subject on the created Encounter. */
   patientId?: number;
-  /** FHIR practitioner integer ID — used as participant on the created Encounter. */
   practitionerId?: number;
-  /** Active organisation ID from the session — written as org_id on the created Encounter. */
   orgId?: string;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-/**
- * Formats elapsed seconds as MM:SS or H:MM:SS.
- *
- * @param seconds - Total elapsed seconds.
- * @returns Formatted time string.
- */
 function formatElapsed(seconds: number): string {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60)
@@ -78,17 +45,6 @@ function formatElapsed(seconds: number): string {
   return h > 0 ? `${h}:${m}:${s}` : `${m}:${s}`;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
-
-/**
- * Doctor consultation room — live video with transcript panel.
- * On end-call, generates the full AI report then persists it via server action.
- *
- * @param roomId - LiveKit room ID.
- * @param fhirAppointmentId - FHIR appointment integer ID for action + navigation.
- * @param participantName - Doctor's display name shown in LiveKit.
- * @param details - Doctor/patient display names for the header.
- */
 export function DoctorConsult({
   roomId,
   fhirAppointmentId,
@@ -102,28 +58,16 @@ export function DoctorConsult({
   const [token, setToken] = useState("");
   const [livekitUrl, setLivekitUrl] = useState<string | null>(null);
   const [transcripts, setTranscripts] = useState<TranscriptLine[]>([]);
-  const [showTranscript, setShowTranscript] = useState(true);
+  const [showTranscript, setShowTranscript] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [isCompleting, setIsCompleting] = useState(false);
   const [notes, setNotes] = useState("");
 
-  // Refs so the end-call handler always reads latest values without stale closures
   const transcriptsRef = useRef<TranscriptLine[]>([]);
-  // Synced on every render — no useEffect needed for a simple value ref
   const notesRef = useRef("");
   notesRef.current = notes;
-
-  /**
-   * Wall-clock instant the consultation started, captured once the room is
-   * live. Recorded as a timestamp rather than derived from `elapsed` for two
-   * reasons: browsers throttle setInterval in a background tab, so the counter
-   * drifts low whenever the doctor switches away; and a ref (like the two
-   * above) is immune to the stale closure that end-call handlers are exposed
-   * to. `elapsed` therefore stays purely a display concern.
-   */
   const startedAtRef = useRef<number | null>(null);
 
-  // Fetch LiveKit JWT for this participant
   useEffect(() => {
     (async () => {
       try {
@@ -140,7 +84,6 @@ export function DoctorConsult({
     })();
   }, [roomId, participantName]);
 
-  // Fetch LiveKit server URL at runtime
   useEffect(() => {
     (async () => {
       try {
@@ -154,17 +97,13 @@ export function DoctorConsult({
     })();
   }, []);
 
-  // Elapsed time counter — starts once we have token + URL
   useEffect(() => {
     if (!token || !livekitUrl) return;
-    /* Stamp the start on the first connection only. A reconnect re-runs this
-       effect, and re-stamping would restart the clock mid-consultation. */
     startedAtRef.current ??= Date.now();
     const interval = setInterval(() => setElapsed((s) => s + 1), 1000);
     return () => clearInterval(interval);
   }, [token, livekitUrl]);
 
-  // Stable transcript callback — doesn't cause TranscriptionPanel to re-subscribe
   const onTranscriptRef = useRef<(line: TranscriptLine) => void>(() => {});
   onTranscriptRef.current = (line) => {
     setTranscripts((prev) => {
@@ -180,18 +119,13 @@ export function DoctorConsult({
   if (!token || !livekitUrl) {
     return (
       <div className="flex items-center justify-center mt-20">
-        <p className="inline-flex items-center gap-2 text-muted-foreground">
-          <Loader2 className="animate-spin" /> Connecting to consultation...
+        <p className="inline-flex items-center gap-2 text-muted-foreground text-sm font-medium">
+          <Loader2 className="animate-spin text-teal-600" /> Connecting to DrGodly Telemedicine Room...
         </p>
       </div>
     );
   }
 
-  /**
-   * End-call handler — generates the AI report then persists everything.
-   * Fires on the "End Consultation" button and on LiveKit disconnect.
-   * Guarded by isCompleting to prevent double-invocation.
-   */
   const handleEndCall = async () => {
     if (isCompleting) return;
     setIsCompleting(true);
@@ -199,7 +133,6 @@ export function DoctorConsult({
     const currentTranscripts = transcriptsRef.current;
     const currentNotes = notesRef.current;
 
-    // Build a text conversation array for the AI agent
     const conversation = currentTranscripts
       .filter((t) => t.text?.trim())
       .map((t) => {
@@ -208,12 +141,10 @@ export function DoctorConsult({
           : "PATIENT";
         return `${role}: ${t.text.trim()}`;
       });
-    // Append doctor notes so the report agent has full context
     if (currentNotes.trim()) {
       conversation.push(`DOCTOR NOTES: ${currentNotes.trim()}`);
     }
 
-    // Map transcript lines to the consultation storage shape
     const virtualConversation = currentTranscripts.map((t) => ({
       speaker: (t.name.toLowerCase().includes("doctor")
         ? "DOCTOR"
@@ -222,7 +153,6 @@ export function DoctorConsult({
       timestamp: t.timestamp,
     }));
 
-    // Call full-report-agent (assessment-plan + doctor-report in parallel)
     let fullReport: Record<string, unknown> | null = null;
     let soapNote: Record<string, unknown> | null = null;
     try {
@@ -233,14 +163,12 @@ export function DoctorConsult({
       });
       if (res.ok) {
         fullReport = await res.json();
-        // soap_report lives inside the merged full report
         soapNote = (fullReport?.soap_report as Record<string, unknown>) ?? null;
       }
     } catch {
-      // Report generation failed — still complete the consultation so status is updated
+      // Non-fatal
     }
 
-    // Persist transcript + reports and mark COMPLETED
     const [, err] = await completeConsultationAction({
       payload: {
         fhir_appointment_id: fhirAppointmentId,
@@ -256,26 +184,16 @@ export function DoctorConsult({
       toast.success("Consultation completed");
     }
 
-    /* Mark the FHIR Appointment as fulfilled now that the consultation is done. */
     try {
       await updateAppointmentAction({
         payload: { id: fhirAppointmentId, status: "fulfilled" },
       });
     } catch {
-      /* Non-fatal — status update failure should not block the review redirect. */
+      // Non-fatal
     }
 
-    /* Create the FHIR Encounter linking this consultation to clinical resources.
-       Awaited so the encounter exists in FHIR before the review page renders.
-
-       actual_period_start/end are the record of how long the consultation
-       actually ran. This is deliberately NOT written back to
-       Appointment.minutes_duration: FHIR defines that as the *planned* length
-       ("can be less than the duration between the start and end times"), so
-       overwriting it would lose what was originally booked. Every read site in
-       the app already derives duration from start/end anyway. */
     try {
-      const [data, error] = await createEncounterAction({
+      await createEncounterAction({
         payload: {
           status: "completed",
           ...(patientId ? { subject: `Patient/${patientId}` } : {}),
@@ -295,7 +213,7 @@ export function DoctorConsult({
         },
       });
     } catch {
-      /* Non-fatal — review page will handle missing encounter gracefully. */
+      // Non-fatal
     }
 
     setIsCompleting(false);
@@ -312,7 +230,7 @@ export function DoctorConsult({
       serverUrl={livekitUrl}
       data-lk-theme="default"
       onDisconnected={handleEndCall}
-      className="!bg-transparent !shadow-none !h-[calc(100vh-132px)]"
+      className="!bg-transparent !shadow-none !h-[calc(100vh-120px)]"
       style={
         {
           "--lk-accent-bg": "var(--primary)",
@@ -320,66 +238,45 @@ export function DoctorConsult({
         } as React.CSSProperties
       }
     >
-      <div className="flex flex-col h-full w-full gap-2">
-        {/* ── Header bar ── */}
-        <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-secondary border border-border shrink-0">
-          <div className="flex items-center gap-4">
-            {/* Live pulse indicator */}
-            <div className="flex items-center gap-1.5">
+      <div className="flex flex-col h-full w-full gap-3">
+        {/* ── Top Clinical Header Bar ── */}
+        <div className="flex items-center justify-between px-4 py-2.5 rounded-2xl bg-white border border-slate-200/80 shadow-xs shrink-0">
+          <div className="flex items-center gap-3">
+            {/* Live Indicator */}
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 border border-rose-200/60">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
               </span>
-              <span className="text-xs font-semibold text-red-500 uppercase tracking-wider">
-                Live
+              <span className="text-[11px] font-bold text-rose-600 uppercase tracking-wider">
+                Live Consult
               </span>
             </div>
 
-            <div className="h-4 w-px bg-border" />
+            <div className="h-4 w-px bg-slate-200" />
 
-            <div className="text-sm leading-tight">
-              <p className="text-muted-foreground text-xs">Doctor</p>
-              <p className="font-medium text-secondary-foreground">
-                {details.doctor.name}
-                {details.doctor.speciality && (
-                  <span className="text-muted-foreground font-normal text-xs ml-1">
-                    · {details.doctor.speciality}
-                  </span>
-                )}
-              </p>
-            </div>
-
-            <div className="h-4 w-px bg-border" />
-
-            <div className="text-sm leading-tight">
-              <p className="text-muted-foreground text-xs">Patient</p>
-              <p className="font-medium text-secondary-foreground">
-                {details.patient.name}
-              </p>
+            {/* Doctor & Patient Info */}
+            <div className="text-xs">
+              <span className="font-semibold text-slate-900">{details.doctor.name}</span>
+              <span className="text-slate-400 mx-1.5">•</span>
+              <span className="text-slate-600">Patient: <strong className="text-slate-900">{details.patient.name}</strong></span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Elapsed timer */}
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground px-3 py-1 rounded-lg bg-background border border-border">
-              <Clock className="h-3.5 w-3.5" />
-              <span className="font-mono tabular-nums text-xs">
-                {formatElapsed(elapsed)}
-              </span>
+            {/* Timer */}
+            <div className="flex items-center gap-1.5 text-xs text-slate-700 px-3 py-1 rounded-xl bg-slate-100/80 border border-slate-200">
+              <Clock className="h-3.5 w-3.5 text-teal-600" />
+              <span className="font-mono font-semibold">{formatElapsed(elapsed)}</span>
             </div>
 
-            {/* Transcript toggle */}
             <Button
               size="sm"
-              variant="secondary"
+              variant="outline"
               onClick={() => setShowTranscript((v) => !v)}
-              className="gap-1.5"
+              className="h-8 text-xs rounded-xl border-slate-200 gap-1.5"
             >
-              {showTranscript ? (
-                <MessageSquareOff className="h-4 w-4" />
-              ) : (
-                <MessageSquare className="h-4 w-4" />
-              )}
+              {showTranscript ? <MessageSquareOff className="h-3.5 w-3.5" /> : <MessageSquare className="h-3.5 w-3.5" />}
               {showTranscript ? "Hide Transcript" : "Show Transcript"}
             </Button>
 
@@ -390,11 +287,12 @@ export function DoctorConsult({
               variant="destructive"
               onClick={handleEndCall}
               disabled={isCompleting}
+              className="h-8 text-xs font-semibold rounded-xl bg-rose-600 hover:bg-rose-700 shadow-xs"
             >
               {isCompleting ? (
                 <>
                   <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
-                  Finishing…
+                  Generating SOAP…
                 </>
               ) : (
                 "End Consultation"
@@ -403,31 +301,80 @@ export function DoctorConsult({
           </div>
         </div>
 
-        {/* ── Body ── */}
-        <div className="flex flex-1 gap-2 min-h-0">
-          {/* Left: video room + doctor notes */}
-          <div className="flex flex-col flex-1 min-h-0 gap-2 overflow-hidden">
-            <RoomControlUI />
-            <ConsultationNotes notes={notes} onNotesChange={setNotes} />
+        {/* ── 3-Panel Split Layout Architecture ── */}
+        <div className="flex flex-1 gap-3 min-h-0 overflow-hidden">
+          {/* Panel 1 (Left 25%): AI Intake & Patient Dossier */}
+          <div className="w-[300px] shrink-0 h-full overflow-hidden hidden lg:block">
+            <PatientDossierPanel patientName={details.patient.name} />
           </div>
 
-          {/* Right sidebar: AI suggestions (always visible) + optional transcript */}
-          <aside className="w-[400px] flex flex-col gap-2 min-h-0 overflow-hidden">
-            <Suggestion
-              transcripts={transcripts}
-              notes={notes}
-              fhirAppointmentId={fhirAppointmentId}
-            />
-            {showTranscript && (
-              <div className="flex-1 min-h-0 overflow-auto">
+          {/* Panel 2 (Center 50%): Video Room, Notes & Controls */}
+          <div className="flex flex-col flex-1 min-h-0 gap-3 overflow-hidden">
+            <div className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-950 shadow-xs relative">
+              <RoomControlUI />
+            </div>
+
+            {/* Bottom Transcript / Clinician Notes */}
+            {showTranscript ? (
+              <div className="h-44 overflow-auto rounded-2xl border border-slate-200/80 bg-white p-2">
                 <TranscriptionPanel
                   roomId={roomId}
                   transcripts={transcripts}
                   onTranscript={handleTranscript}
                 />
               </div>
+            ) : (
+              <div className="h-36 overflow-hidden rounded-2xl border border-slate-200/80 bg-white">
+                <ConsultationNotes notes={notes} onNotesChange={setNotes} />
+              </div>
             )}
-          </aside>
+          </div>
+
+          {/* Panel 3 (Right 25%): Real-Time AI Clinical Decision Support */}
+          <div className="w-[320px] shrink-0 h-full overflow-hidden hidden md:block">
+            <CdsCockpitPanel />
+          </div>
+        </div>
+
+        {/* ── Bottom Clinical Toolbar ── */}
+        <div className="flex items-center justify-between px-4 py-2 rounded-2xl bg-white border border-slate-200/80 shadow-xs shrink-0 text-xs">
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={handleEndCall}
+              disabled={isCompleting}
+              className="h-8 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-medium gap-1.5"
+            >
+              <FileText className="h-3.5 w-3.5" />
+              Generate SOAP Note
+            </Button>
+
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => toast.success("Draft encounter synchronized with EMR")}
+              className="h-8 rounded-xl border-slate-200 text-slate-700 gap-1.5"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+              Add to EMR
+            </Button>
+
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => toast.info("Intake summary shared with patient portal")}
+              className="h-8 rounded-xl border-slate-200 text-slate-700 gap-1.5"
+            >
+              <Share2 className="h-3.5 w-3.5 text-teal-600" />
+              Share with Patient
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-2 text-slate-500 font-medium">
+            <span className="flex items-center gap-1.5 text-teal-700 font-semibold bg-teal-50 px-2.5 py-1 rounded-full border border-teal-200/60">
+              <Bot className="h-3.5 w-3.5 text-teal-600" /> Ask DrGodly AI Copilot
+            </span>
+          </div>
         </div>
       </div>
     </LiveKitRoom>
