@@ -151,6 +151,7 @@ export default function ScreensShowcasePage() {
     },
   ]);
   const [intakeInput, setIntakeInput] = useState("");
+  const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [bookingStep, setBookingStep] = useState<1 | 2 | 3>(1);
   const [bookingSpecialist, setBookingSpecialist] = useState<string>("Dr. Priya Sharma");
   const [bookingSlot, setBookingSlot] = useState<string>("10:30 AM");
@@ -229,11 +230,47 @@ export default function ScreensShowcasePage() {
               );
             })}
           </div>
+
+          {/* Viewport Width Controls for CSS Testing */}
+          <div className="hidden xl:flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/80 shrink-0">
+            <button
+              onClick={() => setViewMode("desktop")}
+              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                viewMode === "desktop" ? "bg-white text-slate-900 font-semibold shadow-2xs" : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              🖥️ Full Screen
+            </button>
+            <button
+              onClick={() => setViewMode("tablet")}
+              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                viewMode === "tablet" ? "bg-white text-slate-900 font-semibold shadow-2xs" : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              📱 Tablet (768px)
+            </button>
+            <button
+              onClick={() => setViewMode("mobile")}
+              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                viewMode === "mobile" ? "bg-white text-slate-900 font-semibold shadow-2xs" : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              📲 Mobile (390px)
+            </button>
+          </div>
         </div>
       </header>
 
       {/* ── Main Screen Viewport ── */}
-      <main className="flex-1 p-4 md:p-6 max-w-7xl w-full mx-auto">
+      <main
+        className={`flex-1 p-4 md:p-6 w-full mx-auto transition-all duration-300 ${
+          viewMode === "mobile"
+            ? "max-w-[420px] bg-white border border-slate-300 rounded-3xl shadow-xl my-4 overflow-x-hidden"
+            : viewMode === "tablet"
+            ? "max-w-[820px] bg-white border border-slate-300 rounded-3xl shadow-xl my-4 overflow-x-hidden"
+            : "max-w-7xl"
+        }`}
+      >
         {/* 1. DOCTOR DASHBOARD SCREEN */}
         {activeScreen === "doctor-dashboard" && (
           <div className="space-y-4 animate-in fade-in duration-300">
