@@ -1,11 +1,4 @@
-# 🩺 DrGodly: AI-Native Telemedicine & Smart EMR Platform
 
-[![GitHub main branch](https://img.shields.io/badge/git-main-teal.svg)](https://github.com/pranjalchirmade09326-hash/DrGodly.git)
-[![HL7 FHIR R4](https://img.shields.io/badge/standard-HL7%20FHIR%20R4-blue.svg)](http://hl7.org/fhir/R4/)
-[![Next.js 16](https://img.shields.io/badge/frontend-Next.js%2016-black.svg)](https://nextjs.org/)
-[![FastAPI](https://img.shields.io/badge/backend-FastAPI%200.115+-009688.svg)](https://fastapi.tiangolo.com/)
-[![ABDM Compliant](https://img.shields.io/badge/ABDM-ABHA%20M1%2FM2%2FM3-orange.svg)](https://abdm.gov.in/)
-[![FastMCP](https://img.shields.io/badge/AI-FastMCP%20Streamable--HTTP-purple.svg)](https://modelcontextprotocol.io/)
 
 > **DrGodly** is an enterprise-grade, **AI-Native Telemedicine and Clinical Operating System** designed to eliminate physician administrative burden, prevent diagnostic errors, and provide seamless chronic care management. It unites ambient AI intelligence, live clinical decision support (CDS), WebRTC telemedicine, and an HL7 FHIR R4 clinical data repository into a single unified platform.
 
@@ -123,7 +116,7 @@ npm run dev
 
 # 3. Open in your browser:
 # ➔ Screen Studio: http://localhost:4000/en/screens
-# ➔ Main App:      http://localhost:4000
+
 ```
 
 ---
@@ -191,11 +184,6 @@ DrGodly provides a unified Swagger UI where you can inspect, test, and execute r
 
 ---
 
-## 📚 Master Documentation References
-
-- **[DRGODLY_SPECIFICATION_DOCUMENT.md](file:///d:/DrGodly%20New/DRGODLY_SPECIFICATION_DOCUMENT.md)**: Full formal technical specification, architecture diagrams, and FHIR resource mappings.
-- **[PROMPTS_MASTER_PLAN.md](file:///d:/DrGodly%20New/PROMPTS_MASTER_PLAN.md)**: Master full-stack prompt roadmap across 10 development phases.
-- **[SWAGGER_AND_API_INTEGRATION_PROMPTS.md](file:///d:/DrGodly%20New/SWAGGER_AND_API_INTEGRATION_PROMPTS.md)**: API integration guide, cURL requests, and proxy documentation.
 
 ---
 
