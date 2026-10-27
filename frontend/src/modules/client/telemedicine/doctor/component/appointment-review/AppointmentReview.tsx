@@ -998,7 +998,7 @@ export function AppointmentReview({
         <DigitalSignatureAndQrCard
           doctorName={doctorName}
           patientName={patientName}
-          appointmentId={appointmentId}
+          appointmentId={fhirAppointmentId}
         />
       </div>
 

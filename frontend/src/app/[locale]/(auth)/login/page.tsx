@@ -1,331 +1,510 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "@/i18n/navigation";
+import {
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Globe2,
+  LockKeyhole,
+  Mail,
+  MessageSquareHeart,
+  ShieldCheck,
+  Stethoscope,
+  FileText,
+  Heart,
+  Users,
+} from "lucide-react";
+import { DrGodlyLogo } from "@/components/shared/DrGodlyLogo";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent } from "@/components/ui/card";
 import {
-  ShieldCheck,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  User,
-  Stethoscope,
-  Globe,
-  Loader2,
-  ArrowRight,
-} from "lucide-react";
-import { AppLogo } from "@/modules/client/shared/components/AppLogo";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
+
+type UserRole = "patient" | "doctor";
+
+const features = [
+  {
+    icon: MessageSquareHeart,
+    title: "AI Health Intake",
+    description: "Share your symptoms in your own words",
+    iconClass: "bg-blue-100 text-blue-600",
+  },
+  {
+    icon: Stethoscope,
+    title: "Consult with Trusted Doctors",
+    description: "Connect with licensed medical professionals",
+    iconClass: "bg-emerald-100 text-emerald-600",
+  },
+  {
+    icon: FileText,
+    title: "AI Clinical Support",
+    description: "Better decisions for better outcomes",
+    iconClass: "bg-violet-100 text-violet-600",
+  },
+  {
+    icon: Heart,
+    title: "Your Health Journey",
+    description: "Continuous, personalized care",
+    iconClass: "bg-pink-100 text-pink-600",
+  },
+];
+
+const trustStats = [
+  {
+    icon: Users,
+    value: "100,000+",
+    label: "Patients Trust DrGodly",
+  },
+  {
+    icon: ShieldCheck,
+    value: "500+",
+    label: "Licensed Doctors",
+  },
+  {
+    icon: Globe2,
+    value: "Nationwide",
+    label: "Available Across 50 States",
+  },
+];
 
 export default function LoginPage() {
   const router = useRouter();
-  const [role, setRole] = useState<"patient" | "doctor">("patient");
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
+  const [role, setRole] = React.useState<UserRole>("patient");
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [email, setEmail] = React.useState("louise.reed@example.com");
+  const [password, setPassword] = React.useState("password123");
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!identifier || !password) {
-      toast.error("Please enter both your email/phone and password.");
-      return;
-    }
-
+  async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     setIsLoading(true);
-    // Simulate authentication and route to respective dashboard
-    setTimeout(() => {
-      setIsLoading(false);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 600));
       toast.success(
-        `Welcome back, ${role === "doctor" ? "Dr. Sharma" : "Louise"}!`
+        `Welcome to DrGodly, ${role === "doctor" ? "Dr. Alexander Wright" : "Louise Reed"}!`
       );
+
       if (role === "doctor") {
-        router.push("/bezs/telemedicine/doctor/dashboard");
+        router.push("/screens");
       } else {
-        router.push("/bezs/telemedicine/patient/appointments");
+        router.push("/screens");
       }
-    }, 900);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const fillTestAccount = (selectedRole: UserRole) => {
+    setRole(selectedRole);
+    if (selectedRole === "doctor") {
+      setEmail("dr.wright@drgodly.com");
+      setPassword("DoctorPass2026!");
+      toast.info("Loaded Dr. Alexander Wright (Cardiology) test credentials");
+    } else {
+      setEmail("louise.reed@example.com");
+      setPassword("PatientPass2026!");
+      toast.info("Loaded Louise Reed test credentials");
+    }
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-background">
-      {/* ── Left Side: High-Resolution Marketing Panel ────────────────── */}
-      <div className="hidden lg:flex lg:w-[58%] xl:w-[60%] relative bg-slate-950 p-4 lg:p-6 overflow-hidden">
-        <div className="relative w-full h-full rounded-2xl overflow-hidden border border-slate-800/80 shadow-2xl flex items-center justify-center bg-slate-900">
-          <Image
-            src="/images/auth-poster.jpg"
-            alt="DrGodly AI-Native Telemedicine"
-            fill
-            priority
-            className="object-cover object-center"
-            sizes="(max-width: 1200px) 58vw, 60vw"
-          />
+    <main className="min-h-screen bg-white text-slate-900">
+      <div className="grid min-h-screen lg:grid-cols-2">
+        {/* =========================================================
+            LEFT: DRGODLY BRAND / MARKETING PANEL
+        ========================================================= */}
+        <section className="relative hidden overflow-hidden bg-gradient-to-br from-white via-blue-50/70 to-cyan-50 lg:flex lg:flex-col">
+          {/* Decorative ambient gradients */}
+          <div className="pointer-events-none absolute -left-32 top-20 h-80 w-80 rounded-full bg-blue-200/30 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-emerald-200/30 blur-3xl" />
 
-          {/* Gentle vignette overlay for maximum contrast and readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-slate-950/20 pointer-events-none" />
+          <div className="relative flex min-h-screen flex-col px-10 py-8 xl:px-16 justify-between">
+            {/* Header / Logo */}
+            <div>
+              <DrGodlyLogo
+                size="lg"
+                tagline="Care Smarter. Together."
+                linkTo="/en"
+              />
 
-          {/* Floating Live Telehealth Pulse Badge */}
-          <div className="absolute bottom-6 left-6 z-10 bg-slate-900/85 backdrop-blur-md border border-slate-700/60 rounded-full px-4 py-2 flex items-center gap-2.5 text-xs text-slate-200 shadow-lg">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="font-medium text-emerald-400">FHIR R4 Connected</span>
-            <span className="text-slate-500">•</span>
-            <span>Real-time Clinical Decision Support</span>
+              {/* Hero Messaging */}
+              <div className="mt-14 max-w-2xl">
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-[#4056b8]">
+                  AI-Native Telemedicine
+                </p>
+
+                <h1 className="text-4xl font-bold leading-[1.08] tracking-tight text-[#10195c] xl:text-5xl">
+                  Better Care.
+                  <br />
+                  <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                    For A Healthier You.
+                  </span>
+                </h1>
+
+                <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-600">
+                  From symptom check to specialist consultation, DrGodly combines AI with licensed
+                  medical professionals to deliver high-quality, personalized and accessible care.
+                </p>
+              </div>
+
+              {/* Feature list */}
+              <div className="mt-8 grid max-w-xl gap-4">
+                {features.map((feature) => {
+                  const Icon = feature.icon;
+                  return (
+                    <div key={feature.title} className="flex items-center gap-3.5">
+                      <div
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${feature.iconClass}`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-[#10195c]">
+                          {feature.title}
+                        </h3>
+                        <p className="text-xs text-slate-500">{feature.description}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Team Quote & Physician Visual */}
+            <div className="relative mt-8 pt-4">
+              <div className="max-w-xs rounded-2xl border border-white/80 bg-white/95 p-4 shadow-lg backdrop-blur mb-4">
+                <div className="flex gap-2.5">
+                  <span className="text-2xl text-blue-500 leading-none">“</span>
+                  <p className="text-xs leading-relaxed text-slate-700">
+                    Technology should bring you closer to care, not further away.
+                  </p>
+                </div>
+                <p className="pl-5 mt-1 text-[11px] font-semibold text-blue-600">
+                  — The DrGodly Team
+                </p>
+              </div>
+
+              {/* Trust stats */}
+              <div className="grid grid-cols-3 border-t border-blue-100 pt-5">
+                {trustStats.map((stat) => {
+                  const Icon = stat.icon;
+                  return (
+                    <div
+                      key={stat.value}
+                      className="flex items-center gap-2.5 border-r border-blue-100 px-3 first:pl-0 last:border-0"
+                    >
+                      <Icon className="h-6 w-6 text-blue-600 shrink-0" />
+                      <div>
+                        <div className="font-bold text-sm text-[#10195c]">{stat.value}</div>
+                        <div className="text-[10px] text-slate-500 leading-tight">
+                          {stat.label}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 text-center text-[10px] font-medium uppercase tracking-[0.25em] text-slate-400">
+                Small steps today. A healthier tomorrow.
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* ── Right Side: Healthcare Sign-In Card ───────────────────────── */}
-      <div className="flex-1 flex flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-16 max-w-xl mx-auto w-full">
-        {/* Top Header: Language Switcher & Quick Sign Up */}
-        <div className="flex items-center justify-between w-full mb-6 text-sm">
-          <div className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
-            <Globe className="h-4 w-4" />
-            <span className="font-medium text-xs">English (US)</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <span>Don&apos;t have an account?</span>
-            <Link
-              href="/signup"
-              className="font-semibold text-primary hover:underline"
-            >
-              Create an account
+        {/* =========================================================
+            RIGHT: LOGIN FORM & CARD
+        ========================================================= */}
+        <section className="relative flex min-h-screen flex-col bg-[#f8fbff]">
+          {/* Top navigation */}
+          <header className="flex items-center justify-end gap-3 px-6 py-4 sm:px-10">
+            <Select defaultValue="en">
+              <SelectTrigger className="w-[110px] h-9 border-0 bg-transparent text-xs text-slate-600 shadow-none">
+                <Globe2 className="mr-1.5 h-3.5 w-3.5 text-slate-500" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="hi">हिन्दी</SelectItem>
+                <SelectItem value="ta">தமிழ்</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Link href="/signup">
+              <Button
+                variant="outline"
+                className="rounded-xl border-blue-500 px-4 h-9 text-xs text-blue-600 hover:bg-blue-50"
+              >
+                Create an account
+              </Button>
             </Link>
-          </div>
-        </div>
+          </header>
 
-        {/* Main Sign-In Form Container */}
-        <div className="w-full my-auto space-y-6">
-          {/* Logo & Headline */}
-          <div className="space-y-2 text-center sm:text-left">
-            <div className="flex items-center justify-center sm:justify-start gap-2.5 mb-3">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-teal-500 flex items-center justify-center text-white font-bold shadow-md shadow-cyan-500/20">
-                <span className="text-xl tracking-tight">DG</span>
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="font-bold text-xl tracking-tight text-foreground leading-none">
-                  DrGodly
-                </span>
-                <span className="text-[11px] text-muted-foreground tracking-wide uppercase font-medium mt-0.5">
-                  Care Smarter. Together.
-                </span>
-              </div>
-            </div>
+          {/* Login Card */}
+          <div className="flex flex-1 items-center justify-center px-4 pb-8 sm:px-8">
+            <Card className="w-full max-w-[500px] rounded-3xl border-0 bg-white shadow-[0_20px_70px_rgba(30,64,175,0.08)]">
+              <CardContent className="p-6 sm:p-9">
+                {/* Logo & Welcome */}
+                <div className="flex flex-col items-center text-center">
+                  <DrGodlyLogo
+                    size="xl"
+                    tagline="AI for Better Care"
+                    className="flex-col items-center"
+                    textClassName="items-center text-center mt-1"
+                  />
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-              Welcome Back
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Sign in to access your consultations, medical records, and AI copilot.
-            </p>
-          </div>
+                  <h2 className="mt-6 text-2xl font-bold tracking-tight text-[#10195c]">
+                    Welcome Back
+                  </h2>
+                  <p className="mt-1 text-xs text-slate-500">
+                    Sign in to your DrGodly clinical account
+                  </p>
+                </div>
 
-          {/* Role Toggle: Patient vs Doctor */}
-          <Tabs
-            value={role}
-            onValueChange={(val) => setRole(val as "patient" | "doctor")}
-            className="w-full"
-          >
-            <TabsList className="grid w-full grid-cols-2 p-1 bg-muted/60 rounded-xl">
-              <TabsTrigger
-                value="patient"
-                className="flex items-center gap-2 py-2 text-xs sm:text-sm font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-lg transition-all"
-              >
-                <User className="h-4 w-4" />
-                <span>Patient</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="doctor"
-                className="flex items-center gap-2 py-2 text-xs sm:text-sm font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-lg transition-all"
-              >
-                <Stethoscope className="h-4 w-4" />
-                <span>Doctor / Clinician</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          {/* Form */}
-          <form onSubmit={handleSignIn} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="identifier" className="text-xs font-semibold">
-                {role === "doctor"
-                  ? "Provider Email or NPI"
-                  : "Email or Phone Number"}
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="identifier"
-                  type="text"
-                  placeholder={
-                    role === "doctor"
-                      ? "dr.sharma@drgodly.com or NPI"
-                      : "name@example.com or +1 (555) 000-0000"
-                  }
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  className="pl-10 h-11 text-sm bg-background/50 border-input focus-visible:ring-primary/30"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-xs font-semibold">
-                  Password
-                </Label>
-                <Link
-                  href="/forgot-password"
-                  className="text-xs text-primary font-medium hover:underline"
+                {/* Role Switcher */}
+                <Tabs
+                  value={role}
+                  onValueChange={(value) => fillTestAccount(value as UserRole)}
+                  className="mt-6"
                 >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10 h-11 text-sm bg-background/50 border-input focus-visible:ring-primary/30"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-            </div>
+                  <TabsList className="grid h-12 w-full grid-cols-2 rounded-xl bg-slate-100 p-1">
+                    <TabsTrigger
+                      value="patient"
+                      className="h-10 rounded-lg text-xs font-semibold data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                    >
+                      <Users className="mr-1.5 h-4 w-4" />
+                      Patient
+                    </TabsTrigger>
 
-            <div className="flex items-center justify-between pt-1">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="remember"
-                  checked={rememberMe}
-                  onCheckedChange={(c) => setRememberMe(!!c)}
-                />
-                <label
-                  htmlFor="remember"
-                  className="text-xs text-muted-foreground font-medium cursor-pointer"
-                >
-                  Remember for 30 days
-                </label>
-              </div>
-            </div>
+                    <TabsTrigger
+                      value="doctor"
+                      className="h-10 rounded-lg text-xs font-semibold data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                    >
+                      <Stethoscope className="mr-1.5 h-4 w-4" />
+                      Doctor
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
 
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full h-11 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-all mt-2"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in…
-                </>
-              ) : (
-                <>
-                  Sign in as {role === "doctor" ? "Doctor" : "Patient"}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </Button>
-          </form>
+                {/* Form */}
+                <form onSubmit={handleLogin} className="mt-6 space-y-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="email" className="text-xs font-medium text-slate-700">
+                      Email or Phone Number
+                    </Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      <Input
+                        id="email"
+                        type="text"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email or phone number"
+                        className="h-11 rounded-xl border-slate-200 pl-10 text-xs focus-visible:ring-blue-500"
+                        autoComplete="username"
+                        required
+                      />
+                    </div>
+                  </div>
 
-          {/* Social SSO Divider */}
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-muted/80" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-3 text-muted-foreground font-medium">
-                or continue with
-              </span>
-            </div>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="password" className="text-xs font-medium text-slate-700">
+                        Password
+                      </Label>
+                      <button
+                        type="button"
+                        className="text-xs font-medium text-blue-600 hover:text-blue-700"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
+
+                    <div className="relative">
+                      <LockKeyhole className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Enter your password"
+                        className="h-11 rounded-xl border-slate-200 pl-10 pr-10 text-xs focus-visible:ring-blue-500"
+                        autoComplete="current-password"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    className="h-11 w-full rounded-xl bg-blue-600 text-xs font-semibold shadow-md shadow-blue-600/20 hover:bg-blue-700 text-white"
+                  >
+                    {isLoading ? (
+                      "Signing in..."
+                    ) : (
+                      <>
+                        Sign In
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                </form>
+
+                {/* Divider */}
+                <div className="my-5 flex items-center gap-3">
+                  <Separator className="flex-1" />
+                  <span className="text-[11px] text-slate-400">or continue with</span>
+                  <Separator className="flex-1" />
+                </div>
+
+                {/* Social Login Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    variant="outline"
+                    className="h-10 rounded-xl border-slate-200 text-xs"
+                    type="button"
+                    onClick={() => {
+                      fillTestAccount("patient");
+                      toast.info("1-Click Google sign-in demo linked!");
+                    }}
+                  >
+                    <GoogleIcon />
+                    <span className="ml-2">Google</span>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="h-10 rounded-xl border-slate-200 text-xs"
+                    type="button"
+                    onClick={() => {
+                      fillTestAccount("doctor");
+                      toast.info("1-Click Apple sign-in demo linked!");
+                    }}
+                  >
+                    <AppleIcon />
+                    <span className="ml-2">Apple</span>
+                  </Button>
+                </div>
+
+                {/* Registration link */}
+                <p className="mt-5 text-center text-xs text-slate-500">
+                  Don&apos;t have an account?{" "}
+                  <Link
+                    href="/signup"
+                    className="font-semibold text-blue-600 hover:text-blue-700"
+                  >
+                    Create one
+                  </Link>
+                </p>
+
+                {/* Security Card */}
+                <div className="mt-5 flex gap-3 rounded-2xl bg-gradient-to-r from-emerald-50 to-blue-50 p-4 border border-emerald-100">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                    <ShieldCheck className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-xs text-[#10195c]">
+                      Your health data is secure
+                    </p>
+                    <p className="mt-0.5 text-[11px] leading-tight text-slate-500">
+                      We follow industry-leading security and privacy standards.
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {["HIPAA", "ABDM M1/M2/M3", "ISO 27001"].map((item) => (
+                        <span
+                          key={item}
+                          className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700 shadow-2xs border border-slate-200/60"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Legal Footer */}
+                <div className="mt-6 flex justify-center gap-3 text-[11px] text-slate-400">
+                  <button type="button" className="hover:text-slate-600">
+                    Terms of Service
+                  </button>
+                  <span>|</span>
+                  <button type="button" className="hover:text-slate-600">
+                    Privacy Policy
+                  </button>
+                  <span>|</span>
+                  <button type="button" className="hover:text-slate-600">
+                    Contact Us
+                  </button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-
-          {/* Social Logins */}
-          <div className="grid grid-cols-2 gap-3">
-            <Button
-              variant="outline"
-              type="button"
-              className="h-10 text-xs font-medium border-input hover:bg-muted/50"
-              onClick={() => {
-                toast.info("Connecting to Google OAuth…");
-              }}
-            >
-              <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
-                <path
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  fill="#4285F4"
-                />
-                <path
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  fill="#34A853"
-                />
-                <path
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                  fill="#FBBC05"
-                />
-                <path
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                  fill="#EA4335"
-                />
-              </svg>
-              Google
-            </Button>
-
-            <Button
-              variant="outline"
-              type="button"
-              className="h-10 text-xs font-medium border-input hover:bg-muted/50"
-              onClick={() => {
-                toast.info("Connecting to Apple ID…");
-              }}
-            >
-              <svg className="mr-2 h-4 w-4 fill-current" viewBox="0 0 24 24">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.84c.67-.82 1.13-1.96 1-3.1-.98.04-2.16.65-2.85 1.47-.61.71-1.14 1.88-1 3 1.09.08 2.19-.55 2.85-1.37z" />
-              </svg>
-              Apple
-            </Button>
-          </div>
-        </div>
-
-        {/* Bottom Trust & Compliance Card */}
-        <div className="mt-8 pt-4 border-t border-muted/60">
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 flex items-start gap-3">
-            <ShieldCheck className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
-            <div className="text-xs">
-              <span className="font-semibold text-foreground block">
-                Your health data is private and encrypted
-              </span>
-              <span className="text-muted-foreground text-[11px] leading-tight block mt-0.5">
-                Compliant with HIPAA, ABDM (ABHA), and SOC-2 Type II standards.
-              </span>
-            </div>
-          </div>
-        </div>
+        </section>
       </div>
-    </div>
+    </main>
+  );
+}
+
+
+/* ===============================================================
+   GOOGLE ICON
+================================================================ */
+
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.22Z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 21.67c2.63 0 4.84-.87 6.45-2.36l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.53A9.74 9.74 0 0 0 12 21.67Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M6.54 13.75A5.86 5.86 0 0 1 6.23 12c0-.61.11-1.2.31-1.75V7.72H3.3A9.76 9.76 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.28l3.24-2.53Z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 6.22c1.43 0 2.72.49 3.73 1.45l2.8-2.8C16.83 3.31 14.63 2.33 12 2.33a9.74 9.74 0 0 0-8.7 5.39l3.24 2.53C7.31 7.94 9.46 6.22 12 6.22Z"
+      />
+    </svg>
+  );
+}
+
+/* ===============================================================
+   APPLE ICON
+================================================================ */
+
+function AppleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M17.05 12.54c-.02-2.25 1.84-3.34 1.93-3.39a4.15 4.15 0 0 0-3.27-1.77c-1.38-.15-2.7.81-3.4.81-.71 0-1.8-.79-2.96-.77a4.36 4.36 0 0 0-3.67 2.24c-1.58 2.74-.4 6.79 1.11 9.01.75 1.09 1.62 2.3 2.78 2.25 1.12-.05 1.54-.72 2.9-.72 1.35 0 1.73.72 2.9.69 1.2-.02 1.96-1.1 2.69-2.19a8.97 8.97 0 0 0 1.22-2.53 3.91 3.91 0 0 1-2.23-3.63Zm-2.23-6.62a3.9 3.9 0 0 0 .89-2.8 4.03 4.03 0 0 0-2.6 1.35 3.75 3.75 0 0 0-.92 2.69 3.34 3.34 0 0 0 2.63-1.24Z" />
+    </svg>
   );
 }

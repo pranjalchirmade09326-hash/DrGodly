@@ -19,7 +19,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import type { AuthResponse } from "@/modules/server/auth/types";
-import { AppLogo } from "@/modules/client/shared/components/AppLogo";
+import { DrGodlyLogo } from "@/components/shared/DrGodlyLogo";
 
 /**
  * Top navigation bar for the marketing landing page.
@@ -63,18 +63,12 @@ export default function RootNavbar({
       <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 text-primary">
-            <AppLogo size={32} className="w-8 h-8" />
-            <span className="text-2xl font-bold text-foreground tracking-tight">
-              DrGodly
-            </span>
-            <Badge
-              variant="outline"
-              className="text-[10px] font-bold ml-1 hidden sm:inline-flex border-primary/30 text-primary"
-            >
-              FHIR R4
-            </Badge>
-          </Link>
+          <DrGodlyLogo
+            size="md"
+            badge="FHIR R4"
+            tagline="AI for Better Care"
+            linkTo="/"
+          />
 
           {/* Nav links */}
           <nav className="hidden md:flex items-center space-x-8">

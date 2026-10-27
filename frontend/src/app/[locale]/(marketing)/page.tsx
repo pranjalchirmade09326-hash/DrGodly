@@ -21,6 +21,7 @@
 import { getServerSession } from "@/modules/server/auth/get-session";
 import RootNavbar from "@/modules/client/(marketing)/components/RootNavbar";
 import Hero from "@/modules/client/(marketing)/components/Hero";
+import ContextFlywheelSection from "@/modules/client/(marketing)/components/ContextFlywheelSection";
 import FhirEmrSection from "@/modules/client/(marketing)/components/FhirEmrSection";
 import Features from "@/modules/client/(marketing)/components/Features";
 import HowItWorks from "@/modules/client/(marketing)/components/HowItWorks";
@@ -40,6 +41,7 @@ export default async function Home() {
       <RootNavbar session={session} />
       <main>
         <Hero session={session} />
+        <ContextFlywheelSection />
         <FhirEmrSection />
         <Features />
         <HowItWorks />

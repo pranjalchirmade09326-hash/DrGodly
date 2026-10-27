@@ -15,11 +15,8 @@
  */
 
 import type { Metadata } from "next";
-import { DM_Sans } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "@/theme/ThemeProvider";
-
-const dmSans = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Drgodly Mobile Integration Guide",
@@ -29,7 +26,7 @@ export const metadata: Metadata = {
 export default function DocsRootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${dmSans.className} antialiased`} suppressHydrationWarning>
+      <body className="font-sans antialiased" suppressHydrationWarning>
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

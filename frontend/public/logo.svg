@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="drgodlyHeartGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1D4ED8" />
+      <stop offset="45%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#00D2FF" />
+    </linearGradient>
+    <filter id="drgodlySoftGlow" x="-15%" y="-15%" width="130%" height="135%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4.5" flood-color="#0284C7" flood-opacity="0.32" />
+    </filter>
+  </defs>
+  <!-- Beautiful Heart Contour -->
+  <path
+    d="M 50 24 C 50 24, 42 10, 28 10 C 15 10, 6 20, 6 34 C 6 56, 32 72, 50 90 C 68 72, 94 56, 94 34 C 94 20, 85 10, 72 10 C 58 10, 50 24, 50 24 Z"
+    fill="url(#drgodlyHeartGrad)"
+    filter="url(#drgodlySoftGlow)"
+  />
+  <!-- Precision Medical Cross Cutout -->
+  <rect x="33" y="36" width="34" height="12" rx="3.5" fill="#FFFFFF" />
+  <rect x="44" y="25" width="12" height="34" rx="3.5" fill="#FFFFFF" />
+</svg>

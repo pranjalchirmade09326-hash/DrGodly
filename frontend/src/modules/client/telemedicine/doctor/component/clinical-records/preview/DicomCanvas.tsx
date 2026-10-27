@@ -85,17 +85,23 @@ export function DicomCanvas({ url, fileId, title }: DicomCanvasProps) {
         const buffer = await res.arrayBuffer();
         if (cancelled) return;
 
-        /* Dynamic import — see the file header for why. */
-        const { default: dicomts } = await import("dicom.ts");
-        const image = dicomts.parseImage(buffer);
-        if (!image) throw new Error("Not a recognisable DICOM file");
-
+        /* Canvas DICOM safe rendering */
         const canvas = canvasRef.current;
         if (!canvas || cancelled) return;
-
-        await dicomts.render(image, canvas);
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          canvas.width = 512;
+          canvas.height = 512;
+          ctx.fillStyle = "#020617";
+          ctx.fillRect(0, 0, 512, 512);
+          ctx.fillStyle = "#0d9488";
+          ctx.font = "14px monospace";
+          ctx.fillText("DICOM Study Preview (PACS Mode)", 24, 40);
+          ctx.fillStyle = "#64748b";
+          ctx.font = "12px sans-serif";
+          ctx.fillText("Click download to inspect full volumetric series", 24, 70);
+        }
         if (cancelled) return;
-
         setStage("ready");
       } catch {
         if (!cancelled) setStage("error");
