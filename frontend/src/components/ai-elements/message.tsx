@@ -12,7 +12,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import type { FileUIPart, UIMessage } from "ai";
+export type UIMessage = {
+  role: "system" | "user" | "assistant" | "data";
+  content?: string;
+};
+export type FileUIPart = {
+  type?: "file";
+  filename?: string;
+  mediaType?: string;
+  url?: string;
+};
 import {
   ChevronLeftIcon,
   ChevronRightIcon,

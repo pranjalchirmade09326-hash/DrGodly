@@ -25,13 +25,10 @@
  */
 
 import "./globals.css";
-import { DM_Sans } from "next/font/google";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FileQuestion } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const dmSans = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Page Not Found | DrGodly",
@@ -41,7 +38,7 @@ export const metadata: Metadata = {
 /** Static global 404 page — no locale, session, or provider context available here. */
 export default function GlobalNotFound() {
   return (
-    <html lang="en" className={dmSans.className}>
+    <html lang="en" className="font-sans">
       <body className="antialiased">
         <div className="flex min-h-screen flex-col items-center justify-center gap-6 text-center px-4">
           <FileQuestion className="h-12 w-12 text-muted-foreground" />

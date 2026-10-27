@@ -104,9 +104,10 @@ export default function Hero({ session }: { session: AuthResponse | null }) {
               variants={itemVariants}
               className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.08]"
             >
-              The AI-Native{" "}
-              <span className="text-primary">FHIR EMR</span>{" "}
-              Built for Modern Healthcare
+              Healthcare that{" "}
+              <span className="bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
+                knows your story.
+              </span>
             </motion.h1>
 
             {/* Subheadline */}
@@ -114,32 +115,35 @@ export default function Hero({ session }: { session: AuthResponse | null }) {
               variants={itemVariants}
               className="mt-6 text-lg sm:text-xl text-muted-foreground leading-relaxed"
             >
-              DrGodly unifies electronic medical records, FHIR R4 interoperability,
-              AI-driven clinical agents, and an MCP server — all inside a single
-              HIPAA-compliant telemedicine platform.
+              DrGodly brings together your health history, AI-powered care intelligence,
+              and real doctors — so every healthcare conversation starts with context.
             </motion.p>
 
             {/* CTA buttons */}
             <motion.div
               variants={itemVariants}
-              className="mt-10 flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-4"
+              className="mt-8 flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-4"
             >
               {!session ? (
                 <>
-                  <OAuthPkceButton
-                    size="lg"
-                    className="rounded-full px-8 h-12 text-base shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
-                  >
-                    Start Free — No Credit Card
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </OAuthPkceButton>
-                  <OAuthPkceButton
-                    variant="outline"
-                    size="lg"
-                    className="rounded-full px-8 h-12 text-base border-primary/20 hover:bg-primary/5"
-                  >
-                    View Live Demo
-                  </OAuthPkceButton>
+                  <Link href="/signup">
+                    <Button
+                      size="lg"
+                      className="rounded-full px-8 h-12 text-base shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all font-semibold"
+                    >
+                      Start Your Health Journey
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <Link href="/screens">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="rounded-full px-8 h-12 text-base border-primary/20 hover:bg-primary/5 font-semibold"
+                    >
+                      See How It Works
+                    </Button>
+                  </Link>
                 </>
               ) : (
                 <Link href={session.session.activeRoleRedirectUrl ?? "/dashboard"}>
@@ -152,6 +156,11 @@ export default function Hero({ session }: { session: AuthResponse | null }) {
                   </Button>
                 </Link>
               )}
+            </motion.div>
+
+            {/* Reassurance pill */}
+            <motion.div variants={itemVariants} className="mt-4 text-xs text-muted-foreground font-medium">
+              AI-powered &middot; Doctor-connected &middot; Privacy-first
             </motion.div>
 
             {/* Trust badges */}
