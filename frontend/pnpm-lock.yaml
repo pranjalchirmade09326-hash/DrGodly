@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  dicom.ts:
+    hash: e65ba7bb909bdcf10a362c031849753d7c239f84815246ef1e55eee9cbbf8891
+    path: patches/dicom.ts.patch
+
 importers:
 
   .:
@@ -91,7 +96,7 @@ importers:
         version: 3.2.0(date-fns@4.1.0)
       dicom.ts:
         specifier: ^1.3.0
-        version: 1.3.0
+        version: 1.3.0(patch_hash=e65ba7bb909bdcf10a362c031849753d7c239f84815246ef1e55eee9cbbf8891)
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -270,6 +275,10 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+    optionalDependencies:
+      '@next/swc-wasm-nodejs':
+        specifier: ^16.2.4
+        version: 16.4.3
 
 packages:
 
@@ -1171,6 +1180,9 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
+
+  '@next/swc-wasm-nodejs@16.4.3':
+    resolution: {integrity: sha512-vJl7V950RQTY8OqK6/0pD3F5NbyeefYVxpa/6u/Y98eZ6lK7/eUK8b4g+EzIUBytWic8fL4MkDuK4DYDf9Wh0A==}
 
   '@next/swc-win32-arm64-msvc@16.2.4':
     resolution: {integrity: sha512-3NdJV5OXMSOeJYijX+bjaLge3mJBlh4ybydbT4GFoB/2hAojWHtMhl3CYlYoMrjPuodp0nzFVi4Tj2+WaMg+Ow==}
@@ -7401,6 +7413,9 @@ snapshots:
   '@next/swc-linux-x64-musl@16.2.4':
     optional: true
 
+  '@next/swc-wasm-nodejs@16.4.3':
+    optional: true
+
   '@next/swc-win32-arm64-msvc@16.2.4':
     optional: true
 
@@ -9769,7 +9784,7 @@ snapshots:
     dependencies:
       dequal: 2.0.3
 
-  dicom.ts@1.3.0:
+  dicom.ts@1.3.0(patch_hash=e65ba7bb909bdcf10a362c031849753d7c239f84815246ef1e55eee9cbbf8891):
     dependencies:
       '@wearemothership/dicom-character-set': 1.0.4-opt.1
       jpeg-lossless-decoder-js: 2.1.2

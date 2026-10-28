@@ -1028,7 +1028,4 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 20px 40px -4px rgba(15, 23, 42, 0.06);
   border-color: rgba(203, 213, 225, 0.9);
 }
-  opacity: 0.4;
-  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
 
