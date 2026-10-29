@@ -53,7 +53,11 @@ export default function LoginPage() {
       toast.success(
         `Welcome back to DrGodly, ${role === "doctor" ? "Dr. Alexander Wright" : "Louise Reed"}!`
       );
-      router.push("/screens");
+      if (role === "doctor") {
+        router.push("/screens?role=doctor");
+      } else {
+        router.push("/screens?role=patient");
+      }
     } finally {
       setIsLoading(false);
     }

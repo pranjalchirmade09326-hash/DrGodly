@@ -105,7 +105,11 @@ export default function SignupPage() {
           role === "doctor" ? `Dr. ${fullName.replace(/^Dr\.\s*/i, "")}` : fullName
         }!`
       );
-      router.push("/screens");
+      if (role === "doctor") {
+        router.push("/screens?role=doctor");
+      } else {
+        router.push("/screens?role=patient");
+      }
     } finally {
       setIsLoading(false);
     }

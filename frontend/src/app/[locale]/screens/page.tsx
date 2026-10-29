@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard,
   Video,
@@ -139,10 +140,18 @@ const mockAppointments: TAppointmentResponse[] = [
 type DoctorTab = 'telemedicine' | 'queue' | 'rx-soap' | 'clinical-emr';
 type PatientTab = 'dashboard' | 'intake' | 'marketplace' | 'pharmacy';
 
-export default function ScreensShowcasePage() {
+function ScreensShowcaseContent() {
+  const searchParams = useSearchParams();
   const [currentRole, setCurrentRole] = useState<'doctor' | 'patient'>('doctor');
   const [doctorTab, setDoctorTab] = useState<DoctorTab>('telemedicine');
   const [patientTab, setPatientTab] = useState<PatientTab>('dashboard');
+
+  React.useEffect(() => {
+    const roleParam = searchParams.get('role');
+    if (roleParam === 'patient' || roleParam === 'doctor') {
+      setCurrentRole(roleParam);
+    }
+  }, [searchParams]);
 
   // Intake State
   const [intakePainLevel, setIntakePainLevel] = useState<number>(3);
@@ -962,5 +971,13 @@ export default function ScreensShowcasePage() {
       {/* ── 5. Master US HealthTech Footer ── */}
       <GlobalFooter />
     </div>
+  );
+}
+
+export default function ScreensShowcasePage() {
+  return (
+    <React.Suspense fallback={<div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center text-xs font-semibold text-slate-500">Loading DrGodly Workstation...</div>}>
+      <ScreensShowcaseContent />
+    </React.Suspense>
   );
 }
