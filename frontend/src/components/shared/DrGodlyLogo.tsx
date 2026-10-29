@@ -22,60 +22,108 @@ export interface DrGodlyLogoProps {
   textClassName?: string;
 }
 
-const SIZE_MAP: Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', { px: number; textSize: string; tagSize: string; gap: string }> = {
-  xs: { px: 22, textSize: 'text-sm font-bold', tagSize: 'text-[9px]', gap: 'gap-1.5' },
-  sm: { px: 28, textSize: 'text-base font-extrabold', tagSize: 'text-[10px]', gap: 'gap-2' },
-  md: { px: 36, textSize: 'text-lg font-black', tagSize: 'text-[11px]', gap: 'gap-2.5' },
-  lg: { px: 44, textSize: 'text-xl font-black', tagSize: 'text-xs', gap: 'gap-3' },
-  xl: { px: 56, textSize: 'text-2xl font-black', tagSize: 'text-xs', gap: 'gap-3.5' },
+const SIZE_MAP: Record<
+  'xs' | 'sm' | 'md' | 'lg' | 'xl',
+  { px: number; textSize: string; tagSize: string; gap: string }
+> = {
+  xs: { px: 24, textSize: 'text-sm font-black', tagSize: 'text-[9px]', gap: 'gap-1.5' },
+  sm: { px: 30, textSize: 'text-base font-black', tagSize: 'text-[10px]', gap: 'gap-2' },
+  md: { px: 38, textSize: 'text-lg font-black', tagSize: 'text-[11px]', gap: 'gap-2.5' },
+  lg: { px: 46, textSize: 'text-xl font-black', tagSize: 'text-xs', gap: 'gap-3' },
+  xl: { px: 58, textSize: 'text-2xl font-black', tagSize: 'text-xs', gap: 'gap-3.5' },
 };
 
 /**
  * Authentic DrGodly Vector Logo Mark
- * Designed in exact concordance with the ChatGPT clinical design specification:
- * Radiant sapphire-to-cyan gradient heart contour with precision centered white medical cross.
+ * Designed with a modern Silicon Valley clinical shield, precision medical cross,
+ * radiant vital core node, and ambient AI intelligence spark.
  */
 export const DrGodlyLogoMark: React.FC<{ sizePx: number; className?: string }> = ({
   sizePx,
   className = '',
 }) => {
-  // Unique gradient ID to avoid SVG ID collision across multiple instances
+  // Unique gradient ID to avoid SVG ID collision across multiple instances on the same page
   const gradId = React.useId().replace(/:/g, '');
 
   return (
     <div
       style={{ width: sizePx, height: sizePx }}
-      className={`relative shrink-0 flex items-center justify-center transition-transform hover:scale-105 duration-200 ${className}`}
+      className={`relative shrink-0 flex items-center justify-center transition-all duration-300 hover:scale-105 select-none ${className}`}
     >
       <svg
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full drop-shadow-sm select-none"
+        className="w-full h-full drop-shadow-sm"
         aria-hidden="true"
       >
         <defs>
-          <linearGradient id={`drgodly-grad-${gradId}`} x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#1D4ED8" />
-            <stop offset="42%" stopColor="#2563EB" />
+          {/* Main Dimensional Medical Gradient */}
+          <linearGradient id={`drgodly-base-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#1E40AF" />
+            <stop offset="40%" stopColor="#2563EB" />
             <stop offset="78%" stopColor="#0284C7" />
             <stop offset="100%" stopColor="#06B6D4" />
           </linearGradient>
-          <filter id={`drgodly-glow-${gradId}`} x="-15%" y="-15%" width="130%" height="135%">
-            <feDropShadow dx="0" dy="3.5" stdDeviation="4" floodColor="#0284C7" floodOpacity="0.32" />
+
+          {/* Frosted Glass Top Bezel Highlight */}
+          <linearGradient id={`drgodly-rim-${gradId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#93C5FD" stopOpacity="0.7" />
+            <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="#06B6D4" stopOpacity="0.5" />
+          </linearGradient>
+
+          {/* Inner Vital Core Radial Glow */}
+          <radialGradient id={`drgodly-core-${gradId}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#38BDF8" />
+            <stop offset="55%" stopColor="#0284C7" />
+            <stop offset="100%" stopColor="#1D4ED8" />
+          </radialGradient>
+
+          {/* Subtle Ambient Soft Shadow */}
+          <filter id={`drgodly-shadow-${gradId}`} x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="5" floodColor="#1D4ED8" floodOpacity="0.3" />
           </filter>
         </defs>
 
-        {/* Radiant Heart Geometry */}
-        <path
-          d="M 50 24 C 50 24, 42 10, 28 10 C 15 10, 6 20, 6 34 C 6 56, 32 72, 50 90 C 68 72, 94 56, 94 34 C 94 20, 85 10, 72 10 C 58 10, 50 24, 50 24 Z"
-          fill={`url(#drgodly-grad-${gradId})`}
-          filter={`url(#drgodly-glow-${gradId})`}
+        {/* ── 1. Rounded Squircle Clinical Shield Base ── */}
+        <rect
+          x="7"
+          y="7"
+          width="86"
+          height="86"
+          rx="25"
+          fill={`url(#drgodly-base-${gradId})`}
+          filter={`url(#drgodly-shadow-${gradId})`}
         />
 
-        {/* Embedded Precision White Medical Cross */}
-        <rect x="33" y="36" width="34" height="12" rx="3.5" fill="#FFFFFF" />
-        <rect x="44" y="25" width="12" height="34" rx="3.5" fill="#FFFFFF" />
+        {/* ── 2. Frosted Inner Rim Border ── */}
+        <rect
+          x="8.5"
+          y="8.5"
+          width="83"
+          height="83"
+          rx="23.5"
+          stroke={`url(#drgodly-rim-${gradId})`}
+          strokeWidth="1.75"
+        />
+
+        {/* ── 3. Embedded Precision White Medical Cross with Pill Ends ── */}
+        {/* Vertical Bar */}
+        <rect x="36" y="23" width="28" height="54" rx="8" fill="#FFFFFF" />
+        {/* Horizontal Bar */}
+        <rect x="23" y="36" width="54" height="28" rx="8" fill="#FFFFFF" />
+
+        {/* ── 4. Central Vital Pulse Node (Heart of Clinical Intelligence) ── */}
+        <circle cx="50" cy="50" r="7.5" fill={`url(#drgodly-core-${gradId})`} />
+        <circle cx="50" cy="50" r="3.2" fill="#FFFFFF" />
+
+        {/* ── 5. Ambient 4-Point AI Intelligence Sparkle (Top-Right) ── */}
+        <path
+          d="M79 17 C79 21.5 83 22.5 83 22.5 C83 22.5 79 23.5 79 28 C79 23.5 75 22.5 75 22.5 C75 22.5 79 21.5 79 17 Z"
+          fill="#38BDF8"
+        />
+        <circle cx="79" cy="22.5" r="1.2" fill="#FFFFFF" />
       </svg>
     </div>
   );
@@ -95,7 +143,7 @@ export const DrGodlyLogo: React.FC<DrGodlyLogoProps> = ({
   const config = isKey
     ? SIZE_MAP[size as keyof typeof SIZE_MAP]
     : {
-        px: typeof size === 'number' ? size : 36,
+        px: typeof size === 'number' ? size : 38,
         textSize: 'text-lg font-black',
         tagSize: 'text-[11px]',
         gap: 'gap-2.5',
@@ -103,9 +151,11 @@ export const DrGodlyLogo: React.FC<DrGodlyLogoProps> = ({
 
   const isDark = theme === 'dark';
   const titleColor = isDark
-    ? 'text-white group-hover:text-cyan-300'
-    : 'text-slate-900 group-hover:text-blue-600';
-  const subtitleColor = isDark ? 'text-slate-400' : 'text-slate-500';
+    ? 'text-white'
+    : 'text-slate-900 dark:text-white';
+  const subtitleColor = isDark
+    ? 'text-slate-400'
+    : 'text-slate-500 dark:text-slate-400';
 
   const content = (
     <div className={`inline-flex items-center ${config.gap} group select-none ${className}`}>
@@ -117,17 +167,17 @@ export const DrGodlyLogo: React.FC<DrGodlyLogoProps> = ({
             <span
               className={`${config.textSize} tracking-tight transition-colors duration-200 ${titleColor}`}
             >
-              DrGodly
+              Dr<span className="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 bg-clip-text text-transparent">Godly</span>
             </span>
             {badge && (
-              <span className="text-[9px] uppercase tracking-wider font-extrabold bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200/80">
+              <span className="text-[9px] uppercase tracking-wider font-extrabold bg-blue-50 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 px-1.5 py-0.5 rounded border border-blue-200/80 dark:border-blue-800">
                 {badge}
               </span>
             )}
           </div>
           {tagline && (
             <span
-              className={`${config.tagSize} font-medium tracking-tight mt-0.5 transition-colors duration-200 ${subtitleColor}`}
+              className={`${config.tagSize} font-medium tracking-tight mt-1 transition-colors duration-200 ${subtitleColor}`}
             >
               {tagline}
             </span>

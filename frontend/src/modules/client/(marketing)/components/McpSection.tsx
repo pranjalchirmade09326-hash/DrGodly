@@ -4,11 +4,8 @@
  * Layer: client / (marketing) / components
  *
  * Explains how the Model Context Protocol (MCP) server exposes the FHIR EMR
- * as a structured AI tool, enabling AI assistants (e.g., Claude) to query
- * patient records, appointments, and clinical data natively.
- *
- * Visually mirrors the AetherEHR terminal demo concept: left panel describes
- * the MCP server capabilities, right panel shows a live mock terminal log.
+ * as a structured AI tool, enabling AI assistants (e.g., Claude, Cursor, ChatGPT)
+ * to safely query patient records, clinical encounters, and lab observations.
  */
 
 "use client";
@@ -25,8 +22,6 @@ import {
   Zap,
 } from "lucide-react";
 
-// ── MCP capability list ─────────────────────────────────────────────────────
-
 const capabilities = [
   {
     icon: <Database className="w-4 h-4 text-primary shrink-0" />,
@@ -34,176 +29,126 @@ const capabilities = [
   },
   {
     icon: <Brain className="w-4 h-4 text-primary shrink-0" />,
-    text: "Connect Claude, GPT-4, or any MCP-compatible AI to your live clinical data",
+    text: "Connect Claude, GPT-4, or any MCP-compatible AI agent to your live clinical records",
   },
   {
     icon: <Shield className="w-4 h-4 text-primary shrink-0" />,
-    text: "All tool calls are HIPAA-scoped — PHI never leaves your secure environment",
+    text: "All tool calls are HIPAA-scoped with cryptographic token validation — zero PHI leakage",
   },
   {
     icon: <Zap className="w-4 h-4 text-primary shrink-0" />,
-    text: "Real-time FHIR resource creation via AI tool calls — no manual data entry",
+    text: "Real-time FHIR resource generation via AI tool calls — zero manual keyboard data entry",
   },
 ];
 
-// ── Mock terminal log lines ─────────────────────────────────────────────────
-
 const terminalLogs = [
-  { prefix: "[INIT]", text: "DrGodly MCP Server v1.0 started on port 3100", color: "text-muted-foreground" },
-  { prefix: "[FHIR]", text: "FHIR R4 base URL registered as MCP tool context", color: "text-blue-400" },
-  { prefix: "[AUTH]", text: "HIPAA-scoped JWT session validated for org-0028", color: "text-emerald-400" },
-  { prefix: "[TOOL]", text: "get_patient_by_id called → PAT-00241 returned", color: "text-violet-400" },
-  { prefix: "[TOOL]", text: "list_appointments called → 3 upcoming records", color: "text-violet-400" },
-  { prefix: "[TOOL]", text: "get_intake_summary called → AI SOAP note attached", color: "text-amber-400" },
-  { prefix: "[AI]  ", text: "Claude: Based on intake, patient shows moderate migraine risk.", color: "text-primary" },
-  { prefix: "[FHIR]", text: "RiskAssessment resource created → fhir_id: RSK-0041", color: "text-emerald-400" },
+  { prefix: "[INIT]", text: "DrGodly MCP Server v2.4 started on port 3100", color: "text-muted-foreground" },
+  { prefix: "[FHIR]", text: "HL7 FHIR R4 base URL registered as MCP tool context", color: "text-blue-400" },
+  { prefix: "[AUTH]", text: "HIPAA-scoped JWT session validated for clinic-0028", color: "text-emerald-400" },
+  { prefix: "[TOOL]", text: "get_patient_by_id(PAT-00241) → Louise Reed returned", color: "text-teal-400" },
+  { prefix: "[TOOL]", text: "list_observations(PAT-00241) → BP 118/76, HR 72", color: "text-teal-400" },
+  { prefix: "[SLM] ", text: "Clinical Agent: Generating SOAP differential for BPPV...", color: "text-violet-400" },
+  { prefix: "[FHIR]", text: "Condition resource created → fhir_id: COND-0492 [H81.10]", color: "text-emerald-400" },
+  { prefix: "[SIGN]", text: "Dr. Aaron Wright cryptographic signature committed.", color: "text-emerald-400" },
 ];
 
-// ── Component ──────────────────────────────────────────────────────────────
-
-/**
- * Dedicated MCP Server section with terminal simulation.
- */
 export default function McpSection() {
   return (
-    <section
-      id="mcp"
-      className="py-20 sm:py-28 bg-secondary/30 overflow-hidden"
-    >
-      <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="mcp" className="py-16 sm:py-24 bg-background overflow-hidden border-b border-border/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto mb-12 sm:mb-16"
         >
-          <span className="text-primary font-semibold tracking-wider uppercase text-sm">
-            MCP Integration
-          </span>
-          <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-foreground">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-700 dark:text-teal-300 text-xs font-bold tracking-wide mb-3">
+            <Server className="w-3.5 h-3.5 text-teal-500" />
+            <span>Developer & AI Agent Ecosystem</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground tracking-tight">
             Your FHIR EMR as an AI Tool
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            DrGodly ships with a built-in{" "}
+          <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+            DrGodly ships with a production-grade{" "}
             <span className="text-foreground font-semibold">Model Context Protocol (MCP) server</span>{" "}
-            — turning your entire clinical record system into a structured, queryable tool
-            for any AI assistant.
+            — turning your entire clinical record system into structured, callable tools
+            for modern frontier AI models.
           </p>
         </motion.div>
 
         {/* Two-column layout */}
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+        <div className="grid lg:grid-cols-12 gap-8 items-center">
           {/* Left: capabilities */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="space-y-8"
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-5 space-y-5"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <Server className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-foreground">MCP Server for FHIR EMR</h3>
-                <Badge variant="outline" className="text-[10px] mt-1 border-primary/30 text-primary">
-                  Model Context Protocol
-                </Badge>
-              </div>
-            </div>
-
-            <p className="text-muted-foreground leading-relaxed">
-              The MCP server exposes your FHIR resources as AI-callable tools. An AI
-              assistant can query patient history, retrieve lab results, create
-              RiskAssessments, and update clinical records — all through structured,
-              HIPAA-compliant tool calls with no raw database access.
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground">
+              Direct Interop for AI Agents
+            </h3>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Instead of forcing AI agents to parse messy screen scrapes or flat PDFs,
+              DrGodly exposes type-safe MCP tools backed directly by HL7 FHIR R4 database entities.
             </p>
 
-            <ul className="space-y-4">
+            <div className="space-y-3 pt-2">
               {capabilities.map((cap, i) => (
-                <motion.li
+                <div
                   key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                  className="flex items-start gap-3"
+                  className="flex items-start gap-3 p-3 rounded-xl bg-card border border-border/70 shadow-2xs"
                 >
-                  {cap.icon}
-                  <span className="text-sm text-muted-foreground leading-relaxed">
-                    {cap.text}
-                  </span>
-                </motion.li>
+                  <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                    {cap.icon}
+                  </div>
+                  <span className="text-xs sm:text-sm text-foreground/90 leading-snug">{cap.text}</span>
+                </div>
               ))}
-            </ul>
-
-            {/* Compatible clients */}
-            <div className="pt-4 border-t border-border/50">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-                Works With Any MCP-Compatible AI Client
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {["AI Chat Assistants", "AI Coding Tools", "AI Agents", "Open Source MCP Clients"].map((ai) => (
-                  <Badge key={ai} variant="secondary" className="text-xs">
-                    {ai}
-                  </Badge>
-                ))}
-              </div>
             </div>
           </motion.div>
 
-          {/* Right: terminal */}
+          {/* Right: mock terminal simulation */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="bg-card border border-border rounded-2xl overflow-hidden shadow-xl"
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-7"
           >
-            {/* Terminal top bar */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-muted/40">
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-                <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
-                <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
-              </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
-                <Terminal className="w-3.5 h-3.5" />
-                drgodly-mcp-server
-              </div>
-              <Badge variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-500">
-                Running
-              </Badge>
-            </div>
-
-            {/* Terminal body */}
-            <div className="p-5 font-mono text-xs space-y-2 bg-background/50 min-h-[300px]">
-              {terminalLogs.map((log, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: 8 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08, duration: 0.4 }}
-                  className="flex gap-3 leading-relaxed"
-                >
-                  <span className="text-muted-foreground/50 shrink-0 select-none">
-                    {log.prefix}
+            <div className="rounded-2xl border border-slate-800 bg-slate-950 shadow-xl overflow-hidden font-mono text-xs">
+              {/* Terminal header */}
+              <div className="px-4 py-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-rose-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-amber-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
+                  <span className="ml-2 text-slate-400 text-xs font-semibold">
+                    drgodly-mcp-server &bull; bash
                   </span>
-                  <span className={log.color}>{log.text}</span>
-                </motion.div>
-              ))}
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-bold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>LISTENING ON PORT 3100</span>
+                </div>
+              </div>
 
-              {/* Blinking cursor */}
-              <div className="flex gap-3">
-                <span className="text-muted-foreground/50 shrink-0 select-none">[WAIT] </span>
-                <span className="text-muted-foreground">
-                  Listening for next tool call
-                  <span className="inline-block w-2 h-4 bg-primary ml-1 animate-pulse" />
-                </span>
+              {/* Terminal body */}
+              <div className="p-4 sm:p-5 space-y-2 text-[11px] leading-relaxed max-h-[300px] overflow-y-auto">
+                {terminalLogs.map((log, i) => (
+                  <div key={i} className="flex items-start gap-2">
+                    <span className="text-slate-500 select-none shrink-0">{log.prefix}</span>
+                    <span className={log.color}>{log.text}</span>
+                  </div>
+                ))}
+                <div className="flex items-center gap-1 text-slate-500 pt-1">
+                  <span>❯</span>
+                  <span className="w-2 h-4 bg-teal-400 animate-pulse" />
+                </div>
               </div>
             </div>
           </motion.div>

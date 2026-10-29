@@ -3,17 +3,19 @@
  *
  * Layer: client / (marketing) / pages
  *
- * Covers: what FHIR R4 is, the seven core resources used in DrGodly,
- * how clinical workflow maps to FHIR resources, and why FHIR-native
- * records are superior to proprietary EMR formats.
+ * Covers: what HL7 FHIR R4 is, the core resources used in DrGodly,
+ * how clinical workflows map to FHIR resources, and why FHIR-native
+ * records are superior to legacy proprietary EMR formats.
  */
 
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { OAuthPkceButton } from "@/modules/client/auth/components/OAuthPkceButton";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import {
   Database,
   User,
@@ -29,410 +31,357 @@ import {
   Layers,
   Zap,
   Globe,
+  Code2,
+  Sparkles,
 } from "lucide-react";
 import type { AuthResponse } from "@/modules/server/auth/types";
 
-// ── FHIR resources ─────────────────────────────────────────────────────────
-
 const resources = [
   {
-    icon: <User className="w-6 h-6 text-blue-500" />,
+    icon: <User className="w-5 h-5 text-blue-500" />,
     name: "Patient",
+    code: "PAT-00241",
     color: "border-blue-500/20 bg-blue-500/5",
     accent: "text-blue-500",
     description:
-      "Stores patient demographics, contact information, identifiers, and communication preferences. The anchor resource every clinical record links back to.",
-    fields: ["name", "birthDate", "gender", "address", "telecom", "identifier"],
+      "Stores patient demographics, verified identifiers, and telecom contacts. The anchor resource every clinical record links back to.",
+    fields: ["identifier (MRN)", "name.family", "birthDate", "telecom", "address"],
+    exampleJson: `{\n  "resourceType": "Patient",\n  "id": "PAT-00241",\n  "name": [{ "family": "Reed", "given": ["Louise"] }],\n  "gender": "female",\n  "birthDate": "1996-05-14"\n}`,
   },
   {
-    icon: <UserCheck className="w-6 h-6 text-emerald-500" />,
+    icon: <UserCheck className="w-5 h-5 text-emerald-500" />,
     name: "Practitioner",
+    code: "PRAC-00088",
     color: "border-emerald-500/20 bg-emerald-500/5",
     accent: "text-emerald-500",
     description:
-      "Clinician profiles with qualifications, specialties, and contact details. Used to link practitioners to appointments and encounters.",
-    fields: ["name", "qualification", "specialty", "telecom", "address"],
+      "Clinician credentials, board certifications, medical licenses, and verified digital signatures for attestation.",
+    fields: ["qualification", "specialty", "telecom", "licenseNPI", "digitalSignature"],
+    exampleJson: `{\n  "resourceType": "Practitioner",\n  "id": "PRAC-00088",\n  "name": [{ "family": "Wright", "given": ["Aaron"], "prefix": ["Dr."] }],\n  "qualification": [{ "code": "MD", "issuer": "State Board" }]\n}`,
   },
   {
-    icon: <Calendar className="w-6 h-6 text-violet-500" />,
+    icon: <Calendar className="w-5 h-5 text-violet-500" />,
     name: "Appointment",
+    code: "APT-01182",
     color: "border-violet-500/20 bg-violet-500/5",
     accent: "text-violet-500",
     description:
-      "Represents a scheduled clinical interaction between patient and practitioner. Status codes: booked, arrived, fulfilled, cancelled, no-show.",
-    fields: ["status", "start", "end", "participant", "serviceType", "description"],
+      "Teleconsultation scheduling with real-time FHIR state tracking: booked, arrived, in-progress, fulfilled, cancelled.",
+    fields: ["status", "start", "end", "participant", "serviceType", "telehealthRoomId"],
+    exampleJson: `{\n  "resourceType": "Appointment",\n  "id": "APT-01182",\n  "status": "fulfilled",\n  "serviceType": [{ "text": "Preventive Cardiology" }]\n}`,
   },
   {
-    icon: <ClipboardList className="w-6 h-6 text-amber-500" />,
+    icon: <ClipboardList className="w-5 h-5 text-amber-500" />,
     name: "Encounter",
+    code: "ENC-00118",
     color: "border-amber-500/20 bg-amber-500/5",
     accent: "text-amber-500",
     description:
-      "Created at consultation completion. Captures the full clinical encounter: SOAP notes, AI summary, diagnosis, and treatment plan.",
+      "Captures the consultation lifecycle: WebRTC room metadata, duration, diagnostic impressions, and structured SOAP notes.",
     fields: ["status", "class", "subject", "participant", "period", "reasonCode"],
+    exampleJson: `{\n  "resourceType": "Encounter",\n  "id": "ENC-00118",\n  "status": "finished",\n  "class": { "code": "VR", "display": "virtual" }\n}`,
   },
   {
-    icon: <Activity className="w-6 h-6 text-rose-500" />,
+    icon: <Activity className="w-5 h-5 text-rose-500" />,
     name: "Observation",
+    code: "OBS-03301",
     color: "border-rose-500/20 bg-rose-500/5",
     accent: "text-rose-500",
     description:
-      "AI-extracted clinical observations from patient intake — vitals, symptoms, severity scores, and structured clinical findings.",
-    fields: ["status", "code", "subject", "value[x]", "effectiveDateTime", "interpretation"],
+      "AI-extracted vitals, quantitative LOINC lab tests, and subjective severity ratings generated from ambient intake.",
+    fields: ["status", "code (LOINC)", "subject", "valueQuantity", "effectiveDateTime"],
+    exampleJson: `{\n  "resourceType": "Observation",\n  "id": "OBS-03301",\n  "code": { "coding": [{ "system": "http://loinc.org", "code": "85354-9" }] },\n  "valueQuantity": { "value": 118, "unit": "mmHg" }\n}`,
   },
   {
-    icon: <Pill className="w-6 h-6 text-cyan-500" />,
+    icon: <Pill className="w-5 h-5 text-cyan-500" />,
     name: "Condition",
+    code: "COND-0492",
     color: "border-cyan-500/20 bg-cyan-500/5",
     accent: "text-cyan-500",
     description:
-      "Diagnoses and health conditions linked to SNOMED CT terminology. Created from AI differential diagnosis and clinician review.",
-    fields: ["clinicalStatus", "code", "subject", "onsetDateTime", "evidence", "severity"],
+      "Active diagnoses linked directly to SNOMED CT and ICD-10 terminology codes with confidence scoring.",
+    fields: ["clinicalStatus", "code (ICD-10 / SNOMED)", "subject", "onsetDateTime", "evidence"],
+    exampleJson: `{\n  "resourceType": "Condition",\n  "id": "COND-0492",\n  "code": { "coding": [{ "system": "http://hl7.org/fhir/sid/icd-10", "code": "H81.10" }] },\n  "clinicalStatus": "active"\n}`,
   },
   {
-    icon: <FileText className="w-6 h-6 text-indigo-500" />,
+    icon: <FileText className="w-5 h-5 text-indigo-500" />,
     name: "DocumentReference",
+    code: "DOC-09941",
     color: "border-indigo-500/20 bg-indigo-500/5",
     accent: "text-indigo-500",
     description:
-      "Clinical documents including intake reports, consultation summaries, discharge notes, and AI-generated clinical reports.",
-    fields: ["status", "type", "subject", "date", "author", "content"],
+      "Comprehensive consultation clinical notes, discharge summaries, and patient-facing aftercare instructions.",
+    fields: ["status", "type", "subject", "date", "author", "content (Base64/URI)"],
+    exampleJson: `{\n  "resourceType": "DocumentReference",\n  "id": "DOC-09941",\n  "status": "current",\n  "type": { "coding": [{ "code": "11488-4", "display": "Consult Note" }] }\n}`,
   },
 ];
-
-// ── Why FHIR comparison ────────────────────────────────────────────────────
 
 const comparison = [
   {
     aspect: "Data Format",
-    fhir: "Structured JSON/XML resources with standardized fields",
-    legacy: "Proprietary database schemas — different per vendor",
+    fhir: "Standardized HL7 FHIR R4 JSON & XML schemas",
+    legacy: "Proprietary database schemas — distinct per vendor",
   },
   {
     aspect: "Interoperability",
-    fhir: "Any FHIR-compatible system can read and write your records",
-    legacy: "Requires expensive middleware or manual data exports",
+    fhir: "Seamlessly exchangeable with any hospital, lab, or payer",
+    legacy: "Requires costly custom HL7 v2 / C-CDA middleware bridges",
   },
   {
-    aspect: "AI Integration",
-    fhir: "AI tools query FHIR resources directly via structured APIs",
-    legacy: "AI must parse unstructured text or fragile CSV exports",
+    aspect: "AI & Agent Integration",
+    fhir: "Native tool calling via Model Context Protocol (MCP)",
+    legacy: "Fragile PDF parsing, CSV dumps, or optical character recognition",
   },
   {
-    aspect: "Compliance",
-    fhir: "HIPAA-aligned resource types with built-in PHI boundaries",
-    legacy: "Compliance mapping requires costly integration projects",
-  },
-  {
-    aspect: "Extensibility",
-    fhir: "Open ecosystem of FHIR profiles, IGs, and implementations",
-    legacy: "Closed vendor roadmaps, locked behind contract terms",
+    aspect: "Regulatory Alignment",
+    fhir: "Fully compliant with ONC Cures Act & US Core 6.1.0",
+    legacy: "Risk of vendor lock-in and steep data export exit penalties",
   },
 ];
-
-// ── How clinical workflow maps to FHIR ─────────────────────────────────────
-
-const workflowMap = [
-  { step: "Patient books appointment", resource: "Appointment", color: "text-violet-500" },
-  { step: "AI intake collects symptoms", resource: "Observation", color: "text-rose-500" },
-  { step: "AI extracts diagnosis hints", resource: "Condition", color: "text-cyan-500" },
-  { step: "Doctor consults patient", resource: "Encounter", color: "text-amber-500" },
-  { step: "Clinical report generated", resource: "DocumentReference", color: "text-indigo-500" },
-];
-
-// ── Animation variants ──────────────────────────────────────────────────────
 
 const fade = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 15 },
   visible: (i = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.07, duration: 0.5 },
+    transition: { delay: i * 0.06, duration: 0.4 },
   }),
 };
 
-// ── Component ──────────────────────────────────────────────────────────────
-
-/**
- * Full dedicated FHIR EMR explanation page.
- *
- * @param session - Active auth session for CTA button variant.
- */
 export function FhirEmrPage({ session }: { session: AuthResponse | null }) {
+  const [selectedResource, setSelectedResource] = useState<string>("Patient");
+
+  const currentResource = resources.find((r) => r.name === selectedResource) || resources[0];
+
   return (
     <div className="pt-20">
-
       {/* ── Hero ── */}
-      <section className="py-20 sm:py-28 bg-background relative overflow-hidden">
+      <section className="py-16 sm:py-24 bg-background relative overflow-hidden border-b border-border/50">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl opacity-50 pointer-events-none" />
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
-            className="max-w-3xl"
+            className="max-w-3xl space-y-4"
             initial="hidden"
             animate="visible"
             variants={fade}
           >
-            <div className="flex items-center gap-2 mb-4">
-              <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                HL7 FHIR R4
-              </Badge>
-              <Badge variant="secondary" className="text-xs">Electronic Medical Records</Badge>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-bold tracking-wide">
+              <Database className="w-3.5 h-3.5" />
+              <span>HL7 FHIR R4 Native Core</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.08] mb-6">
-              What Is FHIR? The Standard Behind Modern Electronic Medical Records
+
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-[1.1]">
+              The Global Standard for{" "}
+              <span className="bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
+                Open Healthcare Records
+              </span>
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed mb-8">
-              HL7 FHIR (Fast Healthcare Interoperability Resources) R4 is the global
-              standard for representing and exchanging electronic health records. DrGodly
-              uses FHIR natively — every patient record, appointment, observation, and
-              clinical encounter is a structured, interoperable FHIR resource.
+
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed font-normal">
+              HL7 FHIR R4 is the gold standard for healthcare data exchange. DrGodly eliminates
+              proprietary EMR silos by storing every patient record, vital observation, and SOAP
+              encounter directly in native, validated FHIR resources.
             </p>
-            <div className="flex flex-wrap gap-3">
+
+            <div className="pt-2 flex flex-wrap gap-3">
               {!session ? (
-                <OAuthPkceButton size="lg" className="rounded-full px-8">
-                  Get Started Free <ArrowRight className="ml-2 w-4 h-4" />
-                </OAuthPkceButton>
-              ) : null}
-              <a href="#resources" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border text-sm font-medium hover:bg-secondary transition-colors">
-                Explore FHIR Resources <ArrowRight className="w-4 h-4" />
-              </a>
+                <Link href="/signup">
+                  <Button size="lg" className="rounded-full px-7 h-11 text-sm bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-500 hover:to-blue-500 text-white font-semibold shadow-md">
+                    Start Free Trial <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/screens">
+                  <Button size="lg" className="rounded-full px-7 h-11 text-sm bg-primary text-primary-foreground font-semibold">
+                    Open Clinical Cockpit <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Link>
+              )}
+              <Link href="/screens">
+                <Button variant="outline" size="lg" className="rounded-full px-6 h-11 text-sm font-semibold border-border">
+                  Explore Live Cockpit
+                </Button>
+              </Link>
             </div>
           </motion.div>
 
-          {/* Quick facts */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 p-8 rounded-2xl bg-secondary/40 border border-border/50"
-          >
+          {/* Quick Metrics Bar */}
+          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-5 sm:p-6 rounded-2xl bg-card border border-border/70 shadow-2xs">
             {[
-              { icon: <Globe className="w-5 h-5 text-primary" />, label: "Global Standard", value: "HL7 FHIR R4" },
-              { icon: <Layers className="w-5 h-5 text-primary" />, label: "Resources Used", value: "7+" },
-              { icon: <Zap className="w-5 h-5 text-primary" />, label: "API Format", value: "REST + GraphQL" },
-              { icon: <CheckCircle2 className="w-5 h-5 text-primary" />, label: "Compliance", value: "HIPAA Aligned" },
+              { icon: <Globe className="w-5 h-5 text-blue-500" />, label: "Global Interoperability", value: "HL7 FHIR R4" },
+              { icon: <Layers className="w-5 h-5 text-teal-500" />, label: "Core Clinical Schemas", value: "7+ Resources" },
+              { icon: <Zap className="w-5 h-5 text-violet-500" />, label: "Query Interface", value: "REST + MCP" },
+              { icon: <CheckCircle2 className="w-5 h-5 text-emerald-500" />, label: "US Regulatory Ready", value: "ONC / ABDM" },
             ].map((f, i) => (
-              <div key={i} className="text-center">
-                <div className="flex justify-center mb-2">{f.icon}</div>
-                <p className="text-2xl font-bold text-foreground">{f.value}</p>
-                <p className="text-sm text-muted-foreground mt-1">{f.label}</p>
+              <div key={i} className="text-center p-2">
+                <div className="flex justify-center mb-1.5">{f.icon}</div>
+                <p className="text-lg sm:text-xl font-extrabold text-foreground">{f.value}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{f.label}</p>
               </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── FHIR Resources ── */}
-      <section id="resources" className="py-20 sm:py-24 bg-secondary/30">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fade}
-            className="text-center max-w-3xl mx-auto mb-16"
-          >
-            <span className="text-primary font-semibold tracking-wider uppercase text-sm">FHIR Resources</span>
-            <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-foreground">
-              The Seven Core FHIR Resources in DrGodly
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Each clinical concept — from a patient registration to a completed consultation —
-              maps to a dedicated, standardized FHIR R4 resource.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {resources.map((res, i) => (
-              <motion.div
-                key={res.name}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fade}
-              >
-                <Card className={`h-full border ${res.color} hover:shadow-md transition-shadow`}>
-                  <CardContent className="pt-6 space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center border border-border">
-                        {res.icon}
-                      </div>
-                      <div>
-                        <p className={`font-bold text-lg ${res.accent}`}>{res.name}</p>
-                        <p className="text-[10px] font-mono text-muted-foreground">FHIR R4 Resource</p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{res.description}</p>
-                    <div className="flex flex-wrap gap-1">
-                      {res.fields.map((f) => (
-                        <span key={f} className="text-[10px] font-mono px-2 py-0.5 rounded bg-secondary text-muted-foreground">
-                          {f}
-                        </span>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Clinical workflow → FHIR mapping ── */}
-      <section className="py-20 sm:py-24 bg-background">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
-              <span className="text-primary font-semibold tracking-wider uppercase text-sm">Clinical Mapping</span>
-              <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-foreground mb-6">
-                Every Clinical Action Creates a FHIR Record
-              </h2>
-              <p className="text-muted-foreground leading-relaxed mb-8">
-                DrGodly does not store clinical data in proprietary tables and convert it
-                later. Every user action — booking, intake, consultation, diagnosis — writes
-                directly to the corresponding FHIR resource in real time.
-              </p>
-              {workflowMap.map((item, i) => (
-                <motion.div
-                  key={i}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fade}
-                  className="flex items-center gap-4 py-3 border-b border-border/50 last:border-0"
+      {/* ── Interactive FHIR Resource Explorer ── */}
+      <section className="py-16 sm:py-24 bg-muted/20 border-b border-border/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-primary">Resource Model</span>
+            <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+              Interactive FHIR R4 Schema Inspector
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Click a resource below to inspect its schema definition, key clinical fields, and live JSON transaction payload.
+            </p>
+
+            {/* Segmented resource buttons */}
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+              {resources.map((r) => (
+                <button
+                  key={r.name}
+                  type="button"
+                  onClick={() => setSelectedResource(r.name)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    selectedResource === r.name
+                      ? "bg-primary text-primary-foreground shadow-xs"
+                      : "bg-card text-muted-foreground hover:text-foreground border border-border"
+                  }`}
                 >
-                  <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
-                  <span className="text-sm text-foreground flex-1">{item.step}</span>
-                  <Badge variant="outline" className={`text-[10px] font-mono shrink-0 ${item.color}`}>
-                    {item.resource}
+                  {r.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Interactive Resource Viewer */}
+          <div className="grid lg:grid-cols-12 gap-6 items-stretch">
+            {/* Left: Details */}
+            <div className="lg:col-span-5 bg-card p-6 rounded-2xl border border-border/70 shadow-2xs space-y-4 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center border border-border">
+                      {currentResource.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-foreground">{currentResource.name}</h3>
+                      <span className="text-[11px] font-mono text-muted-foreground">{currentResource.code}</span>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="text-[10px] font-mono border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+                    Validated R4
                   </Badge>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="bg-card border border-border rounded-2xl p-6 font-mono text-xs space-y-3"
-            >
-              <div className="flex items-center justify-between pb-3 border-b border-border">
-                <span className="font-semibold text-foreground text-sm">Sample FHIR Observation</span>
-                <Badge variant="outline" className="text-[10px]">R4</Badge>
-              </div>
-              {[
-                { key: "resourceType", value: '"Observation"', color: "text-violet-400" },
-                { key: "status", value: '"final"', color: "text-emerald-400" },
-                { key: "code.text", value: '"Chief Complaint"', color: "text-amber-400" },
-                { key: "valueString", value: '"Persistent headache, 3 days"', color: "text-blue-400" },
-                { key: "subject.ref", value: '"Patient/PAT-00241"', color: "text-rose-400" },
-                { key: "effectiveDateTime", value: '"2026-06-16T10:30:00Z"', color: "text-cyan-400" },
-                { key: "interpretation", value: '"moderate severity"', color: "text-indigo-400" },
-              ].map((row, i) => (
-                <div key={i} className="flex gap-3">
-                  <span className="text-muted-foreground/60 shrink-0 min-w-[130px]">{row.key}:</span>
-                  <span className={row.color}>{row.value}</span>
                 </div>
-              ))}
-            </motion.div>
+
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  {currentResource.description}
+                </p>
+
+                <div className="mt-5 space-y-2">
+                  <span className="text-xs font-bold text-foreground block">Key FHIR Attributes:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {currentResource.fields.map((f, i) => (
+                      <span key={i} className="text-[11px] font-mono bg-muted/60 px-2 py-0.5 rounded-md border border-border/50 text-foreground">
+                        {f}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-border/50 flex items-center justify-between text-xs text-muted-foreground">
+                <span>Standard: US Core 6.1.0</span>
+                <span className="text-emerald-500 font-bold">100% Interoperable</span>
+              </div>
+            </div>
+
+            {/* Right: Code Payload */}
+            <div className="lg:col-span-7 bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-xl overflow-hidden font-mono text-xs flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-slate-400 text-xs">
+                  <div className="flex items-center gap-2">
+                    <Code2 className="w-4 h-4 text-teal-400" />
+                    <span>{currentResource.name.toLowerCase()}-payload.json</span>
+                  </div>
+                  <span className="text-[10px] text-emerald-400 font-bold">Valid HL7 FHIR</span>
+                </div>
+                <pre className="p-3 text-slate-200 text-[11px] leading-relaxed overflow-x-auto max-h-[280px]">
+                  <code>{currentResource.exampleJson}</code>
+                </pre>
+              </div>
+
+              <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+                <span>Directly queryable via DrGodly MCP Server</span>
+                <Link href="/mcp" className="text-teal-400 hover:underline">
+                  Learn about MCP &rarr;
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── FHIR vs Legacy comparison ── */}
-      <section className="py-20 sm:py-24 bg-secondary/30">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fade}
-            className="text-center max-w-3xl mx-auto mb-12"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-              FHIR R4 vs. Legacy Proprietary EMR
+      {/* ── Comparison Section ── */}
+      <section className="py-16 sm:py-24 bg-background">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+              Why Choose FHIR-Native Over Legacy EMRs?
             </h2>
-          </motion.div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-muted-foreground font-semibold w-1/4">Aspect</th>
-                  <th className="text-left py-3 px-4 font-semibold w-[37.5%]">
-                    <span className="flex items-center gap-2 text-primary">
-                      <CheckCircle2 className="w-4 h-4" /> DrGodly — FHIR R4 Native
-                    </span>
-                  </th>
-                  <th className="text-left py-3 px-4 text-muted-foreground font-semibold w-[37.5%]">
-                    <span className="flex items-center gap-2">
-                      <XCircle className="w-4 h-4 text-rose-400" /> Legacy Proprietary EMR
-                    </span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {comparison.map((row, i) => (
-                  <motion.tr
-                    key={i}
-                    custom={i}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={fade}
-                    className="border-b border-border/50 hover:bg-secondary/30 transition-colors"
-                  >
-                    <td className="py-4 px-4 font-medium text-foreground">{row.aspect}</td>
-                    <td className="py-4 px-4 text-muted-foreground">
-                      <span className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                        {row.fhir}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4 text-muted-foreground">
-                      <span className="flex items-start gap-2">
-                        <XCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                        {row.legacy}
-                      </span>
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ── */}
-      <section className="py-20 sm:py-28">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Ready to Run on a FHIR-Native EMR?
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10">
-              Start building on a platform where every patient record is a proper FHIR R4
-              resource — interoperable, secure, and AI-ready from day one.
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              A transparent look at open HL7 interoperability versus closed legacy databases.
             </p>
-            {!session ? (
-              <OAuthPkceButton size="lg" className="rounded-full px-10 h-12">
-                Get Started Free <ArrowRight className="ml-2 w-4 h-4" />
-              </OAuthPkceButton>
-            ) : null}
-          </motion.div>
+          </div>
+
+          <div className="rounded-2xl border border-border/70 overflow-hidden shadow-2xs">
+            <div className="grid grid-cols-12 bg-muted/60 p-3.5 text-xs font-bold border-b border-border/70 text-foreground">
+              <div className="col-span-4 sm:col-span-3">Capability</div>
+              <div className="col-span-4 sm:col-span-5 text-primary">DrGodly (FHIR R4)</div>
+              <div className="col-span-4 sm:col-span-4 text-muted-foreground">Legacy Proprietary EMR</div>
+            </div>
+
+            {comparison.map((item, idx) => (
+              <div
+                key={idx}
+                className="grid grid-cols-12 p-3.5 text-xs border-b border-border/50 items-center bg-card hover:bg-muted/30 transition-colors"
+              >
+                <div className="col-span-4 sm:col-span-3 font-semibold text-foreground">
+                  {item.aspect}
+                </div>
+                <div className="col-span-4 sm:col-span-5 text-foreground flex items-start gap-1.5 pr-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                  <span className="leading-snug">{item.fhir}</span>
+                </div>
+                <div className="col-span-4 sm:col-span-4 text-muted-foreground flex items-start gap-1.5">
+                  <XCircle className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
+                  <span className="leading-snug">{item.legacy}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA Box */}
+          <div className="p-6 rounded-2xl bg-gradient-to-r from-blue-600/10 via-teal-500/10 to-indigo-600/10 border border-primary/20 text-center space-y-3">
+            <h3 className="text-base sm:text-lg font-bold text-foreground">
+              Ready to liberate your clinical data?
+            </h3>
+            <p className="text-xs text-muted-foreground max-w-xl mx-auto">
+              Start your 14-day free trial or open our interactive telehealth studio to test FHIR generation in real time.
+            </p>
+            <div className="pt-2 flex justify-center gap-3">
+              <Link href="/signup">
+                <Button size="sm" className="rounded-full px-6 bg-primary text-primary-foreground font-semibold">
+                  Get Started Free
+                </Button>
+              </Link>
+              <Link href="/screens">
+                <Button variant="outline" size="sm" className="rounded-full px-6 border-border font-semibold">
+                  Launch Cockpit
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>

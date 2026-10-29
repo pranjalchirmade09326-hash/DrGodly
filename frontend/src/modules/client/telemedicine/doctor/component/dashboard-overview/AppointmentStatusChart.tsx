@@ -76,8 +76,8 @@ export function AppointmentStatusChart({ counts }: AppointmentStatusChartProps) 
         </p>
       ) : (
         <>
-          <div className="relative flex-1 min-h-0">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="relative flex-1 min-h-[200px] h-[220px]">
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={180}>
               <PieChart>
                 <Pie
                   data={slices}

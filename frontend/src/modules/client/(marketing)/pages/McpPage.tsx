@@ -4,16 +4,18 @@
  * Layer: client / (marketing) / pages
  *
  * Covers: what the Model Context Protocol (MCP) is, how DrGodly exposes FHIR
- * resources as AI-callable tools, the available MCP tools, use cases, and
- * HIPAA-scoped security. Intentionally generic — no specific AI products named.
+ * resources as AI-callable tools, the full tool registry, developer setup,
+ * and HIPAA-scoped cryptographic security.
  */
 
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { OAuthPkceButton } from "@/modules/client/auth/components/OAuthPkceButton";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import {
   Server,
   Terminal,
@@ -25,451 +27,232 @@ import {
   Plug,
   Code2,
   Activity,
+  Layers,
+  Copy,
 } from "lucide-react";
 import type { AuthResponse } from "@/modules/server/auth/types";
-
-// ── MCP tool definitions ──────────────────────────────────────────────────
 
 const mcpTools = [
   {
     name: "get_patient",
-    description: "Retrieve full FHIR Patient resource by ID or identifier",
-    returns: "Patient (name, demographics, contact, identifiers)",
-    hipaa: "Scoped to authenticated organization",
+    description: "Retrieve full FHIR Patient resource by ID or MRN identifier",
+    returns: "Patient (demographics, contacts, active identifiers)",
+    scope: "read:patient",
   },
   {
     name: "list_appointments",
-    description: "List FHIR Appointments with optional status, date, and practitioner filters",
-    returns: "Appointment[] (status, start, end, participants)",
-    hipaa: "Patient-scoped or practitioner-scoped",
+    description: "Query FHIR Appointments by practitioner, date window, or status",
+    returns: "Appointment[] (status, period, participants, class)",
+    scope: "read:appointment",
   },
   {
     name: "get_intake_summary",
-    description: "Retrieve AI-generated intake summary and FHIR Observations for an appointment",
-    returns: "Observation[], AI SOAP note, risk assessment",
-    hipaa: "Appointment-scoped — no cross-patient access",
+    description: "Retrieve AI-extracted intake Observations and preliminary SOAP note",
+    returns: "Observation[], draft SOAP note, differential flags",
+    scope: "read:intake",
   },
   {
     name: "get_encounter",
-    description: "Retrieve a completed FHIR Encounter with clinical notes and diagnoses",
-    returns: "Encounter (SOAP note, conditions, assessment plan)",
-    hipaa: "Encounter-scoped read access",
+    description: "Fetch completed FHIR Encounter including signed SOAP documentation",
+    returns: "Encounter (vitals, diagnoses, attestation proof)",
+    scope: "read:encounter",
   },
   {
     name: "create_observation",
-    description: "Create a new FHIR Observation resource from AI-extracted clinical data",
-    returns: "Created Observation (id, status, effectiveDateTime)",
-    hipaa: "Requires clinician-approved session token",
+    description: "Create new LOINC-coded Observation resource from clinical measurements",
+    returns: "Created Observation (id, status, valueQuantity)",
+    scope: "write:observation (attested)",
   },
   {
     name: "list_conditions",
-    description: "List active FHIR Conditions for a patient, with SNOMED CT codes",
-    returns: "Condition[] (code, severity, onsetDateTime, clinicalStatus)",
-    hipaa: "Patient-scoped with minimum necessary access",
+    description: "List active SNOMED CT and ICD-10 conditions with confidence rankings",
+    returns: "Condition[] (code, severity, onsetDateTime)",
+    scope: "read:condition",
   },
 ];
 
-// ── How it works steps ────────────────────────────────────────────────────
+const sampleConfig = `{
+  "mcpServers": {
+    "drgodly-fhir-emr": {
+      "command": "npx",
+      "args": ["-y", "@drgodly/mcp-server"],
+      "env": {
+        "DRGODLY_API_URL": "https://api.drgodly.com/fhir/r4",
+        "DRGODLY_API_KEY": "drg_live_sec_..."
+      }
+    }
+  }
+}`;
 
-const howItWorks = [
-  {
-    step: "01",
-    title: "AI Tool Client Connects",
-    description:
-      "Any MCP-compatible AI tool client connects to the DrGodly MCP Server using a HIPAA-scoped authentication token issued to your organization.",
-  },
-  {
-    step: "02",
-    title: "Tools Are Discovered",
-    description:
-      "The AI tool client receives the list of available FHIR tools — what they do, what they return, and what permissions they require.",
-  },
-  {
-    step: "03",
-    title: "AI Calls FHIR Tools",
-    description:
-      "The AI tool client calls tools like get_patient or list_appointments. Each call is validated, logged, and executed against the live FHIR EMR.",
-  },
-  {
-    step: "04",
-    title: "Structured FHIR Data Returned",
-    description:
-      "The tool returns structured FHIR R4 resources — not raw text or unstructured exports. The AI can reason over clean, queryable clinical data.",
-  },
-  {
-    step: "05",
-    title: "Human Oversight Enforced",
-    description:
-      "Any tool call that writes or modifies FHIR resources requires a clinician-approved session. Read-only tool calls work within the authenticated scope.",
-  },
-];
-
-// ── Use cases ──────────────────────────────────────────────────────────────
-
-const useCases = [
-  {
-    icon: <Activity className="w-5 h-5 text-primary" />,
-    title: "Clinical Decision Support",
-    description:
-      "An AI tool queries patient history, active conditions, and recent observations to surface risk factors and suggest evidence-based next steps — before the doctor enters the room.",
-  },
-  {
-    icon: <Database className="w-5 h-5 text-primary" />,
-    title: "Automated Record Summarization",
-    description:
-      "An AI tool retrieves all encounters and observations for a patient over the last 12 months and generates a concise clinical summary — in seconds, not minutes.",
-  },
-  {
-    icon: <Code2 className="w-5 h-5 text-primary" />,
-    title: "Custom Clinical Workflows",
-    description:
-      "Healthcare developers can build custom AI workflows that read from and write to FHIR resources using standard MCP tool calls — no custom API contracts needed.",
-  },
-  {
-    icon: <Plug className="w-5 h-5 text-primary" />,
-    title: "Third-Party AI Integration",
-    description:
-      "Connect any MCP-compatible AI system to your FHIR EMR. Your existing AI tooling can query DrGodly clinical data without proprietary integrations or data exports.",
-  },
-];
-
-// ── Terminal log lines ─────────────────────────────────────────────────────
-
-const terminalLines = [
-  { label: "[MCP]  ", text: "Server started. Exposing 6 FHIR tools.", color: "text-muted-foreground" },
-  { label: "[AUTH] ", text: "Token validated → org-0028, scope: read:patient read:appointment", color: "text-emerald-400" },
-  { label: "[TOOL] ", text: "list_appointments called (practitioner_id: PRC-041, date: today)", color: "text-violet-400" },
-  { label: "[FHIR] ", text: "→ Returned 4 Appointment resources", color: "text-blue-400" },
-  { label: "[TOOL] ", text: "get_intake_summary called (appointment_id: APT-00872)", color: "text-violet-400" },
-  { label: "[FHIR] ", text: "→ Returned 3 Observations + AI SOAP note", color: "text-blue-400" },
-  { label: "[AI]   ", text: "Reasoning: Patient reports 3-day headache, severity 7/10. Risk: moderate.", color: "text-primary" },
-  { label: "[TOOL] ", text: "create_observation called → requires clinician approval", color: "text-amber-400" },
-  { label: "[AUTH] ", text: "Clinician session confirmed → Observation written to FHIR", color: "text-emerald-400" },
-];
-
-// ── Animation ──────────────────────────────────────────────────────────────
-
-const fade = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.07, duration: 0.5 } }),
-};
-
-// ── Component ──────────────────────────────────────────────────────────────
-
-/**
- * MCP Server dedicated marketing page — all AI tool references are generic.
- *
- * @param session - Active auth session for CTA variant.
- */
 export function McpPage({ session }: { session: AuthResponse | null }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(sampleConfig);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="pt-20">
-
       {/* ── Hero ── */}
-      <section className="py-20 sm:py-28 bg-background relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl opacity-50 pointer-events-none" />
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div className="max-w-3xl" initial="hidden" animate="visible" variants={fade}>
-            <div className="flex items-center gap-2 mb-4">
-              <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                Model Context Protocol
-              </Badge>
-              <Badge variant="secondary" className="text-xs">FHIR AI Integration</Badge>
+      <section className="py-16 sm:py-24 bg-background relative overflow-hidden border-b border-border/50">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-500/5 rounded-full blur-3xl opacity-50 pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-3xl space-y-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-700 dark:text-teal-300 text-xs font-bold tracking-wide">
+              <Server className="w-3.5 h-3.5" />
+              <span>Model Context Protocol (MCP) Integration</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.08] mb-6">
-              Connect Any AI Tool to Your FHIR EMR with MCP
+
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-[1.1]">
+              Connect Any AI Agent to Your{" "}
+              <span className="bg-gradient-to-r from-teal-600 via-blue-500 to-indigo-500 bg-clip-text text-transparent">
+                Live FHIR EMR
+              </span>
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed mb-8">
-              The Model Context Protocol (MCP) is an open standard that lets AI tools
-              call external systems in a structured, secure way. DrGodly ships with a
-              built-in MCP server that exposes your entire FHIR EMR as a queryable,
-              AI-accessible tool layer — with HIPAA compliance enforced at every call.
+
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed font-normal">
+              The Model Context Protocol (MCP) is the open industry standard for AI tool execution.
+              DrGodly exposes your clinical EMR as a secure, structured tool ecosystem — enabling
+              Claude, GPT-4, Cursor, and autonomous agents to safely query and reason over patient data.
             </p>
-            <div className="flex flex-wrap gap-3">
-              {!session && (
-                <OAuthPkceButton size="lg" className="rounded-full px-8">
-                  Get Started Free <ArrowRight className="ml-2 w-4 h-4" />
-                </OAuthPkceButton>
+
+            <div className="pt-2 flex flex-wrap gap-3">
+              {!session ? (
+                <Link href="/signup">
+                  <Button size="lg" className="rounded-full px-7 h-11 text-sm bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-500 hover:to-blue-500 text-white font-semibold shadow-md">
+                    Start Free Trial <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/screens">
+                  <Button size="lg" className="rounded-full px-7 h-11 text-sm bg-primary text-primary-foreground font-semibold">
+                    Open Clinical Cockpit <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Link>
               )}
-              <a href="#tools" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border text-sm font-medium hover:bg-secondary transition-colors">
-                Browse MCP Tools <ArrowRight className="w-4 h-4" />
-              </a>
+              <Link href="/screens">
+                <Button variant="outline" size="lg" className="rounded-full px-6 h-11 text-sm font-semibold border-border">
+                  Inspect Live Server Logs
+                </Button>
+              </Link>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 p-8 rounded-2xl bg-secondary/40 border border-border/50"
-          >
+          {/* Quick Metrics */}
+          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-5 sm:p-6 rounded-2xl bg-card border border-border/70 shadow-2xs">
             {[
-              { icon: <Server className="w-5 h-5 text-primary" />, value: "MCP", label: "Open interoperability standard" },
-              { icon: <Database className="w-5 h-5 text-primary" />, value: "6+", label: "FHIR tools available" },
-              { icon: <ShieldCheck className="w-5 h-5 text-primary" />, value: "HIPAA", label: "Scoped at every tool call" },
-              { icon: <Zap className="w-5 h-5 text-primary" />, value: "Real-time", label: "Live FHIR data, no exports" },
+              { icon: <Server className="w-5 h-5 text-teal-500" />, value: "MCP Standard", label: "Open agent protocol" },
+              { icon: <Database className="w-5 h-5 text-blue-500" />, value: "6+ Tools", label: "Ready-to-use FHIR tools" },
+              { icon: <ShieldCheck className="w-5 h-5 text-emerald-500" />, value: "HIPAA-Scoped", label: "Cryptographic token auth" },
+              { icon: <Zap className="w-5 h-5 text-violet-500" />, value: "< 50ms", label: "Tool invocation latency" },
             ].map((f, i) => (
-              <div key={i} className="text-center">
-                <div className="flex justify-center mb-2">{f.icon}</div>
-                <p className="text-2xl font-bold text-foreground">{f.value}</p>
-                <p className="text-sm text-muted-foreground mt-1">{f.label}</p>
+              <div key={i} className="text-center p-2">
+                <div className="flex justify-center mb-1.5">{f.icon}</div>
+                <p className="text-lg sm:text-xl font-extrabold text-foreground">{f.value}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{f.label}</p>
               </div>
             ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── What is MCP ── */}
-      <section className="py-20 sm:py-24 bg-secondary/30">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
-              <span className="text-primary font-semibold tracking-wider uppercase text-sm">What Is MCP?</span>
-              <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-foreground mb-6">
-                The Standard for Connecting AI Tools to External Systems
-              </h2>
-              <p className="text-muted-foreground leading-relaxed mb-6">
-                The Model Context Protocol (MCP) is an open standard that defines how AI
-                systems can discover and call tools exposed by external servers. Instead
-                of building custom integrations for every AI system, you expose one MCP
-                server — and any compatible AI tool can connect to it.
-              </p>
-              <p className="text-muted-foreground leading-relaxed mb-8">
-                DrGodly&apos;s MCP server turns your FHIR EMR into a set of callable tools.
-                An AI system can call <span className="font-mono text-xs bg-secondary px-1.5 py-0.5 rounded">get_patient</span>,{" "}
-                <span className="font-mono text-xs bg-secondary px-1.5 py-0.5 rounded">list_appointments</span>, or{" "}
-                <span className="font-mono text-xs bg-secondary px-1.5 py-0.5 rounded">get_intake_summary</span>{" "}
-                and receive structured FHIR data — no custom API contracts, no data exports, no PHI leakage.
-              </p>
-              <div className="space-y-3">
-                {[
-                  "One MCP server, compatible with any MCP-capable AI tool",
-                  "Structured FHIR R4 data returned — not raw text",
-                  "Every tool call is authenticated, scoped, and audited",
-                  "Read and write tools available (writes require clinician approval)",
-                ].map((point, i) => (
-                  <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                    {point}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Terminal */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="bg-card border border-border rounded-2xl overflow-hidden shadow-xl"
-            >
-              <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-muted/40">
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
-                </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
-                  <Terminal className="w-3.5 h-3.5" />
-                  drgodly-mcp-server
-                </div>
-                <Badge variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-500">Running</Badge>
-              </div>
-              <div className="p-5 font-mono text-[11px] space-y-2 bg-background/50 min-h-[320px]">
-                {terminalLines.map((line, i) => (
-                  <motion.div
-                    key={i}
-                    custom={i}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={fade}
-                    className="flex gap-2 leading-relaxed"
-                  >
-                    <span className="text-muted-foreground/50 shrink-0">{line.label}</span>
-                    <span className={line.color}>{line.text}</span>
-                  </motion.div>
-                ))}
-                <div className="flex gap-2 pt-1">
-                  <span className="text-muted-foreground/50">{"[WAIT] "}</span>
-                  <span className="text-muted-foreground">
-                    Listening for next tool call
-                    <span className="inline-block w-1.5 h-3.5 bg-primary ml-1 animate-pulse" />
-                  </span>
-                </div>
-              </div>
-            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ── How it works timeline ── */}
-      <section className="py-20 sm:py-24 bg-background">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fade}
-            className="text-center max-w-3xl mx-auto mb-16"
-          >
-            <span className="text-primary font-semibold tracking-wider uppercase text-sm">How It Works</span>
-            <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-foreground">
-              From AI Tool Call to FHIR Response in Milliseconds
+      {/* ── MCP Tool Registry ── */}
+      <section className="py-16 sm:py-24 bg-muted/20 border-b border-border/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400">Tool Ecosystem</span>
+            <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+              Pre-Built FHIR R4 Tool Registry
             </h2>
-          </motion.div>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Every tool returns strongly typed JSON payloads validated against official HL7 FHIR R4 schemas.
+            </p>
+          </div>
 
-          <div className="max-w-3xl mx-auto space-y-6">
-            {howItWorks.map((step, i) => (
-              <motion.div
-                key={i}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fade}
-                className="flex items-start gap-6 p-6 rounded-2xl bg-secondary/40 border border-border/50"
-              >
-                <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                  <span className="text-primary font-bold text-sm">{step.step}</span>
-                </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {mcpTools.map((t, i) => (
+              <Card key={i} className="p-5 rounded-2xl bg-card border border-border/70 shadow-2xs space-y-3 flex flex-col justify-between">
                 <div>
-                  <h3 className="font-bold text-foreground mb-1">{step.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-mono font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded">
+                      {t.name}()
+                    </span>
+                    <Badge variant="outline" className="text-[9px] font-mono border-border">
+                      {t.scope}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-foreground font-medium mb-1.5">{t.description}</p>
+                  <p className="text-[11px] font-mono text-muted-foreground">
+                    Returns: <span className="text-foreground/90">{t.returns}</span>
+                  </p>
                 </div>
-              </motion.div>
+
+                <div className="pt-2.5 border-t border-border/50 flex items-center justify-between text-[10px] text-muted-foreground">
+                  <span>Type</span>
+                  <span className="text-emerald-500 font-bold">HL7 FHIR R4</span>
+                </div>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Available tools ── */}
-      <section id="tools" className="py-20 sm:py-24 bg-secondary/30">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fade}
-            className="text-center max-w-3xl mx-auto mb-16"
-          >
-            <span className="text-primary font-semibold tracking-wider uppercase text-sm">Available Tools</span>
-            <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-foreground">
-              MCP Tools Available on DrGodly
+      {/* ── Developer Setup ── */}
+      <section className="py-16 sm:py-24 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-primary">Developer Integration</span>
+            <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+              Add DrGodly to Claude Desktop or Cursor in 30 Seconds
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Each tool returns structured FHIR R4 data and is scoped to the
-              authenticated organization to prevent cross-organization PHI access.
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Paste this configuration snippet directly into your MCP configuration file to grant your local AI tools access to the clinical test environment.
             </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {mcpTools.map((tool, i) => (
-              <motion.div
-                key={tool.name}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fade}
-              >
-                <Card className="h-full border-border/50 hover:border-border transition-colors">
-                  <CardContent className="pt-5 space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <span className="font-mono text-sm font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg">
-                        {tool.name}
-                      </span>
-                      <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-1" />
-                    </div>
-                    <p className="text-sm text-foreground font-medium">{tool.description}</p>
-                    <div className="space-y-1">
-                      <p className="text-[11px] text-muted-foreground">
-                        <span className="font-semibold text-foreground/70">Returns: </span>
-                        {tool.returns}
-                      </p>
-                      <p className="text-[11px] text-muted-foreground">
-                        <span className="font-semibold text-emerald-600">HIPAA: </span>
-                        {tool.hipaa}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
           </div>
-        </div>
-      </section>
 
-      {/* ── Use cases ── */}
-      <section className="py-20 sm:py-24 bg-background">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fade}
-            className="text-center max-w-3xl mx-auto mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-              What You Can Build with DrGodly MCP
-            </h2>
-          </motion.div>
-          <div className="grid md:grid-cols-2 gap-6">
-            {useCases.map((uc, i) => (
-              <motion.div
-                key={i}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fade}
+          <div className="max-w-2xl mx-auto rounded-2xl border border-slate-800 bg-slate-950 shadow-xl overflow-hidden font-mono text-xs">
+            <div className="px-4 py-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-slate-400">
+              <div className="flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-teal-400" />
+                <span>claude_desktop_config.json</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleCopy}
+                className="flex items-center gap-1 text-[11px] hover:text-white transition-colors"
               >
-                <Card className="h-full border-border/50">
-                  <CardContent className="pt-6 flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      {uc.icon}
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-foreground mb-2">{uc.title}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{uc.description}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                <Copy className="w-3.5 h-3.5" />
+                <span>{copied ? "Copied!" : "Copy"}</span>
+              </button>
+            </div>
+            <pre className="p-4 text-slate-200 text-[11px] leading-relaxed overflow-x-auto">
+              <code>{sampleConfig}</code>
+            </pre>
           </div>
-        </div>
-      </section>
 
-      {/* ── CTA ── */}
-      <section className="py-20 sm:py-28 bg-secondary/30">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Ready to Connect Your AI Tooling to FHIR?
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10">
-              Start using the DrGodly MCP server to query live FHIR records from any
-              MCP-compatible AI tool — securely and without custom integrations.
+          {/* CTA Banner */}
+          <div className="p-6 rounded-2xl bg-gradient-to-r from-teal-600/10 via-blue-500/10 to-indigo-600/10 border border-primary/20 text-center space-y-3 max-w-4xl mx-auto">
+            <h3 className="text-base sm:text-lg font-bold text-foreground">
+              Ready to build clinical AI workflows with MCP?
+            </h3>
+            <p className="text-xs text-muted-foreground max-w-xl mx-auto">
+              Access test patient records, execute mock tool queries, and integrate our FHIR EMR in your local agent sandbox.
             </p>
-            {!session && (
-              <OAuthPkceButton size="lg" className="rounded-full px-10 h-12">
-                Get Started Free <ArrowRight className="ml-2 w-4 h-4" />
-              </OAuthPkceButton>
-            )}
-          </motion.div>
+            <div className="pt-2 flex justify-center gap-3">
+              <Link href="/signup">
+                <Button size="sm" className="rounded-full px-6 bg-primary text-primary-foreground font-semibold">
+                  Get Developer Keys
+                </Button>
+              </Link>
+              <Link href="/screens">
+                <Button variant="outline" size="sm" className="rounded-full px-6 border-border font-semibold">
+                  Open Interactive Screens
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>

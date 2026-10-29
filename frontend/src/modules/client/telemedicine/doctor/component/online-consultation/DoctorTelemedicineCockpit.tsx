@@ -49,6 +49,112 @@ interface DoctorTelemedicineCockpitProps {
   onEndVisit?: () => void;
 }
 
+
+// ── LIVE REAL-TIME LEAD II ECG WAVEFORM MONITOR ──────────────────────────────
+function LiveEcgMonitor() {
+  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+    let step = 0;
+    const width = canvas.width;
+    const height = canvas.height;
+    const midY = height / 2;
+
+    const getEcgPoint = (t: number) => {
+      const cycle = t % 130;
+      if (cycle < 20) return 0;
+      if (cycle < 35) return -Math.sin(((cycle - 20) / 15) * Math.PI) * 3.5; // P wave
+      if (cycle < 46) return 0;
+      if (cycle < 49) return 2.5; // Q
+      if (cycle < 56) return -((cycle - 49) / 7) * 20; // R peak
+      if (cycle < 63) return ((cycle - 56) / 7) * 9; // S dip
+      if (cycle < 76) return 0;
+      if (cycle < 96) return -Math.sin(((cycle - 76) / 20) * Math.PI) * 5; // T wave
+      return 0;
+    };
+
+    const render = () => {
+      ctx.fillStyle = "rgba(10, 15, 29, 0.22)";
+      ctx.fillRect(0, 0, width, height);
+
+      // Subtle medical grid
+      ctx.fillStyle = "rgba(30, 41, 59, 0.4)";
+      for (let x = 0; x < width; x += 16) {
+        for (let y = 0; y < height; y += 10) {
+          ctx.fillRect(x, y, 1, 1);
+        }
+      }
+
+      ctx.beginPath();
+      ctx.strokeStyle = "#10B981";
+      ctx.lineWidth = 1.6;
+      ctx.shadowColor = "#10B981";
+      ctx.shadowBlur = 5;
+
+      for (let x = 0; x < width; x++) {
+        const y = midY + getEcgPoint(step + x * 0.75);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      step += 1.6;
+      animId = requestAnimationFrame(render);
+    };
+
+    render();
+    return () => cancelAnimationFrame(animId);
+  }, []);
+
+  return (
+    <div className="relative w-full h-11 bg-slate-950 rounded-lg overflow-hidden border border-slate-800 flex items-center justify-center my-1.5 shadow-inner">
+      <canvas ref={canvasRef} width={260} height={44} className="w-full h-full" />
+      <div className="absolute top-1 left-2 flex items-center gap-1 text-[9px] font-mono font-bold text-emerald-400">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+        <span>LEAD II • ECG REAL-TIME</span>
+      </div>
+      <div className="absolute top-1 right-2 text-[9px] font-mono text-emerald-300">
+        25 mm/s • Normal Sinus
+      </div>
+    </div>
+  );
+}
+
+// ── AMBIENT AUDIO SPECTRUM EQUALIZER ─────────────────────────────────────────
+const EQUALIZER_BARS = [
+  { height: "7px", duration: "0.5s" },
+  { height: "12px", duration: "0.7s" },
+  { height: "8px", duration: "0.6s" },
+  { height: "11px", duration: "0.8s" },
+  { height: "6px", duration: "0.55s" },
+  { height: "10px", duration: "0.75s" },
+];
+
+function AudioEqualizer({ active }: { active: boolean }) {
+  return (
+    <div className="flex items-end gap-0.5 h-3 px-1 py-0.5 rounded bg-black/40">
+      {EQUALIZER_BARS.map((bar, i) => (
+        <span
+          key={i}
+          className={`w-0.5 rounded-full bg-emerald-400 transition-all ${
+            active ? "animate-pulse" : "h-1 opacity-30"
+          }`}
+          style={{
+            height: active ? bar.height : "2.5px",
+            animationDuration: bar.duration,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export function DoctorTelemedicineCockpit({
   onBack,
   onEndVisit,
@@ -57,6 +163,7 @@ export function DoctorTelemedicineCockpit({
   const [leftTab, setLeftTab] = useState<"intake" | "history" | "documents">("intake");
   const [centerSubTab, setCenterSubTab] = useState<"transcript" | "notes">("transcript");
   const [rightTab, setRightTab] = useState<"cds" | "investigations" | "medications" | "education">("cds");
+  const [mobilePanel, setMobilePanel] = useState<"dossier" | "stage" | "cds">("stage");
 
   // In-Call Media States
   const [isMuted, setIsMuted] = useState(false);
@@ -65,6 +172,23 @@ export function DoctorTelemedicineCockpit({
   const [elapsedSeconds, setElapsedSeconds] = useState(754); // 12:34
   const [messageInput, setMessageInput] = useState("");
   const [aiPromptInput, setAiPromptInput] = useState("");
+    // Dynamic Live Vitals & AI Copilot Response States
+  const [liveHr, setLiveHr] = useState(72);
+  const [liveSpo2, setLiveSpo2] = useState(99);
+  const [aiQueryResult, setAiQueryResult] = useState<{
+    query: string;
+    answer: string;
+    cdsGrade: string;
+    planSnippet: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const vitalsTimer = setInterval(() => {
+      setLiveHr(72 + Math.floor(Math.random() * 3) - 1);
+      setLiveSpo2(98 + (Math.random() > 0.3 ? 1 : 0));
+    }, 2800);
+    return () => clearInterval(vitalsTimer);
+  }, []);
   const [clinicianNotes, setClinicianNotes] = useState(
     "Patient states episodes occur upon rising from bed. Blood pressure normal at rest. Hydration recommended."
   );
@@ -158,10 +282,35 @@ export function DoctorTelemedicineCockpit({
     toast.success(`Added ${checkedCount} recommended next steps to SOAP encounter plan!`);
   };
 
-  const handleAskDrGodlyAi = (e?: React.FormEvent) => {
+    const handleAskDrGodlyAi = (e?: React.FormEvent, customQuery?: string) => {
     if (e) e.preventDefault();
-    if (!aiPromptInput.trim()) return;
-    toast.info(`DrGodly AI: Searching EHR context for "${aiPromptInput.trim()}"...`);
+    const query = customQuery || aiPromptInput.trim();
+    if (!query) return;
+
+    if (query.toLowerCase().includes("interaction") || query.toLowerCase().includes("sumatriptan")) {
+      setAiQueryResult({
+        query,
+        answer: "No pharmacokinetic contraindication between Amlodipine 5mg OD and Sumatriptan 50mg PRN. Monitor BP during acute migraine attack as sumatriptan exhibits transient 5-HT1B/1D mediated vasoconstrictive tone.",
+        cdsGrade: "Evidence Grade A • UpToDate / Lexicomp",
+        planSnippet: "• Verified drug safety: Sumatriptan PRN cleared alongside Amlodipine with post-dose BP monitoring instructions.",
+      });
+    } else if (query.toLowerCase().includes("vestibular") || query.toLowerCase().includes("dizzy")) {
+      setAiQueryResult({
+        query,
+        answer: "Vestibular Migraine (78% match) vs. Benign Paroxysmal Positional Vertigo (65% match). Recommend Epley maneuver diagnostic assessment and low-tyramine dietary modification.",
+        cdsGrade: "CDS Differential • Barany Society Criteria",
+        planSnippet: "• Order vestibular rehabilitation assessment & Dix-Hallpike positional testing. Maintain hydration protocol.",
+      });
+    } else {
+      setAiQueryResult({
+        query,
+        answer: `DrGodly Clinical RAG analyzed Louise Reed's EHR history for "${query}": Recommend orthostatic blood pressure recording (supine to 3-min standing) and basic metabolic panel to exclude electrolyte etiology.`,
+        cdsGrade: "Clinical Guideline • ACC/AHA 2024",
+        planSnippet: `• Clinical Workup for ${query}: Scheduled orthostatic vitals check & follow-up.`,
+      });
+    }
+
+    toast.success("DrGodly AI synthesized clinical response!");
     setAiPromptInput("");
   };
 
@@ -237,10 +386,51 @@ export function DoctorTelemedicineCockpit({
         </div>
       </header>
 
+            {/* ── MOBILE / TABLET 3-PANEL SELECTOR ── */}
+      <div className="lg:hidden flex items-center justify-between bg-white border-b border-slate-200 px-3 py-2 gap-1.5 shrink-0 shadow-2xs">
+        <button
+          type="button"
+          onClick={() => setMobilePanel("dossier")}
+          className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+            mobilePanel === "dossier"
+              ? "bg-blue-600 text-white shadow-xs"
+              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+          }`}
+        >
+          <FileText className="size-3.5" />
+          <span>Dossier</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobilePanel("stage")}
+          className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+            mobilePanel === "stage"
+              ? "bg-blue-600 text-white shadow-xs"
+              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+          }`}
+        >
+          <VideoIcon className="size-3.5" />
+          <span>Consult & Scribe</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobilePanel("cds")}
+          className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+            mobilePanel === "cds"
+              ? "bg-blue-600 text-white shadow-xs"
+              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+          }`}
+        >
+          <Sparkles className="size-3.5" />
+          <span>CDS & Rx</span>
+        </button>
+      </div>
+
       {/* ── 2. MAIN 3-PANEL CONSULTATION STAGE ───────────────────────────── */}
       <div className="flex-1 grid grid-cols-12 gap-3 p-3 overflow-hidden min-h-0 bg-slate-100/60">
         {/* ── PANEL 1: LEFT PATIENT CLINICAL DOSSIER (~28% / 3.5 cols) ─── */}
-        <div className="col-span-12 lg:col-span-3 xl:col-span-3 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className={`col-span-12 lg:col-span-3 xl:col-span-3 flex-col bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden ${mobilePanel === "dossier" ? "flex" : "hidden lg:flex"}`}>
+
           {/* Header Tabs */}
           <div className="flex border-b border-slate-200 bg-slate-50/70 text-xs font-semibold px-2 shrink-0">
             <button
@@ -318,7 +508,7 @@ export function DoctorTelemedicineCockpit({
                   <span className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> HR
                   </span>
-                  <span className="font-bold text-slate-900 block mt-0.5">72</span>
+                  <span className="font-bold text-slate-900 block mt-0.5 transition-all text-emerald-700">{liveHr}</span>
                   <span className="text-[9px] text-slate-400">bpm</span>
                 </div>
                 <div className="bg-white p-1.5 rounded-lg border border-slate-200/70">
@@ -331,9 +521,11 @@ export function DoctorTelemedicineCockpit({
               </div>
               <div className="text-center pt-0.5">
                 <span className="text-[10px] text-slate-600 font-medium bg-white px-2 py-0.5 rounded-full border border-slate-200/70 inline-flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> SpO₂: 99%
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> SpO₂: {liveSpo2}%
                 </span>
               </div>
+              {/* Real-Time Lead II ECG Waveform */}
+              <LiveEcgMonitor />
             </div>
 
             {/* Card 4: Current Medications */}
@@ -388,51 +580,67 @@ export function DoctorTelemedicineCockpit({
         </div>
 
         {/* ── PANEL 2: CENTER VIDEO & INTERACTION STAGE (~42% / 5.5 cols) ── */}
-        <div className="col-span-12 lg:col-span-5 xl:col-span-5 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className={`col-span-12 lg:col-span-5 xl:col-span-5 flex-col bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden ${mobilePanel === "stage" ? "flex" : "hidden lg:flex"}`}>
+
           {/* Top Half: Video Player Stage */}
-          <div className="relative h-[280px] bg-gradient-to-b from-slate-900 via-slate-950 to-black flex items-center justify-center overflow-hidden shrink-0">
-            {/* Simulated Patient Video Feed */}
-            <div className="relative flex flex-col items-center justify-center w-full h-full">
-              <div className="h-24 w-24 rounded-full bg-teal-800/40 border-2 border-teal-500/40 flex items-center justify-center text-teal-200 font-bold text-2xl shadow-xl">
-                LR
+          <div className="relative h-[290px] bg-slate-950 flex items-center justify-center overflow-hidden shrink-0">
+            {/* Simulated Patient Live Video Feed with Authentic Portrait */}
+            <div className="relative w-full h-full">
+              <img
+                src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80"
+                alt="Louise Reed (Patient Video)"
+                className="w-full h-full object-cover object-center filter brightness-[0.92]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/40 pointer-events-none" />
+              
+              {/* Bottom patient status bar */}
+              <div className="absolute bottom-3 left-3 flex items-center gap-2">
+                <span className="px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-white text-[11px] font-semibold flex items-center gap-1.5 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  Louise Reed (Patient)
+                </span>
+                <span className="px-2 py-0.5 rounded-md bg-blue-600/80 backdrop-blur-md text-white text-[10px] font-medium">
+                  1080p • 60 FPS
+                </span>
               </div>
-              <span className="text-xs font-semibold text-white mt-2">Louise Reed</span>
-              <span className="text-[10px] text-slate-400">720p HD • WebRTC Encrypted</span>
             </div>
 
             {/* Top-left Video HUD Overlay */}
-            <div className="absolute top-2.5 left-2.5 flex items-center gap-2 bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded-lg text-[11px] text-white">
-              <span className="font-semibold">Louise Reed</span>
+            <div className="absolute top-2.5 left-2.5 flex items-center gap-2 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg text-[11px] text-white shadow-sm">
+              <span className="font-semibold text-slate-100 flex items-center gap-1.5">LiveKit WebRTC <AudioEqualizer active={!isMuted} /></span>
               <span className="flex items-center gap-0.5 text-emerald-400">
-                <span className="h-2 w-1 bg-emerald-400 rounded-2xs" />
+                <span className="h-2 w-1 bg-emerald-400 rounded-2xs animate-pulse" />
                 <span className="h-3 w-1 bg-emerald-400 rounded-2xs" />
-                <span className="h-4 w-1 bg-emerald-400 rounded-2xs" />
+                <span className="h-4 w-1 bg-emerald-400 rounded-2xs animate-pulse" />
               </span>
-              <span className="text-slate-300 font-mono text-[10px]">02:34</span>
+              <span className="text-slate-300 font-mono text-[10px]">14 ms &middot; 2.4 Mbps</span>
             </div>
 
             {/* Top-right Video Controls */}
             <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 text-white/80">
-              <button className="h-7 w-7 rounded-lg bg-black/40 hover:bg-black/60 flex items-center justify-center">
+              <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 backdrop-blur-md">
+                <ShieldCheck className="size-3" />
+                HIPAA Encrypted
+              </span>
+              <button className="h-7 w-7 rounded-lg bg-black/50 hover:bg-black/70 flex items-center justify-center text-white transition-colors">
                 <Maximize2 className="size-3.5" />
-              </button>
-              <button className="h-7 w-7 rounded-lg bg-black/40 hover:bg-black/60 flex items-center justify-center">
-                <MoreHorizontal className="size-3.5" />
               </button>
             </div>
 
-            {/* Doctor Self-View PiP (Bottom-right) */}
-            <div className="absolute bottom-14 right-3 h-20 w-24 rounded-xl bg-slate-800/95 border border-slate-700/80 shadow-lg overflow-hidden flex flex-col justify-between p-1.5">
-              <div className="flex justify-end">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            {/* Doctor Self-View PiP (Bottom-right) with Doctor Photo */}
+            <div className="absolute bottom-12 right-3 h-24 w-28 rounded-2xl bg-slate-900 border-2 border-slate-700/90 shadow-2xl overflow-hidden flex flex-col justify-between group">
+              <img
+                src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80"
+                alt="Dr. Alexander Wright, MD"
+                className="w-full h-full object-cover object-top filter brightness-[0.95]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
+              <div className="absolute top-1.5 right-1.5 flex items-center gap-1 bg-black/60 px-1.5 py-0.5 rounded-full">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[8px] text-white font-mono">HD</span>
               </div>
-              <div className="flex items-center justify-center">
-                <div className="h-7 w-7 rounded-full bg-teal-600 text-white text-[10px] font-bold flex items-center justify-center">
-                  AM
-                </div>
-              </div>
-              <span className="text-[9px] text-center font-semibold text-slate-200 truncate">
-                Dr. Arjun Mehta (You)
+              <span className="absolute bottom-1 left-1.5 right-1.5 text-[9px] text-center font-bold text-white truncate drop-shadow-sm">
+                Dr. Wright (You)
               </span>
             </div>
 
@@ -603,7 +811,8 @@ export function DoctorTelemedicineCockpit({
         </div>
 
         {/* ── PANEL 3: RIGHT CLINICAL DECISION SUPPORT (~30% / 3.5 cols) ── */}
-        <div className="col-span-12 lg:col-span-4 xl:col-span-4 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className={`col-span-12 lg:col-span-4 xl:col-span-4 flex-col bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden ${mobilePanel === "cds" ? "flex" : "hidden lg:flex"}`}>
+
           {/* Header Tabs */}
           <div className="flex border-b border-slate-200 bg-slate-50/70 text-xs font-semibold px-2 shrink-0 overflow-x-auto">
             <button
@@ -891,6 +1100,52 @@ export function DoctorTelemedicineCockpit({
             <Share2 className="size-3.5" /> Share with Patient
           </Button>
         </div>
+
+        
+        {/* ── INTERACTIVE DRGODLY AI RESPONSE DRAWER ── */}
+        {aiQueryResult && (
+          <div className="absolute bottom-14 right-3 max-w-md w-full bg-slate-950/95 backdrop-blur-xl border border-purple-500/50 rounded-2xl shadow-2xl p-4 text-white z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center shadow-xs">
+                  <Sparkles className="size-3.5 text-white" />
+                </div>
+                <span className="text-xs font-bold text-purple-300">DrGodly AI Clinical Intelligence</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAiQueryResult(null)}
+                className="text-slate-400 hover:text-white text-xs p-1"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="py-2.5 space-y-1.5 text-xs">
+              <p className="font-semibold text-purple-200 text-[11px]">Query: "{aiQueryResult.query}"</p>
+              <p className="text-[11px] text-slate-300 leading-relaxed font-sans">{aiQueryResult.answer}</p>
+              <div className="flex items-center gap-2 pt-1">
+                <span className="px-2 py-0.5 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800 text-[10px] font-mono font-semibold">
+                  {aiQueryResult.cdsGrade}
+                </span>
+              </div>
+            </div>
+            <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
+              <span className="text-[10px] text-slate-400 font-mono">HIPAA Encrypted RAG</span>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => {
+                  setClinicianNotes((prev) => prev + "\n" + aiQueryResult.planSnippet);
+                  toast.success("Inserted AI guidance into SOAP Encounter Plan!");
+                  setAiQueryResult(null);
+                }}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] h-7 px-3 rounded-xl font-bold gap-1 shadow-sm"
+              >
+                <Check className="size-3" /> Insert into SOAP
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Right: Ask DrGodly AI Natural Language Input */}
         <form onSubmit={handleAskDrGodlyAi} className="flex items-center gap-2 max-w-sm w-full">

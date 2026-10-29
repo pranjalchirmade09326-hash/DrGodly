@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from 'react';
 import { 
@@ -136,8 +136,17 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
 
           {/* User Profile Pill */}
           <div className="flex items-center gap-2.5 pl-1 sm:pl-2 border-l border-slate-200">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-slate-900 to-slate-700 text-white font-bold text-xs flex items-center justify-center ring-2 ring-slate-100 shadow-xs">
-              {role === 'doctor' ? 'AW' : 'LR'}
+            <div className="relative shrink-0">
+              <img
+                src={
+                  role === 'doctor'
+                    ? 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=200&q=80'
+                    : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80'
+                }
+                alt={activeName}
+                className="w-9 h-9 rounded-full object-cover ring-2 ring-blue-500/30 shadow-xs"
+              />
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white absolute -bottom-0.5 -right-0.5" />
             </div>
             <div className="hidden sm:flex flex-col text-left">
               <span className="text-xs font-bold text-slate-900 leading-tight">

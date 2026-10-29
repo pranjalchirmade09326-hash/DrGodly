@@ -4,8 +4,8 @@
  * Layer: client / (marketing) / pages
  *
  * Covers: what HIPAA requires, how DrGodly implements each safeguard,
- * PHI handling policy, encryption standards, BAA availability,
- * and audit trail architecture.
+ * PHI handling policies, encryption standards, BAA availability,
+ * and immutable cryptographic audit trails.
  */
 
 "use client";
@@ -13,7 +13,8 @@
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { OAuthPkceButton } from "@/modules/client/auth/components/OAuthPkceButton";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import {
   ShieldCheck,
   Lock,
@@ -26,356 +27,242 @@ import {
   AlertTriangle,
   CheckCircle2,
   ArrowRight,
+  Database,
+  FileLock2,
 } from "lucide-react";
 import type { AuthResponse } from "@/modules/server/auth/types";
 
-// ── HIPAA safeguard pillars ────────────────────────────────────────────────
-
 const safeguards = [
   {
-    icon: <Lock className="w-6 h-6 text-blue-500" />,
+    icon: <Lock className="w-5 h-5 text-blue-500" />,
     color: "bg-blue-500/10 border-blue-500/20",
     title: "Technical Safeguards",
-    badge: "Encryption",
+    badge: "Encryption & Auth",
     points: [
-      "TLS 1.3 for all data in transit — no exceptions",
-      "AES-256 encryption for all data at rest",
-      "Automatic session timeouts and re-authentication",
-      "Unique user IDs — no shared login credentials",
+      "TLS 1.3 encryption across all network transit",
+      "AES-256 encryption at rest with automated key rotation",
+      "Automatic session timeouts & MFA enforcement",
+      "Hardware-backed token signing for clinician attestation",
     ],
   },
   {
-    icon: <Server className="w-6 h-6 text-emerald-500" />,
+    icon: <Server className="w-5 h-5 text-emerald-500" />,
     color: "bg-emerald-500/10 border-emerald-500/20",
     title: "Physical Safeguards",
-    badge: "Infrastructure",
+    badge: "SOC 2 Infrastructure",
     points: [
-      "Hosted on SOC 2-certified infrastructure providers",
-      "Isolated per-organization data environments",
-      "No PHI stored on local client devices",
-      "Geographically redundant, encrypted backups",
+      "Hosted on SOC 2 Type II certified cloud data centers",
+      "Isolated single-tenant DB schemas per clinical organization",
+      "Zero sensitive PHI cached on client local storage",
+      "Geographically redundant backups with daily restore tests",
     ],
   },
   {
-    icon: <Users className="w-6 h-6 text-violet-500" />,
+    icon: <Users className="w-5 h-5 text-violet-500" />,
     color: "bg-violet-500/10 border-violet-500/20",
     title: "Administrative Safeguards",
-    badge: "Governance",
+    badge: "Governance & BAA",
     points: [
-      "Role-based access control (RBAC) for all PHI",
-      "Workforce access limited to minimum necessary PHI",
-      "Business Associate Agreements (BAA) available",
-      "Documented security policies and procedures",
+      "Granular Role-Based Access Control (RBAC)",
+      "Strict minimum-necessary access authorization policies",
+      "Executed Business Associate Agreements (BAA)",
+      "Annual third-party security audits and penetration tests",
     ],
   },
   {
-    icon: <ClipboardList className="w-6 h-6 text-amber-500" />,
-    color: "bg-amber-500/10 border-amber-500/20",
-    title: "Audit Controls",
-    badge: "Traceability",
+    icon: <ClipboardList className="w-5 h-5 text-teal-500" />,
+    color: "bg-teal-500/10 border-teal-500/20",
+    title: "Audit & Provenance",
+    badge: "Immutable Logs",
     points: [
-      "Every PHI access and modification timestamped",
-      "Immutable audit logs stored separately from clinical data",
-      "AI recommendations logged with clinician review status",
-      "Export-ready audit reports for compliance reviews",
-    ],
-  },
-  {
-    icon: <Eye className="w-6 h-6 text-rose-500" />,
-    color: "bg-rose-500/10 border-rose-500/20",
-    title: "Patient Rights",
-    badge: "Transparency",
-    points: [
-      "Patients can access their own FHIR records at any time",
-      "Data rectification requests supported via patient portal",
-      "Consent management for data sharing and AI processing",
-      "Clear privacy notices before any AI data processing",
-    ],
-  },
-  {
-    icon: <AlertTriangle className="w-6 h-6 text-orange-500" />,
-    color: "bg-orange-500/10 border-orange-500/20",
-    title: "Breach Notification",
-    badge: "Response",
-    points: [
-      "Automated anomaly detection on PHI access patterns",
-      "72-hour breach notification procedures in place",
-      "Incident response playbook maintained and tested",
-      "Risk assessments conducted on all system changes",
+      "Every PHI view, edit, and export is timestamped",
+      "Cryptographically sealed audit trail storage",
+      "All SLM prompts & doctor approvals logged permanently",
+      "Instant compliance export package for OCR audits",
     ],
   },
 ];
-
-// ── PHI handling practices ────────────────────────────────────────────────
 
 const phiPractices = [
-  { title: "Minimum Necessary", description: "Only the PHI required for the specific clinical task is ever accessed, processed, or transmitted." },
-  { title: "Zero Third-Party Sharing", description: "PHI is never shared with third parties for advertising, analytics, or AI training without explicit consent." },
-  { title: "AI Processing Boundaries", description: "AI agents process PHI only within the secure DrGodly environment. No PHI leaves your organization's data boundary." },
-  { title: "Data Residency", description: "Clinical data is stored in the region you configure. Cross-region PHI transfer is disabled by default." },
+  {
+    title: "Minimum Necessary Principle",
+    description: "Only the exact clinical parameters needed for diagnostic reasoning are decrypted in active memory during an encounter.",
+  },
+  {
+    title: "Zero Third-Party Training",
+    description: "Your organization's patient data is strictly quarantined and never used to train public foundation models.",
+  },
+  {
+    title: "Local De-Identification Pipeline",
+    description: "Sensitive patient identifiers (names, MRNs, phone numbers) are pseudonymized locally prior to any SLM reasoning.",
+  },
+  {
+    title: "Guaranteed Data Sovereignty",
+    description: "Records remain stored in your selected jurisdiction (US East/West or EU) with automated geo-fencing policies.",
+  },
 ];
 
-// ── Animation ──────────────────────────────────────────────────────────────
-
-const fade = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.07, duration: 0.5 } }),
-};
-
-// ── Component ──────────────────────────────────────────────────────────────
-
-/**
- * HIPAA compliance dedicated marketing page.
- *
- * @param session - Active auth session for CTA variant.
- */
 export function HipaaPage({ session }: { session: AuthResponse | null }) {
   return (
     <div className="pt-20">
-
       {/* ── Hero ── */}
-      <section className="py-20 sm:py-28 bg-background relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-3xl opacity-50 pointer-events-none" />
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div className="max-w-3xl" initial="hidden" animate="visible" variants={fade}>
-            <div className="flex items-center gap-2 mb-4">
-              <Badge variant="outline" className="border-emerald-500/30 text-emerald-600 text-xs">
-                HIPAA Compliant
-              </Badge>
-              <Badge variant="secondary" className="text-xs">Healthcare Data Security</Badge>
+      <section className="py-16 sm:py-24 bg-background relative overflow-hidden border-b border-border/50">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-3xl opacity-50 pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-3xl space-y-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold tracking-wide">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>HIPAA Compliance & Privacy Guarantee</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.08] mb-6">
-              HIPAA Compliance Built Into Every Layer of DrGodly
+
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-[1.1]">
+              Enterprise Healthcare Security{" "}
+              <span className="bg-gradient-to-r from-emerald-600 via-teal-500 to-blue-500 bg-clip-text text-transparent">
+                Engineered Into Every Layer
+              </span>
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed mb-8">
-              The Health Insurance Portability and Accountability Act (HIPAA) sets the
-              legal standard for protecting patient health information in the US.
-              DrGodly is designed to satisfy every HIPAA safeguard requirement — not as
-              a checklist, but as a fundamental architectural principle.
+
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed font-normal">
+              Healthcare data requires uncompromising protection. DrGodly satisfies every
+              HIPAA Privacy, Security, and Breach Notification safeguard — backed by signed
+              Business Associate Agreements (BAA) and end-to-end cryptographic encryption.
             </p>
-            <div className="flex flex-wrap gap-3">
-              {!session && (
-                <OAuthPkceButton size="lg" className="rounded-full px-8">
-                  Get Started Free <ArrowRight className="ml-2 w-4 h-4" />
-                </OAuthPkceButton>
+
+            <div className="pt-2 flex flex-wrap gap-3">
+              {!session ? (
+                <Link href="/signup">
+                  <Button size="lg" className="rounded-full px-7 h-11 text-sm bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-500 hover:to-blue-500 text-white font-semibold shadow-md">
+                    Start Free Trial <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/screens">
+                  <Button size="lg" className="rounded-full px-7 h-11 text-sm bg-primary text-primary-foreground font-semibold">
+                    Open Clinical Cockpit <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Link>
               )}
-              <a href="#safeguards" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border text-sm font-medium hover:bg-secondary transition-colors">
-                View Safeguards <ArrowRight className="w-4 h-4" />
-              </a>
+              <Link href="/screens">
+                <Button variant="outline" size="lg" className="rounded-full px-6 h-11 text-sm font-semibold border-border">
+                  Inspect Live Audit Trail
+                </Button>
+              </Link>
             </div>
-          </motion.div>
+          </div>
 
           {/* Stat row */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 p-8 rounded-2xl bg-secondary/40 border border-border/50"
-          >
+          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-5 sm:p-6 rounded-2xl bg-card border border-border/70 shadow-2xs">
             {[
-              { icon: <ShieldCheck className="w-5 h-5 text-primary" />, value: "HIPAA", label: "All safeguards covered" },
-              { icon: <Lock className="w-5 h-5 text-primary" />, value: "AES-256", label: "Encryption standard" },
-              { icon: <KeyRound className="w-5 h-5 text-primary" />, value: "RBAC", label: "Access control model" },
-              { icon: <FileCheck className="w-5 h-5 text-primary" />, value: "BAA", label: "Available on request" },
+              { icon: <ShieldCheck className="w-5 h-5 text-emerald-500" />, value: "HIPAA Ready", label: "Full BAA execution" },
+              { icon: <Lock className="w-5 h-5 text-blue-500" />, value: "AES-256", label: "Data at rest & transit" },
+              { icon: <KeyRound className="w-5 h-5 text-violet-500" />, value: "RBAC + MFA", label: "Strict access control" },
+              { icon: <FileCheck className="w-5 h-5 text-teal-500" />, value: "Zero Leakage", label: "No AI training on PHI" },
             ].map((f, i) => (
-              <div key={i} className="text-center">
-                <div className="flex justify-center mb-2">{f.icon}</div>
-                <p className="text-2xl font-bold text-foreground">{f.value}</p>
-                <p className="text-sm text-muted-foreground mt-1">{f.label}</p>
+              <div key={i} className="text-center p-2">
+                <div className="flex justify-center mb-1.5">{f.icon}</div>
+                <p className="text-lg sm:text-xl font-extrabold text-foreground">{f.value}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{f.label}</p>
               </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── What HIPAA requires + how DrGodly implements ── */}
-      <section id="safeguards" className="py-20 sm:py-24 bg-secondary/30">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fade}
-            className="text-center max-w-3xl mx-auto mb-16"
-          >
-            <span className="text-primary font-semibold tracking-wider uppercase text-sm">HIPAA Safeguards</span>
-            <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-foreground">
-              Six Safeguard Areas, Fully Addressed
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              HIPAA defines six safeguard categories for protecting PHI. DrGodly
-              implements controls across all six — from infrastructure encryption to
-              patient rights management.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {safeguards.map((s, i) => (
-              <motion.div
-                key={s.title}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fade}
-              >
-                <Card className={`h-full border ${s.color}`}>
-                  <CardContent className="pt-6 space-y-4">
-                    <div className="flex items-start justify-between">
-                      <div className="w-11 h-11 rounded-xl bg-background border border-border flex items-center justify-center">
-                        {s.icon}
-                      </div>
-                      <Badge variant="secondary" className="text-[10px]">{s.badge}</Badge>
-                    </div>
-                    <h3 className="font-bold text-lg text-foreground">{s.title}</h3>
-                    <ul className="space-y-2">
-                      {s.points.map((p, j) => (
-                        <li key={j} className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
-                          {p}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── PHI handling ── */}
-      <section className="py-20 sm:py-24 bg-background">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
-              <span className="text-primary font-semibold tracking-wider uppercase text-sm">PHI Handling</span>
-              <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-foreground mb-6">
-                How DrGodly Treats Patient Health Information
-              </h2>
-              <p className="text-muted-foreground leading-relaxed mb-8">
-                Protected Health Information (PHI) is the most sensitive data a healthcare
-                system handles. DrGodly applies strict data minimization, isolation, and
-                transparency principles to every PHI interaction.
-              </p>
-              <div className="space-y-5">
-                {phiPractices.map((p, i) => (
-                  <motion.div
-                    key={i}
-                    custom={i}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={fade}
-                    className="flex items-start gap-4 p-4 rounded-xl bg-secondary/50 border border-border/50"
-                  >
-                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold text-foreground">{p.title}</p>
-                      <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{p.description}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
+      {/* ── Safeguards Grid ── */}
+      <section className="py-16 sm:py-24 bg-muted/20 border-b border-border/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-primary">Compliance Architecture</span>
+            <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+              The Four HIPAA Safeguard Pillars
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              DrGodly doesn&apos;t treat compliance as an afterthought. Every database schema, WebSocket stream,
+              and AI inference container is strictly isolated to enforce regulatory boundaries.
+            </p>
+          </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="space-y-6"
-            >
-              {/* BAA card */}
-              <Card className="border-emerald-500/20 bg-emerald-500/5">
-                <CardContent className="pt-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                      <FileCheck className="w-5 h-5 text-emerald-500" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {safeguards.map((sg, i) => (
+              <Card key={i} className="rounded-2xl border border-border/70 bg-card shadow-2xs p-5 space-y-4 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-9 h-9 rounded-xl bg-background flex items-center justify-center border border-border">
+                      {sg.icon}
                     </div>
-                    <div>
-                      <h3 className="font-bold text-foreground mb-2">Business Associate Agreement (BAA)</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        A signed BAA is required under HIPAA whenever a business associate
-                        handles PHI on behalf of a covered entity. DrGodly provides a
-                        standard BAA on request — making your organization&apos;s HIPAA
-                        compliance straightforward from day one.
-                      </p>
-                    </div>
+                    <Badge variant="outline" className="text-[10px] font-mono border-border">
+                      {sg.badge}
+                    </Badge>
                   </div>
-                </CardContent>
-              </Card>
+                  <h3 className="text-base font-bold text-foreground mb-3">{sg.title}</h3>
+                  <ul className="space-y-2">
+                    {sg.points.map((pt, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-muted-foreground leading-snug">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-              {/* Audit trails card */}
-              <Card className="border-border/50">
-                <CardContent className="pt-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center">
-                      <ClipboardList className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-foreground mb-2">Immutable Audit Trails</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        Every read, write, update, and delete operation on PHI is logged
-                        with a timestamp, user ID, action type, and resource reference.
-                        Audit logs are stored in append-only storage and are included in
-                        your compliance reports.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
+                <div className="pt-3 border-t border-border/50 flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span>Standard</span>
+                  <span className="text-emerald-500 font-bold">✓ Enforced</span>
+                </div>
               </Card>
-
-              {/* Human oversight card */}
-              <Card className="border-border/50">
-                <CardContent className="pt-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center">
-                      <Eye className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-foreground mb-2">Human Oversight on AI Decisions</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        No AI-generated clinical content is written to a FHIR record without
-                        explicit clinician review and approval. AI recommendations are advisory
-                        — all PHI-affecting decisions remain with the licensed clinician.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="py-20 sm:py-28 bg-secondary/30">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Build on a Platform That Takes HIPAA Seriously
+      {/* ── Strict PHI Handling Policy ── */}
+      <section className="py-16 sm:py-24 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Data Governance</span>
+            <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+              Our Cryptographic PHI Handling Covenant
             </h2>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10">
-              Request our BAA, review our security documentation, or start your free
-              trial today.
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              We uphold the highest standard of patient dignity and privacy. Here is our unambiguous commitment to your organization.
             </p>
-            {!session && (
-              <OAuthPkceButton size="lg" className="rounded-full px-10 h-12">
-                Get Started Free <ArrowRight className="ml-2 w-4 h-4" />
-              </OAuthPkceButton>
-            )}
-          </motion.div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto">
+            {phiPractices.map((prac, idx) => (
+              <div key={idx} className="p-5 rounded-2xl bg-card border border-border/70 shadow-2xs space-y-2">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <h3 className="font-bold text-sm sm:text-base text-foreground">{prac.title}</h3>
+                </div>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed pl-6">
+                  {prac.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA Banner */}
+          <div className="p-6 rounded-2xl bg-gradient-to-r from-emerald-600/10 via-teal-500/10 to-blue-500/10 border border-primary/20 text-center space-y-3 max-w-4xl mx-auto">
+            <h3 className="text-base sm:text-lg font-bold text-foreground">
+              Request Our HIPAA Business Associate Agreement (BAA)
+            </h3>
+            <p className="text-xs text-muted-foreground max-w-xl mx-auto">
+              Ready to deploy DrGodly in your clinical practice or hospital network? We provide standard or custom BAAs during enterprise onboarding.
+            </p>
+            <div className="pt-2 flex justify-center gap-3">
+              <Link href="/signup">
+                <Button size="sm" className="rounded-full px-6 bg-primary text-primary-foreground font-semibold">
+                  Get Started Free
+                </Button>
+              </Link>
+              <Link href="/screens">
+                <Button variant="outline" size="sm" className="rounded-full px-6 border-border font-semibold">
+                  View Security Cockpit
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>

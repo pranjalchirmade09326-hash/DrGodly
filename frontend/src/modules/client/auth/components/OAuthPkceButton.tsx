@@ -22,7 +22,10 @@ export function OAuthPkceButton({ children, ...props }: OAuthPkceButtonProps) {
     const clientId = process.env.NEXT_PUBLIC_BETTER_AUTH_CLIENT_ID;
     const authUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL;
     const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-    if (!clientId || !authUrl || !appUrl) return;
+    if (!clientId || !authUrl || !appUrl || clientId.includes("your_")) {
+      window.location.href = "/signup";
+      return;
+    }
 
     const state = generateRandomString(32);
     localStorage.setItem("oauth_state", state);

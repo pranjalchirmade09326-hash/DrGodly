@@ -5,7 +5,7 @@
  *
  * Covers: the full AI FHIR clinical workflow from the patient's perspective,
  * the doctor's perspective, and the underlying technical data flow showing
- * how each action maps to FHIR resources in real time.
+ * how each interaction maps to FHIR resources in real time.
  */
 
 "use client";
@@ -13,7 +13,8 @@
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { OAuthPkceButton } from "@/modules/client/auth/components/OAuthPkceButton";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import {
   UserCheck,
   Calendar,
@@ -22,360 +23,245 @@ import {
   FileText,
   Database,
   ArrowRight,
-  ArrowDown,
   CheckCircle2,
   ClipboardList,
   Brain,
   Mic,
+  Activity,
+  Zap,
 } from "lucide-react";
 import type { AuthResponse } from "@/modules/server/auth/types";
 
-// ── Patient journey ────────────────────────────────────────────────────────
-
 const patientSteps = [
   {
-    icon: <UserCheck className="w-6 h-6 text-blue-500" />,
+    icon: <UserCheck className="w-5 h-5 text-blue-500" />,
     step: "01",
-    title: "Register & Set Up Profile",
+    title: "1-Click Profile & Health ID",
     description:
-      "Patient registers with their basic information. A FHIR Patient resource is created. They select their preferred language, timezone, and notification preferences.",
-    fhirResource: "Patient",
-    fhirColor: "text-blue-500",
+      "Patient registers in 60 seconds with verified demographics. A valid FHIR Patient resource is provisioned immediately with secure credentials.",
+    fhirResource: "FHIR Patient",
   },
   {
-    icon: <Calendar className="w-6 h-6 text-violet-500" />,
+    icon: <Calendar className="w-5 h-5 text-teal-500" />,
     step: "02",
-    title: "Browse Practitioners & Book",
+    title: "Specialist Matching & Slot Booking",
     description:
-      "Patient searches available practitioners by specialty, browses available appointment slots, and books a consultation. A FHIR Appointment resource is created with status 'booked'.",
-    fhirResource: "Appointment",
-    fhirColor: "text-violet-500",
+      "Patient browses board-certified physicians by sub-specialty, checks verified ratings, and schedules. Creates an active FHIR Appointment resource.",
+    fhirResource: "FHIR Appointment",
   },
   {
-    icon: <MessageSquare className="w-6 h-6 text-emerald-500" />,
+    icon: <MessageSquare className="w-5 h-5 text-violet-500" />,
     step: "03",
-    title: "Complete AI Intake",
+    title: "Pre-Visit Autonomous AI Intake",
     description:
-      "Before the appointment, the patient completes an AI-guided intake via text or voice. The AI asks clinical questions, extracts symptoms, and creates FHIR Observations automatically.",
-    fhirResource: "Observation",
-    fhirColor: "text-emerald-500",
+      "Prior to the consult, an adaptive AI agent elicits symptoms, pain ratings, and medication history — populating standardized FHIR Observations.",
+    fhirResource: "FHIR Observation",
   },
   {
-    icon: <Stethoscope className="w-6 h-6 text-amber-500" />,
+    icon: <Stethoscope className="w-5 h-5 text-amber-500" />,
     step: "04",
-    title: "Attend Telemedicine Consultation",
+    title: "1080p Encrypted Teleconsultation",
     description:
-      "Patient connects with the doctor for a live telemedicine session. The AI Consultation Agent transcribes the conversation and surfaces clinical insights in real time.",
-    fhirResource: "Encounter",
-    fhirColor: "text-amber-500",
+      "Patient connects via WebRTC video. Ambient AI scribing runs in the background while the doctor focuses entirely on patient care.",
+    fhirResource: "FHIR Encounter",
   },
   {
-    icon: <FileText className="w-6 h-6 text-rose-500" />,
+    icon: <FileText className="w-5 h-5 text-emerald-500" />,
     step: "05",
-    title: "Receive Clinical Report & Follow-Up",
+    title: "Digital Care Plan & E-Prescriptions",
     description:
-      "After the consultation, the patient receives a summary of their visit, next steps, and any follow-up appointment recommendations. All records are accessible in the patient portal.",
-    fhirResource: "DocumentReference",
-    fhirColor: "text-rose-500",
+      "Patient receives their finalized clinical report, e-prescription orders, and home monitoring schedules directly in their secure portal.",
+    fhirResource: "FHIR DocumentReference",
   },
 ];
-
-// ── Doctor journey ─────────────────────────────────────────────────────────
 
 const doctorSteps = [
   {
-    icon: <ClipboardList className="w-6 h-6 text-violet-500" />,
+    icon: <ClipboardList className="w-5 h-5 text-violet-500" />,
     step: "01",
-    title: "View Today's Schedule",
+    title: "Smart Triage & Appointment Queue",
     description:
-      "Doctor logs in to the dashboard and sees all appointments for the day, sorted chronologically. Each appointment shows patient name, time, and appointment type.",
+      "Physician dashboard groups patients chronologically with automated clinical risk flags and pre-visit intake completeness scores.",
   },
   {
-    icon: <Brain className="w-6 h-6 text-blue-500" />,
+    icon: <Brain className="w-5 h-5 text-blue-500" />,
     step: "02",
-    title: "Review AI Intake Insights",
+    title: "Pre-Synthesized AI Dossier",
     description:
-      "Before the consultation, the doctor reviews the AI Intake Insights card: chief complaint, SOAP summary, differential diagnosis hints, risk score, and FHIR Observations.",
+      "Doctor reviews the AI-extracted chief complaint, past vitals, and preliminary ICD-10 differentials before the video call even connects.",
   },
   {
-    icon: <Stethoscope className="w-6 h-6 text-emerald-500" />,
+    icon: <Stethoscope className="w-5 h-5 text-teal-500" />,
     step: "03",
-    title: "Conduct Telemedicine Consultation",
+    title: "3-Panel Clinical Cockpit",
     description:
-      "Doctor connects with the patient via the telemedicine interface. The AI Consultation Agent assists with real-time transcription, SOAP note generation, and clinical flag alerts.",
+      "During the call, the cockpit displays live patient records on the left, 1080p WebRTC in the center, and active AI CDS on the right.",
   },
   {
-    icon: <FileText className="w-6 h-6 text-amber-500" />,
+    icon: <Activity className="w-5 h-5 text-amber-500" />,
     step: "04",
-    title: "Review & Approve AI-Generated Notes",
+    title: "Progressive AI SOAP Generation",
     description:
-      "After the consultation, the doctor reviews the AI-generated SOAP note, assessment plan, and treatment recommendations. They can edit any section before approving.",
+      "As doctor and patient speak, Subjective, Objective, Assessment, and Plan notes populate live with sub-second SLM latency.",
   },
   {
-    icon: <Database className="w-6 h-6 text-rose-500" />,
+    icon: <Database className="w-5 h-5 text-emerald-500" />,
     step: "05",
-    title: "FHIR Record Finalized",
+    title: "One-Click Cryptographic Attestation",
     description:
-      "On clinician approval, a FHIR Encounter resource is created and linked to the patient, appointment, observations, and conditions. The patient record is permanently updated.",
+      "Physician approves or edits the drafted note with digital signature, simultaneously finalizing the FHIR Encounter and sending e-Rx orders.",
   },
 ];
 
-// ── Technical data flow ────────────────────────────────────────────────────
-
-const dataFlow = [
-  { from: "Patient books slot", to: "FHIR Appointment (status: booked)", arrow: true },
-  { from: "AI intake runs", to: "FHIR Observation[] + Condition hints", arrow: true },
-  { from: "Consultation starts", to: "FHIR Encounter (status: in-progress)", arrow: true },
-  { from: "AI generates SOAP note", to: "Encounter.text + assessment plan", arrow: true },
-  { from: "Clinician approves", to: "FHIR Encounter (status: finished)", arrow: true },
-  { from: "Follow-up scheduled", to: "FHIR Appointment (status: booked)", arrow: false },
-];
-
-// ── Animation ──────────────────────────────────────────────────────────────
-
-const fade = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.5 } }),
-};
-
-// ── Component ──────────────────────────────────────────────────────────────
-
-/**
- * How It Works dedicated marketing page — full workflow deep dive.
- *
- * @param session - Active auth session for CTA variant.
- */
 export function HowItWorksPage({ session }: { session: AuthResponse | null }) {
   return (
     <div className="pt-20">
-
       {/* ── Hero ── */}
-      <section className="py-20 sm:py-28 bg-background relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/5 rounded-full blur-3xl opacity-50 pointer-events-none" />
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <motion.div className="max-w-3xl mx-auto" initial="hidden" animate="visible" variants={fade}>
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                Full Workflow
-              </Badge>
-              <Badge variant="secondary" className="text-xs">AI + FHIR + Telemedicine</Badge>
+      <section className="py-16 sm:py-24 bg-background relative overflow-hidden border-b border-border/50">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl opacity-50 pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <div className="max-w-3xl mx-auto space-y-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-bold tracking-wide">
+              <Zap className="w-3.5 h-3.5" />
+              <span>Full Clinical Continuum</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.08] mb-6">
-              The Complete AI FHIR Clinical Workflow, Step by Step
+
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-[1.1]">
+              The Complete AI FHIR Clinical Workflow,{" "}
+              <span className="bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
+                Step by Step
+              </span>
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed mb-8">
-              DrGodly combines AI agents, FHIR R4 records, and telemedicine into a single
-              coherent clinical workflow. Here is exactly how every interaction — from first
-              booking to finalized FHIR record — works for both patients and doctors.
-            </p>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* ── Patient journey ── */}
-      <section className="py-20 sm:py-24 bg-secondary/30">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fade}
-            className="mb-14"
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <UserCheck className="w-5 h-5 text-primary" />
-              <span className="text-primary font-semibold tracking-wider uppercase text-sm">For Patients</span>
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed font-normal">
+              DrGodly bridges the entire clinical continuum — from autonomous pre-visit intake
+              to ambient consultation scribing and cryptographic FHIR record persistence.
+            </p>
+
+            <div className="pt-2 flex justify-center gap-3">
+              {!session ? (
+                <Link href="/signup">
+                  <Button size="lg" className="rounded-full px-7 h-11 text-sm bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-500 hover:to-blue-500 text-white font-semibold shadow-md">
+                    Start Free Trial <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/screens">
+                  <Button size="lg" className="rounded-full px-7 h-11 text-sm bg-primary text-primary-foreground font-semibold">
+                    Open Clinical Cockpit <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Link>
+              )}
+              <Link href="/screens">
+                <Button variant="outline" size="lg" className="rounded-full px-6 h-11 text-sm font-semibold border-border">
+                  Experience Live in Studio
+                </Button>
+              </Link>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-              The Patient Experience
-            </h2>
-            <p className="mt-3 text-lg text-muted-foreground max-w-2xl">
-              From registration to receiving their clinical report, the patient journey in
-              DrGodly is guided, AI-assisted, and fully documented in FHIR.
-            </p>
-          </motion.div>
-
-          <div className="relative space-y-0">
-            {patientSteps.map((step, i) => (
-              <div key={i} className="flex items-stretch gap-8">
-                {/* Timeline */}
-                <div className="flex flex-col items-center shrink-0 pt-6">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ type: "spring", stiffness: 300, delay: i * 0.1 }}
-                    className="w-12 h-12 rounded-full bg-background border-2 border-primary/20 flex items-center justify-center z-10 relative"
-                  >
-                    <span className="text-primary font-bold text-sm">{step.step}</span>
-                  </motion.div>
-                  {i < patientSteps.length - 1 && (
-                    <div className="w-0.5 flex-1 bg-border/60 my-2" />
-                  )}
-                </div>
-
-                {/* Content */}
-                <motion.div
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fade}
-                  className="flex-1 pb-10"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-9 h-9 rounded-xl bg-background border border-border flex items-center justify-center">
-                      {step.icon}
-                    </div>
-                    <h3 className="text-xl font-bold text-foreground">{step.title}</h3>
-                    <Badge variant="outline" className={`text-[10px] font-mono ml-auto ${step.fhirColor}`}>
-                      {step.fhirResource}
-                    </Badge>
-                  </div>
-                  <p className="text-muted-foreground leading-relaxed ml-12">{step.description}</p>
-                </motion.div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
 
-      {/* ── Doctor journey ── */}
-      <section className="py-20 sm:py-24 bg-background">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fade}
-            className="mb-14"
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <Stethoscope className="w-5 h-5 text-primary" />
-              <span className="text-primary font-semibold tracking-wider uppercase text-sm">For Doctors</span>
+      {/* ── Patient Journey ── */}
+      <section className="py-16 sm:py-24 bg-muted/20 border-b border-border/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div>
+            <div className="flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-xs mb-1">
+              <UserCheck className="w-4 h-4" />
+              <span>Patient Experience</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
-              The Doctor Experience
+            <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+              From Symptom Onset to Resolved Care Plan
             </h2>
-            <p className="mt-3 text-lg text-muted-foreground max-w-2xl">
-              Clinicians start their day with AI-prepared patient insights and end it with
-              FHIR records finalized — without spending extra time on documentation.
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-xl">
+              A frictionless, guided digital journey ensuring patients feel heard and cared for.
             </p>
-          </motion.div>
+          </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            {doctorSteps.map((step, i) => (
-              <motion.div
-                key={i}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fade}
-                className="relative"
-              >
-                <Card className="h-full border-border/50">
-                  <CardContent className="pt-5 space-y-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-primary">{step.step}</span>
-                      <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-                        {step.icon}
-                      </div>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {patientSteps.map((s, idx) => (
+              <Card key={idx} className="p-4 rounded-2xl bg-card border border-border/70 shadow-2xs space-y-3 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="w-8 h-8 rounded-xl bg-background flex items-center justify-center border border-border">
+                      {s.icon}
                     </div>
-                    <h3 className="font-bold text-foreground text-sm">{step.title}</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{step.description}</p>
-                  </CardContent>
-                </Card>
-                {i < doctorSteps.length - 1 && (
-                  <div className="hidden xl:flex absolute -right-2 top-1/2 -translate-y-1/2 z-10">
-                    <ArrowRight className="w-4 h-4 text-muted-foreground/40" />
+                    <span className="text-xs font-mono font-bold text-muted-foreground/60">{s.step}</span>
                   </div>
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Technical data flow ── */}
-      <section className="py-20 sm:py-24 bg-secondary/30">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fade}
-            className="text-center max-w-3xl mx-auto mb-14"
-          >
-            <span className="text-primary font-semibold tracking-wider uppercase text-sm">Technical Flow</span>
-            <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-foreground">
-              How Clinical Actions Map to FHIR Resources
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Every action in DrGodly writes to the FHIR EMR in real time.
-              Here is the exact resource mapping, end to end.
-            </p>
-          </motion.div>
-
-          <div className="max-w-2xl mx-auto space-y-3">
-            {dataFlow.map((flow, i) => (
-              <motion.div
-                key={i}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fade}
-                className="flex flex-col items-center"
-              >
-                <div className="w-full flex items-center gap-4 p-4 rounded-xl bg-card border border-border">
-                  <div className="flex-1 text-sm font-medium text-foreground">{flow.from}</div>
-                  <ArrowRight className="w-4 h-4 text-primary shrink-0" />
-                  <div className="flex-1 text-sm font-mono text-primary text-right">{flow.to}</div>
+                  <h3 className="text-sm font-bold text-foreground mb-1">{s.title}</h3>
+                  <p className="text-[11px] text-muted-foreground leading-snug">{s.description}</p>
                 </div>
-                {flow.arrow && (
-                  <ArrowDown className="w-4 h-4 text-border my-1" />
-                )}
-              </motion.div>
+                <div className="pt-2 border-t border-border/50">
+                  <Badge variant="outline" className="text-[9px] font-mono border-border text-primary">
+                    {s.fhirResource}
+                  </Badge>
+                </div>
+              </Card>
             ))}
           </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className="mt-12 flex items-center justify-center gap-3 text-sm text-muted-foreground max-w-xl mx-auto text-center"
-          >
-            <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
-            Every FHIR write is gated by clinician approval — no AI agent can modify
-            patient records without explicit human authorization.
-          </motion.div>
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="py-20 sm:py-28 bg-background">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Experience the Workflow for Yourself
+      {/* ── Doctor Journey ── */}
+      <section className="py-16 sm:py-24 bg-background border-b border-border/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div>
+            <div className="flex items-center gap-2 text-teal-600 dark:text-teal-400 font-bold uppercase tracking-wider text-xs mb-1">
+              <Stethoscope className="w-4 h-4" />
+              <span>Clinician Experience</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+              Zero Keyboard Fatigue, Maximum Clinical Focus
             </h2>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10">
-              Create a free account and walk through the entire FHIR clinical workflow —
-              from patient intake to finalized Encounter record.
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-xl">
+              Turn documentation burden into automated clinical insights so doctors can focus on patients.
             </p>
-            {!session && (
-              <OAuthPkceButton size="lg" className="rounded-full px-10 h-12">
-                Get Started Free <ArrowRight className="ml-2 w-4 h-4" />
-              </OAuthPkceButton>
-            )}
-          </motion.div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {doctorSteps.map((s, idx) => (
+              <Card key={idx} className="p-4 rounded-2xl bg-card border border-border/70 shadow-2xs space-y-3 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="w-8 h-8 rounded-xl bg-background flex items-center justify-center border border-border">
+                      {s.icon}
+                    </div>
+                    <span className="text-xs font-mono font-bold text-muted-foreground/60">{s.step}</span>
+                  </div>
+                  <h3 className="text-sm font-bold text-foreground mb-1">{s.title}</h3>
+                  <p className="text-[11px] text-muted-foreground leading-snug">{s.description}</p>
+                </div>
+                <div className="pt-2 border-t border-border/50 flex items-center justify-between text-[10px] text-muted-foreground">
+                  <span>Latency</span>
+                  <span className="text-emerald-500 font-bold">&lt; 800ms</span>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Final Action CTA ── */}
+      <section className="py-16 sm:py-24 bg-muted/20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-5">
+          <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+            See the Complete Clinical Workflow in Real Time
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto">
+            Experience the 3-panel telehealth cockpit, explore interactive triage queues, and test ambient FHIR generation.
+          </p>
+          <div className="pt-2 flex justify-center gap-3">
+            <Link href="/signup">
+              <Button size="lg" className="rounded-full px-7 bg-primary text-primary-foreground font-semibold">
+                Start Free Trial
+              </Button>
+            </Link>
+            <Link href="/screens">
+              <Button variant="outline" size="lg" className="rounded-full px-7 border-border font-semibold">
+                Open All Screens Showcase
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
     </div>

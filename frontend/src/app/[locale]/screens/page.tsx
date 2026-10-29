@@ -48,6 +48,7 @@ import { DrGodlyLogo } from '@/components/shared/DrGodlyLogo';
 import { DoctorSearchMarketplace } from '@/modules/client/doctor-search/DoctorSearchMarketplace';
 import { DashboardOverview } from '@/modules/client/telemedicine/doctor/component/dashboard-overview/DashboardOverview';
 import { DoctorTelemedicineCockpit } from '@/modules/client/telemedicine/doctor/component/online-consultation/DoctorTelemedicineCockpit';
+import { DoctorClinicalRecordsWorkspace } from '@/modules/client/telemedicine/doctor/component/clinical-records/DoctorClinicalRecordsWorkspace';
 import { PatientDashboard } from '@/modules/client/telemedicine/patient/component/dashboard/PatientDashboard';
 import { AiIntakeStudio } from '@/modules/client/telemedicine/patient/component/ai-intake/AiIntakeStudio';
 import { GenericPharmacyCheckout } from '@/modules/client/telemedicine/patient/component/pharmacy/GenericPharmacyCheckout';
@@ -135,7 +136,7 @@ const mockAppointments: TAppointmentResponse[] = [
   },
 ];
 
-type DoctorTab = 'telemedicine' | 'queue' | 'rx-soap';
+type DoctorTab = 'telemedicine' | 'queue' | 'rx-soap' | 'clinical-emr';
 type PatientTab = 'dashboard' | 'intake' | 'marketplace' | 'pharmacy';
 
 export default function ScreensShowcasePage() {
@@ -221,8 +222,19 @@ export default function ScreensShowcasePage() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* Persona Title & Security Status */}
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200/70 flex items-center justify-center text-blue-600 font-bold shrink-0 shadow-2xs">
-              {currentRole === 'doctor' ? <Stethoscope className="w-5 h-5" /> : <User className="w-5 h-5" />}
+            <div className="relative shrink-0">
+              <img
+                src={
+                  currentRole === 'doctor'
+                    ? 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=200&q=80'
+                    : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80'
+                }
+                alt={currentRole === 'doctor' ? 'Dr. Alexander Wright, MD' : 'Louise Reed'}
+                className="w-12 h-12 rounded-2xl object-cover object-top ring-2 ring-slate-100 shadow-xs"
+              />
+              <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-white absolute -bottom-0.5 -right-0.5 flex items-center justify-center">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              </span>
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -243,13 +255,13 @@ export default function ScreensShowcasePage() {
           </div>
 
           {/* Segmented Apple-Grade Navigation Pill Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 no-scrollbar scroll-smooth w-full md:w-auto -mx-1 px-1">
             {currentRole === 'doctor' ? (
               <>
                 <button
                   type="button"
                   onClick={() => setDoctorTab('telemedicine')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`shrink-0 whitespace-nowrap flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     doctorTab === 'telemedicine'
                       ? 'bg-slate-900 text-white shadow-sm'
                       : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
@@ -261,7 +273,7 @@ export default function ScreensShowcasePage() {
                 <button
                   type="button"
                   onClick={() => setDoctorTab('queue')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`shrink-0 whitespace-nowrap flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     doctorTab === 'queue'
                       ? 'bg-slate-900 text-white shadow-sm'
                       : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
@@ -273,7 +285,7 @@ export default function ScreensShowcasePage() {
                 <button
                   type="button"
                   onClick={() => setDoctorTab('rx-soap')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`shrink-0 whitespace-nowrap flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     doctorTab === 'rx-soap'
                       ? 'bg-slate-900 text-white shadow-sm'
                       : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
@@ -282,13 +294,25 @@ export default function ScreensShowcasePage() {
                   <FileCheck2 className="w-3.5 h-3.5" />
                   <span>Clinical SOAP & e-Rx</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setDoctorTab('clinical-emr')}
+                  className={`shrink-0 whitespace-nowrap flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                    doctorTab === 'clinical-emr'
+                      ? 'bg-slate-900 text-white shadow-sm'
+                      : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
+                  }`}
+                >
+                  <Stethoscope className="w-3.5 h-3.5 text-blue-500" />
+                  <span>Longitudinal EMR & Charting</span>
+                </button>
               </>
             ) : (
               <>
                 <button
                   type="button"
                   onClick={() => setPatientTab('dashboard')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`shrink-0 whitespace-nowrap flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     patientTab === 'dashboard'
                       ? 'bg-slate-900 text-white shadow-sm'
                       : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
@@ -300,7 +324,7 @@ export default function ScreensShowcasePage() {
                 <button
                   type="button"
                   onClick={() => setPatientTab('intake')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`shrink-0 whitespace-nowrap flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     patientTab === 'intake'
                       ? 'bg-slate-900 text-white shadow-sm'
                       : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
@@ -312,7 +336,7 @@ export default function ScreensShowcasePage() {
                 <button
                   type="button"
                   onClick={() => setPatientTab('marketplace')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`shrink-0 whitespace-nowrap flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     patientTab === 'marketplace'
                       ? 'bg-slate-900 text-white shadow-sm'
                       : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
@@ -324,7 +348,7 @@ export default function ScreensShowcasePage() {
                 <button
                   type="button"
                   onClick={() => setPatientTab('pharmacy')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`shrink-0 whitespace-nowrap flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     patientTab === 'pharmacy'
                       ? 'bg-slate-900 text-white shadow-sm'
                       : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
@@ -336,6 +360,32 @@ export default function ScreensShowcasePage() {
               </>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* ── Live Telemetry Status Ticker Ribbon ── */}
+      <div className="bg-slate-900 text-white px-4 sm:px-6 py-1.5 text-[11px] font-mono flex items-center justify-between overflow-x-auto whitespace-nowrap gap-4 border-b border-slate-800 shadow-inner">
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            TELEHEALTH PIPELINE: 100% OPERATIONAL
+          </span>
+          <span className="text-slate-700">|</span>
+          <span className="text-slate-300">
+            FHIR R4 SERVER: <span className="text-blue-400">drgodly.health/fhir/r4</span> (11ms)
+          </span>
+          <span className="text-slate-700">|</span>
+          <span className="text-slate-300">
+            SECURITY: <span className="text-emerald-400">HIPAA BAA &bull; AES-256</span>
+          </span>
+        </div>
+        <div className="flex items-center gap-2.5 text-slate-400">
+          <span className="flex items-center gap-1 text-slate-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            EHR LIVE SYNC: <span className="text-white font-bold ml-1">ACTIVE</span>
+          </span>
+          <span className="text-slate-600">&bull;</span>
+          <span className="text-cyan-400 font-bold">1080p HD WebRTC</span>
         </div>
       </div>
 
@@ -351,7 +401,14 @@ export default function ScreensShowcasePage() {
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/70 shadow-xs">
                   <div className="flex items-center gap-3">
-                    <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
+                    <div className="relative shrink-0">
+                      <img
+                        src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80"
+                        alt="Louise Reed"
+                        className="w-10 h-10 rounded-xl object-cover ring-2 ring-emerald-400 shadow-2xs"
+                      />
+                      <span className="w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white absolute -bottom-0.5 -right-0.5" />
+                    </div>
                     <div>
                       <h2 className="text-base font-bold text-slate-900 leading-tight">
                         Encounter in Progress: Louise Reed (Age 30, Female)
@@ -566,6 +623,26 @@ export default function ScreensShowcasePage() {
                 </div>
               </div>
             )}
+
+            {/* Screen 4: Longitudinal Clinical EMR & Charting */}
+            {doctorTab === 'clinical-emr' && (
+              <div className="space-y-4 animate-in fade-in duration-300">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200/70">
+                  <div>
+                    <h2 className="text-xl font-black text-slate-900 tracking-tight">
+                      Longitudinal Patient Chart & Clinical EMR
+                    </h2>
+                    <p className="text-xs text-slate-500">
+                      Problem List, Medication Reconciliation, Diagnostic Reference Ranges & Smart S.O.A.P Note
+                    </p>
+                  </div>
+                  <Badge className="bg-blue-50 text-blue-700 border-blue-200/80 text-xs py-1 px-3 font-semibold">
+                    FHIR R4 DiagnosticReport & ClinicalImpression Validated
+                  </Badge>
+                </div>
+                <DoctorClinicalRecordsWorkspace />
+              </div>
+            )}
           </div>
         )}
 
@@ -583,21 +660,28 @@ export default function ScreensShowcasePage() {
                   <div className="pointer-events-none absolute -left-16 -bottom-16 w-80 h-80 rounded-full bg-cyan-500/10 blur-3xl" />
 
                   <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="space-y-2.5 max-w-xl">
-                      <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-semibold text-cyan-200 border border-white/15">
-                        <ShieldCheck size={14} />
-                        <span>Member ID: #DG-89241 &middot; Active Plan</span>
+                    <div className="flex items-start gap-4">
+                      <img
+                        src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80"
+                        alt="Louise Reed"
+                        className="w-16 h-16 rounded-2xl object-cover ring-2 ring-white/30 shrink-0 shadow-md hidden sm:block"
+                      />
+                      <div className="space-y-2 max-w-xl">
+                        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-semibold text-cyan-200 border border-white/15">
+                          <ShieldCheck size={14} />
+                          <span>Member ID: #DG-89241 &middot; Active Plan</span>
+                        </div>
+                        <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
+                          Good afternoon, Louise. Your care team is active.
+                        </h2>
+                        <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+                          Your connected blood pressure monitor synced 42 minutes ago. Your readings are within standard baseline parameters.
+                        </p>
                       </div>
-                      <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
-                        Good afternoon, Louise. Your care team is active.
-                      </h2>
-                      <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
-                        Your connected blood pressure monitor synced 42 minutes ago. Your readings are within standard baseline parameters.
-                      </p>
                     </div>
 
                     <div className="flex items-center gap-4 bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/15 shrink-0 shadow-lg">
-                      <HealthScoreGauge score={86} maxScore={100} />
+                      <HealthScoreGauge score={86} />
                       <div>
                         <div className="text-[11px] text-slate-300 uppercase tracking-wider font-bold">Health Score</div>
                         <div className="text-2xl font-black text-white">86 / 100</div>
@@ -641,19 +725,33 @@ export default function ScreensShowcasePage() {
                         <h3 className="text-sm font-extrabold text-slate-900">Scheduled Virtual Visit</h3>
                         <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-[10px] font-bold">Today</Badge>
                       </div>
-                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
+                      <div className="p-4 rounded-2xl bg-gradient-to-b from-blue-50/60 to-slate-50 border border-blue-100/80 space-y-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center text-xs shadow-xs">
-                            AW
+                          <div className="relative shrink-0">
+                            <img
+                              src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80"
+                              alt="Dr. Alexander Wright, MD"
+                              className="w-12 h-12 rounded-2xl object-cover object-top ring-2 ring-white shadow-sm"
+                            />
+                            <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-white absolute -bottom-0.5 -right-0.5 flex items-center justify-center">
+                              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                            </span>
                           </div>
                           <div>
-                            <div className="text-xs font-bold text-slate-900">Dr. Alexander Wright, MD</div>
-                            <div className="text-[11px] text-slate-500">Harvard Medical School &middot; Cardiology</div>
+                            <div className="flex items-center gap-1.5">
+                              <div className="text-xs font-bold text-slate-900">Dr. Alexander Wright, MD</div>
+                              <CheckCircle2 className="size-3 text-blue-600 fill-blue-100" />
+                            </div>
+                            <div className="text-[11px] text-slate-500 font-medium">Harvard Medical Faculty &middot; Chief Cardiologist</div>
                           </div>
                         </div>
                         <div className="flex items-center justify-between text-xs text-slate-600 pt-2 border-t border-slate-200/60">
-                          <span>Appointment Time:</span>
-                          <span className="font-bold text-blue-600">10:30 AM EST (In 20 mins)</span>
+                          <span className="flex items-center gap-1 text-[11px] text-slate-500">
+                            <Clock className="size-3 text-blue-600" /> Appointment:
+                          </span>
+                          <span className="font-bold text-blue-700 bg-blue-100/70 px-2 py-0.5 rounded-md text-[11px]">
+                            10:30 AM EST (In 20 mins)
+                          </span>
                         </div>
                         <Button
                           size="sm"
@@ -661,9 +759,10 @@ export default function ScreensShowcasePage() {
                             setCurrentRole('doctor');
                             setDoctorTab('telemedicine');
                           }}
-                          className="w-full mt-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-xs"
+                          className="w-full mt-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold rounded-xl shadow-sm flex items-center justify-center gap-2"
                         >
-                          Launch Virtual Exam Room
+                          <Video className="size-3.5" />
+                          <span>Join HD Video Room</span>
                         </Button>
                       </div>
                     </Card>
@@ -705,141 +804,29 @@ export default function ScreensShowcasePage() {
               </div>
             )}
 
-            {/* Screen 2: AI Symptom Intake Studio */}
+            {/* Screen 2: AI Clinical Intake Studio */}
             {patientTab === 'intake' && (
-              <div className="max-w-4xl mx-auto space-y-6">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-200/70">
+              <div className="space-y-4 animate-in fade-in duration-300">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200/70">
                   <div>
                     <h2 className="text-xl font-black text-slate-900 tracking-tight">
-                      AI Clinical Intake & Triage
+                      AI Clinical Intake & Triage Studio
                     </h2>
                     <p className="text-xs text-slate-500">
-                      Share your symptoms ahead of your visit for automated provider briefing
+                      Anatomical Discomfort Mapping, Visual Analog Scale (VAS 1–10), ECG/Lab OCR Corroboration & Autonomous Red-Flag Triage
                     </p>
                   </div>
-                  <Badge className="bg-blue-50 text-blue-700 border-blue-200/80 text-xs py-1 px-3">
-                    Gemini 2.5 Medical Engine
+                  <Badge className="bg-blue-50 text-blue-700 border-blue-200/80 text-xs py-1 px-3 font-semibold">
+                    FHIR QuestionnaireResponse & Observation Ready
                   </Badge>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                  {/* Chatbot Interface */}
-                  <div className="md:col-span-7">
-                    <Card className="rounded-3xl border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] flex flex-col h-[530px] bg-white overflow-hidden">
-                      <CardHeader className="bg-slate-50/80 border-b border-slate-100 p-4 shrink-0">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
-                            <Sparkles className="size-4" />
-                          </div>
-                          <div>
-                            <h3 className="text-xs font-extrabold text-slate-900">DrGodly Virtual Triage</h3>
-                            <p className="text-[10px] text-slate-500">Evidence-based clinical intake protocol</p>
-                          </div>
-                        </div>
-                      </CardHeader>
-
-                      <div className="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs">
-                        {intakeChatMessages.map((msg, idx) => (
-                          <div
-                            key={idx}
-                            className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
-                          >
-                            <div
-                              className={`max-w-[85%] p-3.5 rounded-2xl text-xs leading-relaxed ${
-                                msg.from === 'user'
-                                  ? 'bg-blue-600 text-white rounded-br-none shadow-xs'
-                                  : 'bg-slate-100/90 text-slate-900 rounded-bl-none border border-slate-200/50'
-                              }`}
-                            >
-                              {msg.text}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="p-3 border-t border-slate-100 bg-slate-50/50 flex items-center gap-2">
-                        <Input
-                          placeholder="Describe what you are experiencing..."
-                          value={intakeInput}
-                          onChange={(e) => setIntakeInput(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && sendIntakeMessage(intakeInput)}
-                          className="text-xs bg-white h-9 rounded-xl border-slate-200"
-                        />
-                        <Button
-                          size="sm"
-                          onClick={() => sendIntakeMessage(intakeInput)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white shrink-0 h-9 px-3.5 rounded-xl shadow-xs"
-                        >
-                          <Send size={13} />
-                        </Button>
-                      </div>
-                    </Card>
-                  </div>
-
-                  {/* Pain Intensity & Quick Chips */}
-                  <div className="md:col-span-5 space-y-4">
-                    <Card className="rounded-3xl border-slate-200/80 shadow-[0_2px_16px_rgba(0,0,0,0.02)] p-5 bg-white space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-extrabold text-slate-900">Visual Severity Scale</h3>
-                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${getPainSeverity(intakePainLevel).color}`}>
-                          {getPainSeverity(intakePainLevel).label}
-                        </span>
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-xs font-bold text-slate-700">
-                          <span>0 (None)</span>
-                          <span className="text-blue-600 text-sm font-black">{intakePainLevel} / 10</span>
-                          <span>10 (Debilitating)</span>
-                        </div>
-                        <input
-                          type="range"
-                          min={0}
-                          max={10}
-                          value={intakePainLevel}
-                          onChange={(e) => setIntakePainLevel(Number(e.target.value))}
-                          className="w-full accent-blue-600 cursor-pointer h-2 bg-slate-200 rounded-lg"
-                        />
-                      </div>
-
-                      <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-100 text-[11px] text-slate-600 space-y-1.5">
-                        <span className="font-bold text-slate-800">Quick Symptoms Tags:</span>
-                        <div className="flex flex-wrap gap-1.5 pt-1">
-                          {['Morning Headache', 'BP > 140/90', 'Lightheadedness', 'No Chest Pain'].map((chip) => (
-                            <button
-                              key={chip}
-                              type="button"
-                              onClick={() => sendIntakeMessage(chip)}
-                              className="px-2.5 py-1 rounded-xl bg-white border border-slate-200/80 hover:border-blue-400 text-slate-800 text-[10px] font-bold transition shadow-2xs"
-                            >
-                              + {chip}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </Card>
-
-                    <Card className="rounded-3xl border-blue-200 bg-blue-50/40 p-5 space-y-2.5">
-                      <div className="flex items-center gap-2 text-blue-900 font-bold text-xs">
-                        <ShieldCheck className="size-4 text-blue-600" />
-                        <span>Physician Pre-Encounter Brief Ready</span>
-                      </div>
-                      <p className="text-[11px] text-slate-600 leading-relaxed">
-                        Your symptom details will be synthesized into an AI encounter summary. Dr. Wright will review this before joining your video consultation.
-                      </p>
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setCurrentRole('doctor');
-                          setDoctorTab('telemedicine');
-                        }}
-                        className="w-full mt-1 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-xs"
-                      >
-                        Proceed to Virtual Consultation
-                      </Button>
-                    </Card>
-                  </div>
-                </div>
+                <AiIntakeStudio
+                  patientName="Louise Reed"
+                  onNavigateToConsultation={() => {
+                    setCurrentRole('doctor');
+                    setDoctorTab('telemedicine');
+                  }}
+                />
               </div>
             )}
 

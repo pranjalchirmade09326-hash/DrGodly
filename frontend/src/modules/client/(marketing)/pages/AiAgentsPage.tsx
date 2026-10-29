@@ -3,9 +3,9 @@
  *
  * Layer: client / (marketing) / pages
  *
- * Covers: the three clinical AI agents (intake, consultation, voice), how each
- * agent works end-to-end, the data it produces (FHIR resources, SOAP notes),
- * and the human oversight model that ensures clinical safety.
+ * Covers: the specialized clinical AI agents (Intake, Consultation Scribe, CDS),
+ * how each operates across the encounter continuum, and the strict Human-in-the-Loop
+ * safety principles that guarantee clinician authority and HIPAA adherence.
  */
 
 "use client";
@@ -13,7 +13,8 @@
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { OAuthPkceButton } from "@/modules/client/auth/components/OAuthPkceButton";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import {
   Brain,
   MessageSquare,
@@ -26,302 +27,271 @@ import {
   Database,
   ShieldCheck,
   Clock,
+  Activity,
+  Stethoscope,
 } from "lucide-react";
 import type { AuthResponse } from "@/modules/server/auth/types";
-
-// ── Agent definitions ──────────────────────────────────────────────────────
 
 const agents = [
   {
     id: "intake",
-    icon: <MessageSquare className="w-8 h-8 text-blue-500" />,
+    icon: <MessageSquare className="w-6 h-6 text-blue-500" />,
     color: "border-blue-500/20 bg-blue-500/5",
     accentColor: "text-blue-500",
-    badgeColor: "border-blue-500/30 text-blue-600",
-    status: "Active",
-    title: "AI Intake Agent",
-    subtitle: "Pre-appointment patient intake via text or voice",
+    badgeColor: "border-blue-500/30 text-blue-600 dark:text-blue-400",
+    status: "Active Production",
+    title: "AI Intake & Triage Agent",
+    subtitle: "Pre-appointment clinical dialogue via voice or text",
     description:
-      "Before every appointment, the AI Intake Agent guides the patient through a structured clinical interview. It collects symptoms, duration, severity, and relevant history — then converts everything into structured FHIR resources.",
+      "Before every appointment, the AI Intake Agent conducts an adaptive clinical interview. It elicits symptoms, pain ratings, duration, and past history — converting raw dialogue into structured FHIR Observations.",
     howItWorks: [
-      "Patient accesses the intake form before their appointment",
-      "Agent asks targeted clinical questions in natural language",
-      "Patient responses are parsed and structured in real time",
-      "FHIR Observations and Conditions are written to the EMR",
-      "A SOAP-style AI summary is generated for the doctor",
+      "Patient accesses pre-visit intake link on mobile or desktop",
+      "Agent asks targeted clinical questions dynamically adapted to response",
+      "NLP extracts red flags, duration, and severity scores in real time",
+      "Drafts FHIR Observations and Conditions directly into the patient record",
+      "Synthesizes an advance clinical summary for the attending physician",
     ],
-    outputs: ["FHIR Observation resources", "FHIR Condition (differential hints)", "AI SOAP Note", "Risk assessment score", "Recommended questions for doctor"],
+    outputs: ["FHIR Observation resources", "Pre-consultation SOAP summary", "Emergency red flag alerts", "ICD-10 differential hints"],
   },
   {
-    id: "consultation",
-    icon: <Brain className="w-8 h-8 text-violet-500" />,
+    id: "scribe",
+    icon: <Mic className="w-6 h-6 text-teal-500" />,
+    color: "border-teal-500/20 bg-teal-500/5",
+    accentColor: "text-teal-500",
+    badgeColor: "border-teal-500/30 text-teal-600 dark:text-teal-400",
+    status: "Active Production",
+    title: "Ambient Consultation Scribe",
+    subtitle: "Real-time WebRTC audio transcription & sub-second SOAP generation",
+    description:
+      "During telehealth visits, the Ambient Scribe operates in the background. It transcribes multi-party conversations, attributes speakers, and autonomously constructs clean Subjective, Objective, Assessment, and Plan notes.",
+    howItWorks: [
+      "Physician starts 1080p encrypted WebRTC consultation session",
+      "Bi-directional audio streams at 48kHz with acoustic noise cancellation",
+      "Parallel SLMs extract clinical observations without lag",
+      "SOAP note sections update progressively during the encounter",
+      "Physician reviews, edits, and digitally attests with a single click",
+    ],
+    outputs: ["FHIR Encounter payload", "Autonomous SOAP note (S/O/A/P)", "Timestamped speaker transcript", "Digital signature attestation"],
+  },
+  {
+    id: "cds",
+    icon: <Brain className="w-6 h-6 text-violet-500" />,
     color: "border-violet-500/20 bg-violet-500/5",
     accentColor: "text-violet-500",
-    badgeColor: "border-violet-500/30 text-violet-600",
-    status: "Active",
-    title: "AI Consultation Agent",
-    subtitle: "Real-time clinical intelligence during telemedicine consultations",
+    badgeColor: "border-violet-500/30 text-violet-600 dark:text-violet-400",
+    status: "Active Production",
+    title: "Clinical Decision Support (CDS) Agent",
+    subtitle: "Evidence-based guidelines & differential diagnosis ranking",
     description:
-      "During the telemedicine consultation, the AI Consultation Agent assists the clinician by transcribing the conversation, generating a structured SOAP note, and surfacing clinical flags in real time.",
+      "Leveraging medical RAG (Retrieval-Augmented Generation), the CDS Agent matches patient vitals and symptoms against ACC/AHA, GINA, and ADA clinical practice guidelines to present probabilistic differentials.",
     howItWorks: [
-      "Doctor and patient connect for a telemedicine session",
-      "Agent transcribes the conversation in real time",
-      "Clinical keywords trigger SOAP note section updates",
-      "Agent surfaces differential diagnoses and red flags",
-      "On session end, a complete Encounter is submitted for clinician review",
+      "Correlates live patient vitals with historical laboratory metrics",
+      "Queries vector database containing verified peer-reviewed guidelines",
+      "Ranks top differential diagnoses with calculated confidence percentages",
+      "Suggests guideline-adherent pharmacotherapy and lab orders",
+      "Prevents drug-condition contraindications and duplicate dosing",
     ],
-    outputs: ["FHIR Encounter resource", "Full SOAP Note (S/O/A/P)", "Differential diagnosis", "Assessment & treatment plan", "Follow-up recommendation"],
-  },
-  {
-    id: "voice",
-    icon: <Mic className="w-8 h-8 text-emerald-500" />,
-    color: "border-emerald-500/20 bg-emerald-500/5",
-    accentColor: "text-emerald-500",
-    badgeColor: "border-emerald-500/30 text-emerald-600",
-    status: "Coming Soon",
-    title: "Voice AI Agent",
-    subtitle: "Ambient voice intake and consultation for hands-free clinical workflows",
-    description:
-      "The Voice AI Agent extends the capabilities of the intake and consultation agents into fully ambient, hands-free clinical interactions — capturing clinical conversations in real time without requiring any manual input from the clinician.",
-    howItWorks: [
-      "Clinician activates ambient listening mode for the session",
-      "Agent identifies speakers (clinician vs. patient) automatically",
-      "Clinical dialogue is transcribed and structured live",
-      "FHIR resources are created as the conversation unfolds",
-      "Clinician reviews and approves the generated Encounter before finalizing",
-    ],
-    outputs: ["Real-time transcript", "Speaker-attributed SOAP note", "FHIR Observation stream", "Ambient clinical summary", "Auto-generated follow-up plan"],
+    outputs: ["Differential diagnosis probabilities", "Guideline citations (ACC/AHA, ADA)", "Suggested pharmacotherapy plans", "Lab requisition orders"],
   },
 ];
-
-// ── Human oversight model ──────────────────────────────────────────────────
 
 const oversightPrinciples = [
   {
-    icon: <Eye className="w-5 h-5 text-primary" />,
-    title: "Review Before Write",
-    description: "No AI-generated content is written to the FHIR EMR until a licensed clinician reviews and explicitly approves it.",
+    icon: <Eye className="w-5 h-5 text-blue-500" />,
+    title: "Clinician Authority First",
+    description: "No AI output is committed to the permanent EMR until a licensed practitioner explicitly reviews, edits, and attests it.",
   },
   {
-    icon: <ShieldCheck className="w-5 h-5 text-primary" />,
-    title: "Advisory by Default",
-    description: "Every AI output is marked as a suggestion. Clinicians can accept, edit, or discard any AI-generated content before it enters the patient record.",
+    icon: <ShieldCheck className="w-5 h-5 text-emerald-500" />,
+    title: "Advisory by Architecture",
+    description: "Every diagnosis and medication suggestion is marked as an advisory draft state, upholding the 'AI proposes; clinicians dispose' rule.",
   },
   {
-    icon: <ClipboardList className="w-5 h-5 text-primary" />,
-    title: "Full Audit Trail",
-    description: "All AI actions — what it generated, when, and whether the clinician accepted or modified it — are logged in immutable audit records.",
+    icon: <ClipboardList className="w-5 h-5 text-teal-500" />,
+    title: "Immutable Audit Trails",
+    description: "Every SLM prompt, inference token, and clinician modification is recorded in cryptographically signed audit logs for compliance.",
   },
   {
-    icon: <Clock className="w-5 h-5 text-primary" />,
-    title: "Time-Bounded Sessions",
-    description: "Each AI agent session is time-bounded and tied to a specific appointment. No agent has persistent access to the full patient record.",
+    icon: <Clock className="w-5 h-5 text-violet-500" />,
+    title: "Session-Bounded Memory",
+    description: "Agent execution contexts are strictly isolated to the active clinical encounter, preventing cross-tenant data leakage.",
   },
 ];
 
-// ── Animation ──────────────────────────────────────────────────────────────
-
-const fade = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.07, duration: 0.5 } }),
-};
-
-// ── Component ──────────────────────────────────────────────────────────────
-
-/**
- * AI Clinical Agents dedicated marketing page.
- *
- * @param session - Active auth session for CTA variant.
- */
 export function AiAgentsPage({ session }: { session: AuthResponse | null }) {
   return (
     <div className="pt-20">
-
       {/* ── Hero ── */}
-      <section className="py-20 sm:py-28 bg-background relative overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl opacity-50 pointer-events-none" />
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div className="max-w-3xl" initial="hidden" animate="visible" variants={fade}>
-            <div className="flex items-center gap-2 mb-4">
-              <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                AI Clinical Agents
-              </Badge>
-              <Badge variant="secondary" className="text-xs">Autonomous Clinical Intelligence</Badge>
+      <section className="py-16 sm:py-24 bg-background relative overflow-hidden border-b border-border/50">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl opacity-50 pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-3xl space-y-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-600 dark:text-violet-400 text-xs font-bold tracking-wide">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Multi-Agent Clinical Intelligence</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.08] mb-6">
-              Clinical AI Agents That Work Before, During, and After Every Appointment
+
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-[1.1]">
+              Clinical AI Agents That Work{" "}
+              <span className="bg-gradient-to-r from-violet-600 via-blue-500 to-teal-500 bg-clip-text text-transparent">
+                Before, During, & After
+              </span>{" "}
+              Every Visit
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed mb-8">
-              DrGodly deploys specialized AI agents at each phase of the clinical encounter.
-              The Intake Agent collects and structures patient data before the appointment.
-              The Consultation Agent assists the clinician in real time. All outputs become
-              FHIR records — reviewed and approved by the clinician before they&apos;re finalized.
+
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed font-normal">
+              DrGodly coordinates specialized small language models across the clinical encounter.
+              From conversational intake to real-time ambient scribing and evidence-based CDS,
+              our agents eliminate documentation fatigue while keeping physicians in total control.
             </p>
-            <div className="flex flex-wrap gap-3">
-              {!session && (
-                <OAuthPkceButton size="lg" className="rounded-full px-8">
-                  Get Started Free <ArrowRight className="ml-2 w-4 h-4" />
-                </OAuthPkceButton>
+
+            <div className="pt-2 flex flex-wrap gap-3">
+              {!session ? (
+                <Link href="/signup">
+                  <Button size="lg" className="rounded-full px-7 h-11 text-sm bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-500 hover:to-blue-500 text-white font-semibold shadow-md">
+                    Start Free Trial <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/screens">
+                  <Button size="lg" className="rounded-full px-7 h-11 text-sm bg-primary text-primary-foreground font-semibold">
+                    Open Clinical Cockpit <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </Link>
               )}
-              <a href="#agents" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border text-sm font-medium hover:bg-secondary transition-colors">
-                Explore Agents <ArrowRight className="w-4 h-4" />
-              </a>
+              <Link href="/screens">
+                <Button variant="outline" size="lg" className="rounded-full px-6 h-11 text-sm font-semibold border-border">
+                  Experience Live in Studio
+                </Button>
+              </Link>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 p-8 rounded-2xl bg-secondary/40 border border-border/50"
-          >
+          {/* Quick Metrics */}
+          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-5 sm:p-6 rounded-2xl bg-card border border-border/70 shadow-2xs">
             {[
-              { icon: <Sparkles className="w-5 h-5 text-primary" />, value: "3", label: "Specialized clinical agents" },
-              { icon: <Database className="w-5 h-5 text-primary" />, value: "FHIR", label: "All outputs are FHIR resources" },
-              { icon: <Eye className="w-5 h-5 text-primary" />, value: "100%", label: "Clinician review required" },
-              { icon: <ClipboardList className="w-5 h-5 text-primary" />, value: "Full", label: "Audit trail on all AI actions" },
+              { icon: <Sparkles className="w-5 h-5 text-violet-500" />, value: "3", label: "Specialized clinical agents" },
+              { icon: <Database className="w-5 h-5 text-blue-500" />, value: "FHIR R4", label: "Structured output persistence" },
+              { icon: <Eye className="w-5 h-5 text-teal-500" />, value: "100%", label: "Clinician oversight required" },
+              { icon: <Clock className="w-5 h-5 text-emerald-500" />, value: "< 800ms", label: "Autonomous SOAP latency" },
             ].map((f, i) => (
-              <div key={i} className="text-center">
-                <div className="flex justify-center mb-2">{f.icon}</div>
-                <p className="text-2xl font-bold text-foreground">{f.value}</p>
-                <p className="text-sm text-muted-foreground mt-1">{f.label}</p>
+              <div key={i} className="text-center p-2">
+                <div className="flex justify-center mb-1.5">{f.icon}</div>
+                <p className="text-lg sm:text-xl font-extrabold text-foreground">{f.value}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{f.label}</p>
               </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── Agents ── */}
-      <section id="agents" className="py-20 sm:py-24 bg-secondary/30">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
-          {agents.map((agent, ai) => (
-            <motion.div
-              key={agent.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className={`grid lg:grid-cols-2 gap-12 items-start ${ai % 2 === 1 ? "lg:grid-flow-col-dense" : ""}`}
-            >
-              {/* Text side */}
-              <div className={ai % 2 === 1 ? "lg:col-start-2" : ""}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-14 h-14 rounded-2xl ${agent.color} border flex items-center justify-center`}>
-                    {agent.icon}
-                  </div>
-                  <div>
-                    <Badge variant="outline" className={`text-[10px] mb-1 ${agent.badgeColor}`}>
-                      {agent.status}
-                    </Badge>
-                    <h2 className={`text-2xl font-bold ${agent.accentColor}`}>{agent.title}</h2>
-                  </div>
-                </div>
-                <p className="text-muted-foreground font-medium mb-3">{agent.subtitle}</p>
-                <p className="text-muted-foreground leading-relaxed mb-6">{agent.description}</p>
-
-                <div className="space-y-2 mb-6">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">How It Works</p>
-                  {agent.howItWorks.map((step, i) => (
-                    <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className={`font-bold shrink-0 mt-0.5 ${agent.accentColor}`}>{i + 1}.</span>
-                      {step}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Output card */}
-              <div className={ai % 2 === 1 ? "lg:col-start-1 lg:row-start-1" : ""}>
-                <Card className={`border ${agent.color}`}>
-                  <CardContent className="pt-6">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-4">
-                      Agent Outputs
-                    </p>
-                    <div className="space-y-3">
-                      {agent.outputs.map((output, i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-background border border-border/50">
-                          <CheckCircle2 className={`w-4 h-4 shrink-0 ${agent.accentColor}`} />
-                          <span className="text-sm text-foreground font-medium">{output}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Human oversight ── */}
-      <section className="py-20 sm:py-24 bg-background">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fade}
-            className="text-center max-w-3xl mx-auto mb-16"
-          >
-            <span className="text-primary font-semibold tracking-wider uppercase text-sm">Human Oversight</span>
-            <h2 className="mt-2 text-3xl sm:text-4xl font-bold text-foreground">
-              AI Assists. Clinicians Decide.
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Every AI output in DrGodly is advisory. No AI agent can finalize a FHIR
-              record, submit a diagnosis, or modify a patient chart without explicit
-              clinician review and approval.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {oversightPrinciples.map((p, i) => (
-              <motion.div
-                key={i}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fade}
-              >
-                <Card className="h-full border-border/50">
-                  <CardContent className="pt-6 space-y-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                      {p.icon}
-                    </div>
-                    <h3 className="font-bold text-foreground">{p.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{p.description}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="py-20 sm:py-28 bg-secondary/30">
-        <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Put AI to Work on Your Clinical Workflow
+      {/* ── Agents Deep Dive ── */}
+      <section className="py-16 sm:py-24 bg-muted/20 border-b border-border/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+          {agents.map((agent, i) => (
+            <div
+              key={agent.id}
+              className={`grid lg:grid-cols-12 gap-8 items-center ${i % 2 === 1 ? "lg:flex-row-reverse" : ""}`}
+            >
+              <div className="lg:col-span-6 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-12 h-12 rounded-xl ${agent.color} border flex items-center justify-center`}>
+                    {agent.icon}
+                  </div>
+                  <div>
+                    <Badge variant="outline" className={`text-[10px] mb-1 font-bold ${agent.badgeColor}`}>
+                      {agent.status}
+                    </Badge>
+                    <h2 className="text-xl sm:text-2xl font-bold text-foreground">{agent.title}</h2>
+                  </div>
+                </div>
+
+                <p className="text-xs sm:text-sm text-primary font-medium">{agent.subtitle}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{agent.description}</p>
+
+                <div className="pt-2">
+                  <h4 className="text-xs font-bold text-foreground uppercase tracking-wider mb-2">Workflow Process:</h4>
+                  <ul className="space-y-1.5">
+                    {agent.howItWorks.map((step, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-xs text-muted-foreground">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="lg:col-span-6">
+                <Card className="rounded-2xl border border-border/70 bg-card shadow-md p-5 space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-border/60">
+                    <span className="text-xs font-bold text-foreground">Generated Clinical Deliverables</span>
+                    <Badge variant="outline" className="text-[10px] border-border font-mono">
+                      Sub-second SLM
+                    </Badge>
+                  </div>
+                  <div className="space-y-2">
+                    {agent.outputs.map((out, idx) => (
+                      <div key={idx} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-muted/40 border border-border/50 text-xs">
+                        <Activity className="w-3.5 h-3.5 text-primary shrink-0" />
+                        <span className="font-medium text-foreground">{out}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Human Oversight Principles ── */}
+      <section className="py-16 sm:py-24 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Clinical Safety</span>
+            <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+              Human-in-the-Loop Clinical Governance
             </h2>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10">
-              Let AI handle intake, transcription, and documentation — so your clinicians
-              can focus on what matters: the patient in front of them.
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              DrGodly is engineered with strict ethical and legal safeguards. Autonomous agents assist,
+              synthesize, and draft — but licensed clinicians always retain absolute final decision-making power.
             </p>
-            {!session && (
-              <OAuthPkceButton size="lg" className="rounded-full px-10 h-12">
-                Get Started Free <ArrowRight className="ml-2 w-4 h-4" />
-              </OAuthPkceButton>
-            )}
-          </motion.div>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {oversightPrinciples.map((p, idx) => (
+              <Card key={idx} className="p-5 rounded-2xl bg-card border border-border/70 shadow-2xs space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center border border-border">
+                  {p.icon}
+                </div>
+                <h3 className="font-bold text-sm sm:text-base text-foreground">{p.title}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">{p.description}</p>
+              </Card>
+            ))}
+          </div>
+
+          {/* CTA Banner */}
+          <div className="p-6 rounded-2xl bg-gradient-to-r from-violet-600/10 via-blue-500/10 to-teal-500/10 border border-primary/20 text-center space-y-3">
+            <h3 className="text-base sm:text-lg font-bold text-foreground">
+              Experience DrGodly&apos;s Clinical Agents in Real Time
+            </h3>
+            <p className="text-xs text-muted-foreground max-w-xl mx-auto">
+              Test ambient voice diarization, live SOAP note drafting, and automated FHIR generation in our interactive sandbox.
+            </p>
+            <div className="pt-2 flex justify-center gap-3">
+              <Link href="/signup">
+                <Button size="sm" className="rounded-full px-6 bg-primary text-primary-foreground font-semibold">
+                  Start Free Trial
+                </Button>
+              </Link>
+              <Link href="/screens">
+                <Button variant="outline" size="sm" className="rounded-full px-6 border-border font-semibold">
+                  Open Interactive Screens
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>
