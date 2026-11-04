@@ -125,7 +125,8 @@ export default function LoginPage() {
       // Demo round trip — see the note above about OAuthPkceButton for real auth.
       await new Promise((resolve) => setTimeout(resolve, 600));
       toast.success(`Welcome to DrGodly, ${DEMO_ACCOUNTS[role].name}!`);
-      router.push("/screens");
+      // Carry the chosen persona so the demo workspace opens on the matching side.
+      router.push(`/screens?role=${role}`);
     } finally {
       setIsLoading(false);
     }

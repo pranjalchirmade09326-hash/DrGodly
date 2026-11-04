@@ -6,6 +6,19 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "assets.drgodly.com",
+      },
+    ],
+  },
   serverExternalPackages: ["dicom.ts"],
   output: "standalone",
   experimental: {
@@ -27,5 +40,10 @@ const nextConfig = {
   },
 };
 
-const withNextIntl = createNextIntlPlugin();
+// The plugin resolves `next-intl/config` to src/i18n/request.ts for BOTH
+// bundlers. Doing it with a manual webpack alias instead (as an earlier
+// revision of this file did) only covers webpack, so `pnpm dev:turbo` and
+// `next build` under Turbopack would fail to find the i18n request config.
+// next-intl requires a *relative* path here — an absolute one is rejected.
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 export default withNextIntl(nextConfig);

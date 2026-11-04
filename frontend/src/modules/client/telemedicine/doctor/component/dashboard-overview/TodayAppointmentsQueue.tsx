@@ -12,6 +12,7 @@ export interface QueueAppointment {
   id: number | string;
   patientName: string;
   patientAgeGender: string;
+  avatarUrl?: string;
   time: string;
   type: "video" | "in-person";
   reason: string;
@@ -25,6 +26,7 @@ const SAMPLE_QUEUE: QueueAppointment[] = [
     id: 101,
     patientName: "Anjali Menon",
     patientAgeGender: "42, Female",
+    avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80",
     time: "10:30 AM",
     type: "video",
     reason: "Hypertension & Diabetes Follow-up",
@@ -36,6 +38,7 @@ const SAMPLE_QUEUE: QueueAppointment[] = [
     id: 102,
     patientName: "Rahul Verma",
     patientAgeGender: "35, Male",
+    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
     time: "11:15 AM",
     type: "video",
     reason: "Acute Bronchitis & Persistent Cough",
@@ -47,6 +50,7 @@ const SAMPLE_QUEUE: QueueAppointment[] = [
     id: 103,
     patientName: "Meera Nair",
     patientAgeGender: "58, Female",
+    avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80",
     time: "02:00 PM",
     type: "in-person",
     reason: "Cardiology Review & ECG Evaluation",
@@ -58,6 +62,7 @@ const SAMPLE_QUEUE: QueueAppointment[] = [
     id: 104,
     patientName: "Sanjay Patel",
     patientAgeGender: "29, Male",
+    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
     time: "03:30 PM",
     type: "video",
     reason: "Lab Report Discussion (Lipid Profile)",
@@ -157,12 +162,21 @@ export function TodayAppointmentsQueue({
                 {/* Patient Details */}
                 <td className="py-3 px-4 whitespace-nowrap">
                   <div className="flex items-center gap-2.5">
-                    <div className="h-8 w-8 rounded-full bg-teal-100 text-teal-800 font-semibold flex items-center justify-center text-xs shrink-0">
-                      {item.patientName.charAt(0)}
-                    </div>
+                    {item.avatarUrl ? (
+                      <img
+                        src={item.avatarUrl}
+                        alt={item.patientName}
+                        className="h-9 w-9 rounded-full object-cover ring-1 ring-slate-200 shrink-0 shadow-2xs"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="h-9 w-9 rounded-full bg-teal-100 text-teal-800 font-semibold flex items-center justify-center text-xs shrink-0">
+                        {item.patientName.charAt(0)}
+                      </div>
+                    )}
                     <div>
-                      <div className="font-medium text-slate-900">{item.patientName}</div>
-                      <div className="text-[11px] text-slate-500">{item.patientAgeGender}</div>
+                      <div className="font-semibold text-slate-900">{item.patientName}</div>
+                      <div className="text-[11px] text-slate-500 font-medium">{item.patientAgeGender}</div>
                     </div>
                   </div>
                 </td>

@@ -1,4 +1,3 @@
-"use client";
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { ThemeSwitcher } from "@/theme/ThemeSwitcher";

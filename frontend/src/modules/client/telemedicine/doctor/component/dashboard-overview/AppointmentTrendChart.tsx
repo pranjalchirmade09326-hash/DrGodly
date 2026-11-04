@@ -56,8 +56,9 @@ export function AppointmentTrendChart({ data }: AppointmentTrendChartProps) {
         <p className="text-xs text-muted-foreground">Last 6 months</p>
       </div>
 
-      <ResponsiveContainer width="100%" height="90%">
-        <BarChart data={data} barSize={20}>
+      <div className="w-full h-[260px] min-h-[240px]">
+        <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={200}>
+          <BarChart data={data} barSize={20}>
           <CartesianGrid
             strokeDasharray="3 3"
             vertical={false}
@@ -117,6 +118,7 @@ export function AppointmentTrendChart({ data }: AppointmentTrendChartProps) {
           />
         </BarChart>
       </ResponsiveContainer>
+      </div>
     </Card>
   );
 }

@@ -4,27 +4,31 @@
  * Route: /[locale]/(marketing)
  *
  * Server component. Fetches the current session to control CTA button
- * variants (Sign Up vs. Open Dashboard). Composes the full public-facing
- * landing page:
+ * variants (Sign Up vs. Open Dashboard). Composes the high-converting,
+ * sleek Silicon Valley healthcare SaaS narrative flow:
  *
- *   RootNavbar  — fixed top nav with FHIR EMR / Platform / Security / MCP API links
- *   Hero        — AI-native FHIR EMR headline, stat row, mock EMR card visual
- *   FhirEmrSection — FHIR R4 resource showcase + proprietary EMR comparison
- *   Features    — six-card grid: FHIR EMR, AI Agents, HIPAA, MCP, Voice, Telemedicine
- *   HowItWorks  — five-step AI FHIR clinical workflow timeline
- *   McpSection  — MCP Server integration explainer with live terminal simulation
- *   Testimonials (repurposed) — HIPAA/Security/Compliance trust section
- *   Cta         — Final sign-up CTA with compliance badges
- *   Footer      — Links + HL7/HIPAA/MCP compliance badges
+ *   RootNavbar                   — fixed top nav with DrGodly logo, navigation, and auth actions
+ *   Hero                         — value prop + compact live telemetry cockpit simulation
+ *   MetricsRibbon                — single-row 4-metric strip + certified interoperability ticker
+ *   InteractiveSimulatorSection  — interactive patient workbench (Louise Reed / Marcus Chen / Sarah Jenkins)
+ *   ClinicalPipelineSection      — 4-stage visual data pipeline (Ambient Input → Event Bus → SLMs → Attestation)
+ *   Features                     — 6 core capabilities bento grid
+ *   FhirEmrSection               — HL7 FHIR R4 resource model vs. legacy proprietary EMRs
+ *   McpSection                   — Model Context Protocol server terminal simulation
+ *   Testimonials                 — HIPAA, SOC 2 Type II, BAA, and data privacy trust pillars
+ *   Cta                          — Final sign-up / cockpit demonstration call-to-action
+ *   Footer                       — Links + HL7/HIPAA/MCP compliance disclosures
  */
 
 import { getServerSession } from "@/modules/server/auth/get-session";
 import RootNavbar from "@/modules/client/(marketing)/components/RootNavbar";
 import Hero from "@/modules/client/(marketing)/components/Hero";
-import ContextFlywheelSection from "@/modules/client/(marketing)/components/ContextFlywheelSection";
-import FhirEmrSection from "@/modules/client/(marketing)/components/FhirEmrSection";
+import MetricsRibbon from "@/modules/client/(marketing)/components/MetricsRibbon";
+import TrustLogos from "@/modules/client/(marketing)/components/TrustLogos";
 import Features from "@/modules/client/(marketing)/components/Features";
-import HowItWorks from "@/modules/client/(marketing)/components/HowItWorks";
+import InteractiveSimulatorSection from "@/modules/client/(marketing)/components/InteractiveSimulatorSection";
+import ClinicalPipelineSection from "@/modules/client/(marketing)/components/ClinicalPipelineSection";
+import FhirEmrSection from "@/modules/client/(marketing)/components/FhirEmrSection";
 import McpSection from "@/modules/client/(marketing)/components/McpSection";
 import Testimonials from "@/modules/client/(marketing)/components/Testimonials";
 import Cta from "@/modules/client/(marketing)/components/Cta";
@@ -32,7 +36,7 @@ import Footer from "@/modules/client/(marketing)/components/Footer";
 
 export const dynamic = "force-dynamic";
 
-/** Marketing landing page. */
+/** Marketing landing page with high-converting clinical sequence. */
 export default async function Home() {
   const session = await getServerSession();
 
@@ -41,10 +45,12 @@ export default async function Home() {
       <RootNavbar session={session} />
       <main>
         <Hero session={session} />
-        <ContextFlywheelSection />
-        <FhirEmrSection />
+        <MetricsRibbon />
+        <TrustLogos />
         <Features />
-        <HowItWorks />
+        <InteractiveSimulatorSection />
+        <ClinicalPipelineSection />
+        <FhirEmrSection />
         <McpSection />
         <Testimonials />
         <Cta session={session} />

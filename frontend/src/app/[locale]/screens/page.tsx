@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard,
   Video,
@@ -57,6 +58,7 @@ import { HealthScoreGauge } from '@/modules/client/telemedicine/patient/componen
 import { HealthSnapshotGrid } from '@/modules/client/telemedicine/patient/component/dashboard/HealthSnapshotGrid';
 import { CarePlanChecklist } from '@/modules/client/telemedicine/patient/component/dashboard/CarePlanChecklist';
 import { AskDrGodlyChatWidget } from '@/modules/client/telemedicine/patient/component/dashboard/AskDrGodlyChatWidget';
+import { DoctorClinicalRecordsWorkspace } from '@/modules/client/telemedicine/doctor/component/clinical-records/DoctorClinicalRecordsWorkspace';
 import type { TAppointmentResponse } from '@/modules/entities/schemas/appointment';
 
 // ── US Clinical Triage Queue Mock Data ───────────────────────────────────────
@@ -135,13 +137,23 @@ const mockAppointments: TAppointmentResponse[] = [
   },
 ];
 
-type DoctorTab = 'telemedicine' | 'queue' | 'rx-soap';
+type DoctorTab = 'telemedicine' | 'queue' | 'rx-soap' | 'clinical-emr';
 type PatientTab = 'dashboard' | 'intake' | 'marketplace' | 'pharmacy';
 
-export default function ScreensShowcasePage() {
+function ScreensShowcaseContent() {
+  const searchParams = useSearchParams();
   const [currentRole, setCurrentRole] = useState<'doctor' | 'patient'>('doctor');
   const [doctorTab, setDoctorTab] = useState<DoctorTab>('telemedicine');
   const [patientTab, setPatientTab] = useState<PatientTab>('dashboard');
+
+  // Landing from /login or /signup carries the chosen persona, e.g.
+  // /screens?role=patient, so the demo opens on the matching workspace.
+  React.useEffect(() => {
+    const roleParam = searchParams.get('role');
+    if (roleParam === 'patient' || roleParam === 'doctor') {
+      setCurrentRole(roleParam);
+    }
+  }, [searchParams]);
 
   // Intake State
   const [intakePainLevel, setIntakePainLevel] = useState<number>(3);
@@ -260,7 +272,7 @@ export default function ScreensShowcasePage() {
                 <button
                   type="button"
                   onClick={() => setDoctorTab('telemedicine')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                     doctorTab === 'telemedicine'
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'border border-border bg-card text-card-foreground hover:bg-muted'
@@ -272,7 +284,7 @@ export default function ScreensShowcasePage() {
                 <button
                   type="button"
                   onClick={() => setDoctorTab('queue')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                     doctorTab === 'queue'
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'border border-border bg-card text-card-foreground hover:bg-muted'
@@ -284,7 +296,7 @@ export default function ScreensShowcasePage() {
                 <button
                   type="button"
                   onClick={() => setDoctorTab('rx-soap')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                     doctorTab === 'rx-soap'
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'border border-border bg-card text-card-foreground hover:bg-muted'
@@ -293,13 +305,25 @@ export default function ScreensShowcasePage() {
                   <FileCheck2 className="w-3.5 h-3.5" />
                   <span>Clinical SOAP & e-Rx</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setDoctorTab('clinical-emr')}
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
+                    doctorTab === 'clinical-emr'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'border border-border bg-card text-card-foreground hover:bg-muted'
+                  }`}
+                >
+                  <Stethoscope className="size-3.5" />
+                  <span>Longitudinal EMR & Charting</span>
+                </button>
               </>
             ) : (
               <>
                 <button
                   type="button"
                   onClick={() => setPatientTab('dashboard')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                     patientTab === 'dashboard'
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'border border-border bg-card text-card-foreground hover:bg-muted'
@@ -311,7 +335,7 @@ export default function ScreensShowcasePage() {
                 <button
                   type="button"
                   onClick={() => setPatientTab('intake')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                     patientTab === 'intake'
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'border border-border bg-card text-card-foreground hover:bg-muted'
@@ -323,7 +347,7 @@ export default function ScreensShowcasePage() {
                 <button
                   type="button"
                   onClick={() => setPatientTab('marketplace')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                     patientTab === 'marketplace'
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'border border-border bg-card text-card-foreground hover:bg-muted'
@@ -335,7 +359,7 @@ export default function ScreensShowcasePage() {
                 <button
                   type="button"
                   onClick={() => setPatientTab('pharmacy')}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                     patientTab === 'pharmacy'
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'border border-border bg-card text-card-foreground hover:bg-muted'
@@ -575,6 +599,29 @@ export default function ScreensShowcasePage() {
                     </Button>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Screen 4: Longitudinal Clinical EMR & Charting */}
+            {doctorTab === 'clinical-emr' && (
+              <div className="animate-in fade-in space-y-4 duration-300">
+                <div className="flex flex-col items-start justify-between gap-3 border-b border-border pb-3 sm:flex-row sm:items-center">
+                  <div>
+                    <h2 className="text-xl font-black tracking-tight text-foreground">
+                      Longitudinal Patient Chart & Clinical EMR
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      Problem List, Medication Reconciliation, Diagnostic Reference Ranges & Smart S.O.A.P Note
+                    </p>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="border-primary/25 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
+                  >
+                    FHIR R4 DiagnosticReport & ClinicalImpression Validated
+                  </Badge>
+                </div>
+                <DoctorClinicalRecordsWorkspace />
               </div>
             )}
           </div>
@@ -986,5 +1033,24 @@ export default function ScreensShowcasePage() {
       {/* ── 5. Master US HealthTech Footer ── */}
       <GlobalFooter />
     </div>
+  );
+}
+
+/**
+ * The content reads `useSearchParams`, so it needs a Suspense boundary — without
+ * one, Next's prerender of /screens fails while trying to statically generate a
+ * route whose output depends on the query string.
+ */
+export default function ScreensShowcasePage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-background text-xs font-semibold text-muted-foreground">
+          Loading DrGodly Workstation…
+        </div>
+      }
+    >
+      <ScreensShowcaseContent />
+    </React.Suspense>
   );
 }

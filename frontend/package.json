@@ -18,6 +18,8 @@
     "seed:test-data": "tsx scripts/test-data/seed.ts"
   },
   "dependencies": {
+    "@a2ui/react": "^0.14.0",
+    "@a2ui/web_core": "^0.14.0",
     "@asteasolutions/zod-to-openapi": "^9.1.0",
     "@base-ui/react": "^1.4.1",
     "@better-auth/oauth-provider": "^1.6.9",
@@ -31,6 +33,7 @@
     "@livekit/components-styles": "^1.2.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@reduxjs/toolkit": "^2.13.0",
     "@remixicon/react": "^4.9.0",
     "@scalar/nextjs-api-reference": "^0.11.18",
     "@tanstack/react-query": "^5.101.0",
@@ -48,7 +51,7 @@
     "dicom.ts": "^1.3.0",
     "dotenv": "^17.4.2",
     "embla-carousel-react": "^8.6.0",
-    "framer-motion": "^12.38.0",
+    "framer-motion": "^12.43.0",
     "graphql": "^17.0.2",
     "graphql-request": "^7.4.0",
     "html-to-image": "^1.11.13",
@@ -59,8 +62,9 @@
     "livekit-client": "^2.19.2",
     "livekit-server-sdk": "^2.15.4",
     "lodash": "^4.18.1",
-    "lucide-react": "^1.14.0",
+    "lucide-react": "^1.62.0",
     "marked-react": "^4.0.0",
+    "motion-dom": "^12.43.0",
     "nanoid": "^5.1.11",
     "next": "16.2.4",
     "next-intl": "^4.11.0",
@@ -72,6 +76,7 @@
     "react-day-picker": "^10.0.0",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.75.0",
+    "react-redux": "^9.3.1",
     "react-resizable-panels": "^4.10.0",
     "recharts": "3.8.0",
     "shadcn": "^4.7.0",
@@ -109,6 +114,8 @@
     "typescript": "^5"
   },
   "optionalDependencies": {
-    "@next/swc-wasm-nodejs": "^16.2.4"
+    "@next/swc-wasm-nodejs": "^16.2.4",
+    "@swc/core-wasm32-wasi": "*",
+    "lightningcss-wasm": "^1.32.0"
   }
 }

@@ -61,12 +61,23 @@ export const DoctorSearchResultCard: React.FC<DoctorSearchResultCardProps> = ({
       <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
         {/* Avatar & Identifiers */}
         <div className="flex items-start gap-3.5">
-          <div className="relative">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 via-indigo-600 to-teal-500 text-white font-bold text-lg flex items-center justify-center shadow-sm">
-              {doctor.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
-            </div>
+          <div className="relative shrink-0">
+            {doctor.avatarUrl ? (
+              <img
+                src={doctor.avatarUrl}
+                alt={doctor.name}
+                className="w-16 h-16 rounded-2xl object-cover shadow-sm ring-2 ring-slate-100"
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-700 via-indigo-600 to-teal-500 text-white font-bold text-lg flex items-center justify-center shadow-sm">
+                {doctor.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
+              </div>
+            )}
             {doctor.isAvailableToday && (
-              <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-white absolute -bottom-1 -right-1" title="Available Today" />
+              <span className="w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-white absolute -bottom-1 -right-1 shadow-xs flex items-center justify-center" title="Available Today for Video Consultation">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              </span>
             )}
           </div>
 

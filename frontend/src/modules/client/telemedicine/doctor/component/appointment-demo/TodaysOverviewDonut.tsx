@@ -83,7 +83,7 @@ export function TodaysOverviewDonut({ counts }: TodaysOverviewDonutProps) {
           — capped so it doesn't become absurd on a very wide card, and
           floored so it stays legible on a narrow one. */}
       <div className="relative aspect-square w-[42%] min-w-28 max-w-56 shrink-0">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
           <PieChart>
             <Pie
               data={slices.length > 0 ? slices : [{ status: "empty", count: 1 }]}
