@@ -1,22 +1,41 @@
 /**
- * Footer — site-wide footer for the DrGodly marketing landing page.
+ * Footer — site-wide footer for the DrGodly marketing pages.
  *
  * Layer: client / (marketing) / components
  *
- * Four-column layout: brand tagline, Product links, Company links, Legal links.
- * Bottom bar includes copyright and compliance trust badges
- * (HIPAA, HL7 FHIR R4, MCP Server).
+ * Brand column plus two link columns. Every link resolves to a route that
+ * actually exists and goes through next-intl's <Link>, so it carries the
+ * active locale: the previous version mixed raw href="/fhir-emr" (no locale
+ * prefix — a hard navigation that dropped the user out of the i18n routing
+ * tree) with href="#" placeholders for Company/Legal columns, which rendered
+ * as clickable-but-dead links.
  */
 
 "use client";
 
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { AppLogo } from "@/modules/client/shared/components/AppLogo";
+import { Link } from "@/i18n/navigation";
+import { DrGodlyLogo } from "@/components/shared/DrGodlyLogo";
 
-/**
- * Marketing page footer with compliance trust badges and navigation links.
- */
+const PRODUCT_LINKS = [
+  { label: "FHIR EMR", href: "/fhir-emr" },
+  { label: "AI Clinical Agents", href: "/ai-agents" },
+  { label: "MCP Server", href: "/mcp" },
+  { label: "How It Works", href: "/how-it-works" },
+] as const;
+
+const EXPLORE_LINKS = [
+  { label: "Interactive demo", href: "/screens" },
+  { label: "Security & HIPAA", href: "/hipaa" },
+] as const;
+
+const START_LINKS = [
+  { label: "Create account", href: "/signup" },
+  { label: "Sign in", href: "/login" },
+] as const;
+
+/** Marketing page footer with compliance trust badges and navigation links. */
 export default function Footer() {
   return (
     <motion.footer
@@ -26,26 +45,32 @@ export default function Footer() {
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+      <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
-          <div className="col-span-2 lg:col-span-1">
-            <a href="#" className="flex items-center space-x-2 text-primary">
-              <AppLogo size={32} className="w-8 h-8" />
-              <span className="text-2xl font-bold text-foreground">DrGodly</span>
-            </a>
-            <p className="mt-4 text-muted-foreground text-sm leading-relaxed">
+          <div className="sm:col-span-2 lg:col-span-2">
+            <DrGodlyLogo size="md" tagline={null} linkTo="/" />
+            <p className="mt-4 text-muted-foreground text-sm leading-relaxed max-w-sm">
               The AI-native FHIR R4 EMR built for HIPAA-compliant telemedicine
               and electronic medical records.
             </p>
-            <div className="mt-4 flex flex-wrap gap-1.5">
-              <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Badge
+                variant="outline"
+                className="text-[11px] border-primary/30 text-primary"
+              >
                 FHIR R4
               </Badge>
-              <Badge variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-600">
+              <Badge
+                variant="outline"
+                className="text-[11px] border-emerald-500/30 text-emerald-600"
+              >
                 HIPAA
               </Badge>
-              <Badge variant="outline" className="text-[10px] border-violet-500/30 text-violet-600">
+              <Badge
+                variant="outline"
+                className="text-[11px] border-violet-500/30 text-violet-600"
+              >
                 MCP
               </Badge>
             </div>
@@ -54,52 +79,52 @@ export default function Footer() {
           {/* Product */}
           <div>
             <h3 className="font-semibold text-foreground">Product</h3>
-            <ul className="mt-4 space-y-2 text-sm">
-              {[
-                { label: "FHIR EMR", href: "/fhir-emr" },
-                { label: "AI Clinical Agents", href: "/ai-agents" },
-                { label: "MCP Server", href: "/mcp" },
-                { label: "How It Works", href: "/how-it-works" },
-                { label: "Pricing", href: "#" },
-              ].map((item) => (
+            <ul className="mt-4 space-y-2.5 text-sm">
+              {PRODUCT_LINKS.map((item) => (
                 <li key={item.label}>
-                  <a
+                  <Link
                     href={item.href}
-                    className="text-muted-foreground hover:text-primary transition-colors"
+                    className="text-muted-foreground hover:text-primary transition-colors inline-block py-0.5"
                   >
                     {item.label}
-                  </a>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <h3 className="font-semibold text-foreground mt-8">Get started</h3>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              {START_LINKS.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="text-muted-foreground hover:text-primary transition-colors inline-block py-0.5"
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Company */}
+          {/* Explore */}
           <div>
-            <h3 className="font-semibold text-foreground">Company</h3>
-            <ul className="mt-4 space-y-2 text-sm">
-              {["About Us", "Careers", "Press", "Contact"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    {item}
-                  </a>
+            <h3 className="font-semibold text-foreground">Explore</h3>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              {EXPLORE_LINKS.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="text-muted-foreground hover:text-primary transition-colors inline-block py-0.5"
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="font-semibold text-foreground">Legal</h3>
-            <ul className="mt-4 space-y-2 text-sm">
-              {["Privacy Policy", "Terms of Service", "HIPAA BAA", "Compliance"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <p className="mt-6 text-xs text-muted-foreground leading-relaxed max-w-[16rem]">
+              Clinical decisions stay with licensed providers. DrGodly supports
+              documentation and continuity of care.
+            </p>
           </div>
         </div>
 
@@ -108,11 +133,11 @@ export default function Footer() {
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} DrGodly. All rights reserved.
           </p>
-          <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
             <span>HL7® FHIR® R4 Compliant</span>
-            <span className="text-border">·</span>
+            <span className="text-border hidden sm:inline">·</span>
             <span>HIPAA Secured</span>
-            <span className="text-border">·</span>
+            <span className="text-border hidden sm:inline">·</span>
             <span>MCP Server Integration</span>
           </div>
         </div>

@@ -214,10 +214,10 @@ export function IntakeInsights({
             <span>Pre-Visit Clinical Intake Synthesis</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-semibold py-0">
+            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-semibold py-0">
               ABHA Verified
             </Badge>
-            <Badge variant="outline" className="text-[10px] text-slate-600">
+            <Badge variant="outline" className="text-[11px] text-slate-600">
               {intake.mode === "VOICE" ? "Voice Intake" : "Text Intake"}
             </Badge>
           </div>
@@ -269,7 +269,7 @@ export function IntakeInsights({
                     <div key={i} className="flex items-start gap-2">
                       <span
                         className={cn(
-                          "text-[10px] font-semibold shrink-0 mt-0.5 uppercase",
+                          "text-[11px] font-semibold shrink-0 mt-0.5 uppercase",
                           msg.role === "user"
                             ? "text-primary"
                             : "text-muted-foreground",

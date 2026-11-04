@@ -166,24 +166,24 @@ export function DoctorTelemedicineCockpit({
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 text-slate-800 font-sans select-none overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
+    <div className="flex flex-col h-full bg-muted/40 font-sans text-foreground select-none overflow-hidden rounded-2xl border border-border shadow-sm">
       {/* ── 1. TOP PATIENT CONTEXT HEADER ───────────────────────────────── */}
-      <header className="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center justify-between shrink-0 shadow-2xs">
+      <header className="flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-border bg-card px-3 py-2.5 sm:px-4">
         {/* Left: Patient Avatar & Demographics */}
-        <div className="flex items-center gap-3">
-          <div className="relative h-11 w-11 rounded-full overflow-hidden bg-slate-200 border-2 border-teal-500/30 shrink-0">
-            <div className="h-full w-full bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center text-white font-bold text-sm">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <div className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-primary/30 bg-secondary shrink-0">
+            <div className="h-full w-full bg-gradient-to-tr from-primary to-primary/70 flex items-center justify-center text-white font-bold text-sm">
               LR
             </div>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-slate-900 tracking-tight leading-none">
+              <h2 className="text-base font-bold text-card-foreground tracking-tight leading-none">
                 Louise Reed
               </h2>
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-500 mt-1">
+            <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
               <span>Female</span>
               <span>•</span>
               <span>Age 30</span>
@@ -210,18 +210,18 @@ export function DoctorTelemedicineCockpit({
         </div>
 
         {/* Right: Visit Reason, Live Timer & End Visit Button */}
-        <div className="flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-2 sm:gap-4">
           <div className="text-right hidden md:block">
-            <span className="text-[10px] text-slate-400 block uppercase tracking-wider font-semibold">
+            <span className="text-[11px] text-muted-foreground block uppercase tracking-wider font-semibold">
               Visit Reason
             </span>
-            <span className="text-xs font-semibold text-slate-800">
+            <span className="text-xs font-semibold text-card-foreground">
               Dizziness and headache
             </span>
           </div>
 
           {/* Green Elapsed Timer */}
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50/60 border border-emerald-300 text-emerald-700 text-xs font-mono font-bold shadow-2xs">
+          <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-300/70 bg-emerald-50/60 px-2.5 py-1 font-mono text-xs font-bold text-emerald-700">
             <Clock className="size-3.5 text-emerald-600 animate-pulse" />
             <span>{formatTime(elapsedSeconds)}</span>
           </div>
@@ -238,17 +238,19 @@ export function DoctorTelemedicineCockpit({
       </header>
 
       {/* ── 2. MAIN 3-PANEL CONSULTATION STAGE ───────────────────────────── */}
-      <div className="flex-1 grid grid-cols-12 gap-3 p-3 overflow-hidden min-h-0 bg-slate-100/60">
+      {/* Stage scrolls vertically while stacked on phones; on lg+ it stays a
+          fixed-height three-column workspace with per-panel scrolling. */}
+      <div className="grid min-h-0 flex-1 grid-cols-12 gap-3 overflow-x-hidden overflow-y-auto bg-muted/50 p-3 lg:overflow-hidden">
         {/* ── PANEL 1: LEFT PATIENT CLINICAL DOSSIER (~28% / 3.5 cols) ─── */}
-        <div className="col-span-12 lg:col-span-3 xl:col-span-3 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="col-span-12 flex min-h-[28rem] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-xs lg:col-span-3 lg:min-h-0 xl:col-span-3">
           {/* Header Tabs */}
-          <div className="flex border-b border-slate-200 bg-slate-50/70 text-xs font-semibold px-2 shrink-0">
+          <div className="flex shrink-0 overflow-x-auto border-b border-border bg-muted/60 px-2 text-xs font-semibold">
             <button
               onClick={() => setLeftTab("intake")}
               className={`py-2 px-3 border-b-2 transition ${
                 leftTab === "intake"
-                  ? "border-blue-600 text-blue-600 font-bold"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  ? "border-primary text-primary font-bold"
+                  : "border-transparent text-muted-foreground hover:text-card-foreground"
               }`}
             >
               AI Intake Summary
@@ -257,8 +259,8 @@ export function DoctorTelemedicineCockpit({
               onClick={() => setLeftTab("history")}
               className={`py-2 px-3 border-b-2 transition ${
                 leftTab === "history"
-                  ? "border-blue-600 text-blue-600 font-bold"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  ? "border-primary text-primary font-bold"
+                  : "border-transparent text-muted-foreground hover:text-card-foreground"
               }`}
             >
               History
@@ -267,8 +269,8 @@ export function DoctorTelemedicineCockpit({
               onClick={() => setLeftTab("documents")}
               className={`py-2 px-3 border-b-2 transition ${
                 leftTab === "documents"
-                  ? "border-blue-600 text-blue-600 font-bold"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  ? "border-primary text-primary font-bold"
+                  : "border-transparent text-muted-foreground hover:text-card-foreground"
               }`}
             >
               Documents
@@ -281,7 +283,7 @@ export function DoctorTelemedicineCockpit({
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
               <div className="flex items-center gap-1.5 text-slate-800 font-semibold">
                 <PieChart className="size-3.5 text-blue-600" />
-                <span>Chief Complaint <span className="text-[10px] text-slate-400 font-normal">(AI extracted)</span></span>
+                <span>Chief Complaint <span className="text-[11px] text-slate-400 font-normal">(AI extracted)</span></span>
               </div>
               <p className="text-slate-700 text-xs font-medium pl-5">
                 Dizziness and headaches for 2 days
@@ -292,7 +294,7 @@ export function DoctorTelemedicineCockpit({
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
               <div className="flex items-center gap-1.5 text-slate-800 font-semibold">
                 <MessageSquare className="size-3.5 text-blue-600" />
-                <span>HPI <span className="text-[10px] text-slate-400 font-normal">(AI summarized)</span></span>
+                <span>HPI <span className="text-[11px] text-slate-400 font-normal">(AI summarized)</span></span>
               </div>
               <p className="text-slate-600 text-[11px] leading-relaxed pl-5">
                 30-year-old female with intermittent dizziness, worse on standing, associated with mild headache.
@@ -304,33 +306,33 @@ export function DoctorTelemedicineCockpit({
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
               <div className="flex items-center gap-1.5 text-slate-800 font-semibold">
                 <Heart className="size-3.5 text-blue-600" />
-                <span>Key Vitals <span className="text-[10px] text-slate-400 font-normal">(patient reported)</span></span>
+                <span>Key Vitals <span className="text-[11px] text-slate-400 font-normal">(patient reported)</span></span>
               </div>
               <div className="grid grid-cols-3 gap-2 text-center text-xs">
                 <div className="bg-white p-1.5 rounded-lg border border-slate-200/70">
-                  <span className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
+                  <span className="text-[11px] text-slate-400 flex items-center justify-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> BP
                   </span>
                   <span className="font-bold text-slate-900 block mt-0.5">118/76</span>
-                  <span className="text-[9px] text-slate-400">mmHg</span>
+                  <span className="text-[10px] text-slate-400">mmHg</span>
                 </div>
                 <div className="bg-white p-1.5 rounded-lg border border-slate-200/70">
-                  <span className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
+                  <span className="text-[11px] text-slate-400 flex items-center justify-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> HR
                   </span>
                   <span className="font-bold text-slate-900 block mt-0.5">72</span>
-                  <span className="text-[9px] text-slate-400">bpm</span>
+                  <span className="text-[10px] text-slate-400">bpm</span>
                 </div>
                 <div className="bg-white p-1.5 rounded-lg border border-slate-200/70">
-                  <span className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
+                  <span className="text-[11px] text-slate-400 flex items-center justify-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Temp
                   </span>
                   <span className="font-bold text-slate-900 block mt-0.5">98.1°F</span>
-                  <span className="text-[9px] text-slate-400">(36.7°C)</span>
+                  <span className="text-[10px] text-slate-400">(36.7°C)</span>
                 </div>
               </div>
               <div className="text-center pt-0.5">
-                <span className="text-[10px] text-slate-600 font-medium bg-white px-2 py-0.5 rounded-full border border-slate-200/70 inline-flex items-center gap-1">
+                <span className="text-[11px] text-slate-600 font-medium bg-white px-2 py-0.5 rounded-full border border-slate-200/70 inline-flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> SpO₂: 99%
                 </span>
               </div>
@@ -388,7 +390,7 @@ export function DoctorTelemedicineCockpit({
         </div>
 
         {/* ── PANEL 2: CENTER VIDEO & INTERACTION STAGE (~42% / 5.5 cols) ── */}
-        <div className="col-span-12 lg:col-span-5 xl:col-span-5 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="col-span-12 flex min-h-[30rem] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-xs lg:col-span-5 lg:min-h-0 xl:col-span-5">
           {/* Top Half: Video Player Stage */}
           <div className="relative h-[280px] bg-gradient-to-b from-slate-900 via-slate-950 to-black flex items-center justify-center overflow-hidden shrink-0">
             {/* Simulated Patient Video Feed */}
@@ -397,7 +399,7 @@ export function DoctorTelemedicineCockpit({
                 LR
               </div>
               <span className="text-xs font-semibold text-white mt-2">Louise Reed</span>
-              <span className="text-[10px] text-slate-400">720p HD • WebRTC Encrypted</span>
+              <span className="text-[11px] text-slate-400">720p HD • WebRTC Encrypted</span>
             </div>
 
             {/* Top-left Video HUD Overlay */}
@@ -408,7 +410,7 @@ export function DoctorTelemedicineCockpit({
                 <span className="h-3 w-1 bg-emerald-400 rounded-2xs" />
                 <span className="h-4 w-1 bg-emerald-400 rounded-2xs" />
               </span>
-              <span className="text-slate-300 font-mono text-[10px]">02:34</span>
+              <span className="text-slate-300 font-mono text-[11px]">02:34</span>
             </div>
 
             {/* Top-right Video Controls */}
@@ -427,11 +429,11 @@ export function DoctorTelemedicineCockpit({
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
               </div>
               <div className="flex items-center justify-center">
-                <div className="h-7 w-7 rounded-full bg-teal-600 text-white text-[10px] font-bold flex items-center justify-center">
+                <div className="h-7 w-7 rounded-full bg-teal-600 text-white text-[11px] font-bold flex items-center justify-center">
                   AM
                 </div>
               </div>
-              <span className="text-[9px] text-center font-semibold text-slate-200 truncate">
+              <span className="text-[10px] text-center font-semibold text-slate-200 truncate">
                 Dr. Arjun Mehta (You)
               </span>
             </div>
@@ -468,7 +470,7 @@ export function DoctorTelemedicineCockpit({
 
               <button
                 onClick={() => setShowCaptions(!showCaptions)}
-                className={`h-8 w-8 rounded-full flex items-center justify-center text-white font-bold text-[10px] transition ${
+                className={`h-8 w-8 rounded-full flex items-center justify-center text-white font-bold text-[11px] transition ${
                   showCaptions ? "bg-teal-600" : "bg-slate-800 hover:bg-slate-700"
                 }`}
                 title="Closed Captions"
@@ -532,7 +534,7 @@ export function DoctorTelemedicineCockpit({
                         : "bg-slate-50 border-slate-200 text-slate-800"
                     }`}
                   >
-                    <div className="flex items-center justify-between text-[10px] mb-1">
+                    <div className="flex items-center justify-between text-[11px] mb-1">
                       <span className="font-bold">{msg.sender}</span>
                       <span className="text-slate-400 font-mono">{msg.time}</span>
                     </div>
@@ -603,15 +605,15 @@ export function DoctorTelemedicineCockpit({
         </div>
 
         {/* ── PANEL 3: RIGHT CLINICAL DECISION SUPPORT (~30% / 3.5 cols) ── */}
-        <div className="col-span-12 lg:col-span-4 xl:col-span-4 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="col-span-12 flex min-h-[28rem] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-xs lg:col-span-4 lg:min-h-0 xl:col-span-4">
           {/* Header Tabs */}
-          <div className="flex border-b border-slate-200 bg-slate-50/70 text-xs font-semibold px-2 shrink-0 overflow-x-auto">
+          <div className="flex shrink-0 overflow-x-auto border-b border-border bg-muted/60 px-2 text-xs font-semibold">
             <button
               onClick={() => setRightTab("cds")}
               className={`py-2 px-3 border-b-2 transition whitespace-nowrap ${
                 rightTab === "cds"
-                  ? "border-blue-600 text-blue-600 font-bold"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  ? "border-primary text-primary font-bold"
+                  : "border-transparent text-muted-foreground hover:text-card-foreground"
               }`}
             >
               Clinical Decision Support
@@ -620,8 +622,8 @@ export function DoctorTelemedicineCockpit({
               onClick={() => setRightTab("investigations")}
               className={`py-2 px-3 border-b-2 transition whitespace-nowrap ${
                 rightTab === "investigations"
-                  ? "border-blue-600 text-blue-600 font-bold"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  ? "border-primary text-primary font-bold"
+                  : "border-transparent text-muted-foreground hover:text-card-foreground"
               }`}
             >
               Investigations
@@ -630,8 +632,8 @@ export function DoctorTelemedicineCockpit({
               onClick={() => setRightTab("medications")}
               className={`py-2 px-3 border-b-2 transition whitespace-nowrap ${
                 rightTab === "medications"
-                  ? "border-blue-600 text-blue-600 font-bold"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  ? "border-primary text-primary font-bold"
+                  : "border-transparent text-muted-foreground hover:text-card-foreground"
               }`}
             >
               Medications
@@ -640,8 +642,8 @@ export function DoctorTelemedicineCockpit({
               onClick={() => setRightTab("education")}
               className={`py-2 px-3 border-b-2 transition whitespace-nowrap ${
                 rightTab === "education"
-                  ? "border-blue-600 text-blue-600 font-bold"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
+                  ? "border-primary text-primary font-bold"
+                  : "border-transparent text-muted-foreground hover:text-card-foreground"
               }`}
             >
               Patient Education
@@ -657,7 +659,7 @@ export function DoctorTelemedicineCockpit({
                   <Stethoscope className="size-4 text-emerald-600" />
                   AI Clinical Assessment
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-semibold">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-semibold">
                   Low–Moderate Risk
                 </span>
               </div>
@@ -747,7 +749,7 @@ export function DoctorTelemedicineCockpit({
                   size="sm"
                   variant="outline"
                   onClick={handleAddPlan}
-                  className="h-6 text-[10px] px-2 text-blue-600 border-blue-200 hover:bg-blue-50 font-semibold"
+                  className="h-6 text-[11px] px-2 text-blue-600 border-blue-200 hover:bg-blue-50 font-semibold"
                 >
                   Add to Plan
                 </Button>
@@ -824,7 +826,7 @@ export function DoctorTelemedicineCockpit({
                   <AlertTriangle className="size-3 text-rose-600" />
                   Red Flag Alerts
                 </span>
-                <ul className="text-rose-900/80 text-[10px] space-y-0.5 leading-snug">
+                <ul className="text-rose-900/80 text-[11px] space-y-0.5 leading-snug">
                   <li>• Severe headache (thunderclap)</li>
                   <li>• Focal neurological deficit</li>
                   <li>• Persistent vomiting</li>
@@ -839,7 +841,7 @@ export function DoctorTelemedicineCockpit({
                   <BookOpen className="size-3 text-blue-600" />
                   Relevant Guidelines
                 </span>
-                <ul className="text-blue-900/80 text-[10px] space-y-0.5 leading-snug">
+                <ul className="text-blue-900/80 text-[11px] space-y-0.5 leading-snug">
                   <li>• <a href="#" className="underline">ACG – Headache (2022)</a></li>
                   <li>• <a href="#" className="underline">AHA – Orthostatic HTN</a></li>
                   <li>• <a href="#" className="underline">AAO – Vertigo Eval</a></li>
@@ -852,23 +854,23 @@ export function DoctorTelemedicineCockpit({
       </div>
 
       {/* ── 3. BOTTOM PERSISTENT ACTION TOOLBAR ─────────────────────────── */}
-      <footer className="bg-white border-t border-slate-200 px-4 py-2.5 flex items-center justify-between shrink-0 shadow-2xs gap-3">
+      <footer className="flex shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-border bg-card px-3 py-2.5 shadow-2xs sm:px-4">
         {/* Left: Back to Patients */}
         <Button
           variant="outline"
           size="sm"
           onClick={onBack}
-          className="border-slate-200 text-slate-700 hover:bg-slate-100 text-xs h-8 px-3 rounded-xl gap-1.5"
+          className="h-8 shrink-0 gap-1.5 rounded-xl border-border text-xs text-secondary-foreground hover:bg-muted"
         >
           <ArrowLeft className="size-3.5" /> Back to Patients
         </Button>
 
         {/* Center: Clinical Encounter Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             size="sm"
             onClick={() => toast.success("Drafting SOAP note with ambient STT speech model...")}
-            className="bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-xs h-8 px-3 rounded-xl gap-1.5 font-semibold"
+            className="h-8 gap-1.5 rounded-xl border border-primary/20 bg-primary/10 text-xs font-semibold text-primary hover:bg-primary/15"
           >
             <FileText className="size-3.5" /> Generate SOAP Note
           </Button>
@@ -877,7 +879,7 @@ export function DoctorTelemedicineCockpit({
             size="sm"
             variant="outline"
             onClick={() => toast.success("Encounter committed to FHIR R4 repository")}
-            className="border-slate-200 text-slate-700 hover:bg-slate-100 text-xs h-8 px-3 rounded-xl gap-1.5"
+            className="h-8 gap-1.5 rounded-xl border-border text-xs text-secondary-foreground hover:bg-muted"
           >
             <Database className="size-3.5" /> Add to EMR
           </Button>
@@ -886,18 +888,18 @@ export function DoctorTelemedicineCockpit({
             size="sm"
             variant="outline"
             onClick={() => toast.success("Patient summary dispatched via SMS & WhatsApp")}
-            className="border-slate-200 text-slate-700 hover:bg-slate-100 text-xs h-8 px-3 rounded-xl gap-1.5"
+            className="h-8 gap-1.5 rounded-xl border-border text-xs text-secondary-foreground hover:bg-muted"
           >
             <Share2 className="size-3.5" /> Share with Patient
           </Button>
         </div>
 
-        {/* Right: Ask DrGodly AI Natural Language Input */}
-        <form onSubmit={handleAskDrGodlyAi} className="flex items-center gap-2 max-w-sm w-full">
+        {/* Right: Ask DrGodly AI Natural Language Input — full width under the actions on phones */}
+        <form onSubmit={handleAskDrGodlyAi} className="flex w-full min-w-0 items-center gap-2 sm:w-auto sm:max-w-sm">
           <Button
             type="button"
             size="sm"
-            className="bg-purple-600 hover:bg-purple-700 text-white text-xs h-8 px-3 rounded-xl gap-1.5 shrink-0 shadow-xs"
+            className="h-8 shrink-0 gap-1.5 rounded-xl bg-primary text-xs text-primary-foreground shadow-xs hover:bg-primary/90"
           >
             <Sparkles className="size-3.5" /> Ask DrGodly AI
           </Button>
@@ -908,13 +910,15 @@ export function DoctorTelemedicineCockpit({
               placeholder="Ask anything about this patient..."
               value={aiPromptInput}
               onChange={(e) => setAiPromptInput(e.target.value)}
-              className="w-full text-xs pr-7 pl-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-purple-500 text-slate-800"
+              aria-label="Ask about this patient's record"
+              className="w-full rounded-xl border border-input bg-muted/60 py-1.5 pl-3 pr-7 text-xs text-foreground placeholder:text-muted-foreground focus-visible:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
             />
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-purple-600 hover:text-purple-700"
+              aria-label="Send question"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:text-primary/80"
             >
-              <Send className="size-3" />
+              <Send className="size-3.5" />
             </button>
           </div>
         </form>

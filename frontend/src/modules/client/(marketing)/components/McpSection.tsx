@@ -109,7 +109,7 @@ export default function McpSection() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground">MCP Server for FHIR EMR</h3>
-                <Badge variant="outline" className="text-[10px] mt-1 border-primary/30 text-primary">
+                <Badge variant="outline" className="text-[11px] mt-1 border-primary/30 text-primary">
                   Model Context Protocol
                 </Badge>
               </div>
@@ -174,7 +174,7 @@ export default function McpSection() {
                 <Terminal className="w-3.5 h-3.5" />
                 drgodly-mcp-server
               </div>
-              <Badge variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-500">
+              <Badge variant="outline" className="text-[11px] border-emerald-500/30 text-emerald-500">
                 Running
               </Badge>
             </div>

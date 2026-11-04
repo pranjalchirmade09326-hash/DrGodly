@@ -107,7 +107,7 @@ export default function ContextFlywheelSection() {
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground tracking-tight">
             Anonymous when you need an answer. <br className="hidden sm:inline" />
-            <span className="text-teal-600 dark:text-teal-400">Personalized</span> when you want better care.
+            <span className="text-primary">Personalized</span> when you want better care.
           </h2>
 
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
@@ -116,33 +116,47 @@ export default function ContextFlywheelSection() {
           </p>
         </div>
 
-        {/* Dual Mode Switcher Bar */}
+        {/* Dual Mode Switcher Bar — stacks on phones so both options stay reachable */}
         <div className="mt-10 flex justify-center">
-          <div className="inline-flex p-1.5 rounded-2xl bg-muted/80 border border-border shadow-xs">
+          <div className="mx-auto flex w-full max-w-md flex-col gap-1 rounded-2xl border border-border bg-muted/80 p-1.5 shadow-xs sm:w-auto sm:max-w-none sm:gap-0 sm:inline-flex sm:flex-row">
             <button
               onClick={() => setActiveMode("anonymous")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-xs font-semibold transition-all sm:px-5 sm:text-sm ${
                 activeMode === "anonymous"
                   ? "bg-card text-foreground shadow-sm border border-border"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <EyeOff className="size-4 text-slate-500" />
+              <EyeOff className="size-4 text-muted-foreground" />
               <span>1. Anonymous Instant Triage</span>
-              <Badge className="bg-muted text-[10px] py-0 font-normal">Zero Data Retention</Badge>
+              <Badge
+                variant="outline"
+                className="py-0 text-[11px] font-normal text-muted-foreground"
+              >
+                Zero Data Retention
+              </Badge>
             </button>
 
             <button
               onClick={() => setActiveMode("personalized")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-left text-xs font-semibold transition-all sm:px-5 sm:text-sm ${
                 activeMode === "personalized"
-                  ? "bg-teal-600 text-white shadow-md shadow-teal-600/20"
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Sparkles className="size-4" />
               <span>2. Personalized with Health History</span>
-              <Badge className="bg-white/20 text-white text-[10px] py-0 border-0">High Precision</Badge>
+              <Badge
+                variant="outline"
+                className={
+                  activeMode === "personalized"
+                    ? "border-0 bg-white/20 py-0 text-[11px] font-normal text-white"
+                    : "py-0 text-[11px] font-normal text-muted-foreground"
+                }
+              >
+                High Precision
+              </Badge>
             </button>
           </div>
         </div>
@@ -208,7 +222,7 @@ export default function ContextFlywheelSection() {
                       <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
                       <span className="text-xs font-bold text-foreground">Anonymous Session: #T-9921</span>
                     </div>
-                    <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                    <Badge variant="outline" className="text-[11px] text-muted-foreground">
                       Encrypted Ephemeral
                     </Badge>
                   </div>
@@ -216,7 +230,7 @@ export default function ContextFlywheelSection() {
                   {/* Chat flow */}
                   <div className="space-y-3 text-xs flex-1">
                     <div className="p-3 rounded-2xl bg-muted/60 text-foreground space-y-1 max-w-[85%]">
-                      <span className="text-[10px] font-bold text-muted-foreground uppercase">You</span>
+                      <span className="text-[11px] font-bold text-muted-foreground uppercase">You</span>
                       <p className="leading-relaxed">
                         &ldquo;I woke up feeling very dizzy whenever I stand up out of bed. My head feels heavy. What could this be?&rdquo;
                       </p>
@@ -227,7 +241,7 @@ export default function ContextFlywheelSection() {
                         <span className="flex items-center gap-1.5">
                           <Bot className="size-3.5" /> DrGodly AI Co-pilot
                         </span>
-                        <span className="text-[10px] font-normal text-muted-foreground">Evidence Grounded</span>
+                        <span className="text-[11px] font-normal text-muted-foreground">Evidence Grounded</span>
                       </div>
                       <p className="text-xs leading-relaxed text-foreground/90">
                         Based on your description, this symptom cluster fits <strong>postural lightheadedness</strong>. Common considerations:
@@ -292,7 +306,7 @@ export default function ContextFlywheelSection() {
                           />
                           <Badge
                             variant={isSelected ? "default" : "outline"}
-                            className={`text-[9px] py-0 ${
+                            className={`text-[10px] py-0 ${
                               isSelected ? "bg-teal-600 text-white" : "text-muted-foreground"
                             }`}
                           >
@@ -319,7 +333,7 @@ export default function ContextFlywheelSection() {
                           <h4 className="font-bold text-sm sm:text-base text-foreground">
                             Context-Aware Health Profile
                           </h4>
-                          <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px]">
+                          <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[11px]">
                             HL7 FHIR R4 Ready
                           </Badge>
                         </div>

@@ -39,7 +39,7 @@ export function PatientCarePanel({
           <div>
             <div className="flex items-center gap-1.5">
               <h4 className="text-sm font-bold text-slate-900">{doctorName}</h4>
-              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-semibold py-0">
+              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-semibold py-0">
                 Verified MD
               </Badge>
             </div>
@@ -56,7 +56,7 @@ export function PatientCarePanel({
               <Sparkles className="h-3.5 w-3.5 text-teal-600" />
               Pre-Visit Clinical Intake
             </span>
-            <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 text-[10px]">
+            <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 text-[11px]">
               Ready for Review
             </Badge>
           </div>

@@ -260,13 +260,13 @@ export function FhirEmrPage({ session }: { session: AuthResponse | null }) {
                       </div>
                       <div>
                         <p className={`font-bold text-lg ${res.accent}`}>{res.name}</p>
-                        <p className="text-[10px] font-mono text-muted-foreground">FHIR R4 Resource</p>
+                        <p className="text-[11px] font-mono text-muted-foreground">FHIR R4 Resource</p>
                       </div>
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed">{res.description}</p>
                     <div className="flex flex-wrap gap-1">
                       {res.fields.map((f) => (
-                        <span key={f} className="text-[10px] font-mono px-2 py-0.5 rounded bg-secondary text-muted-foreground">
+                        <span key={f} className="text-[11px] font-mono px-2 py-0.5 rounded bg-secondary text-muted-foreground">
                           {f}
                         </span>
                       ))}
@@ -310,7 +310,7 @@ export function FhirEmrPage({ session }: { session: AuthResponse | null }) {
                 >
                   <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
                   <span className="text-sm text-foreground flex-1">{item.step}</span>
-                  <Badge variant="outline" className={`text-[10px] font-mono shrink-0 ${item.color}`}>
+                  <Badge variant="outline" className={`text-[11px] font-mono shrink-0 ${item.color}`}>
                     {item.resource}
                   </Badge>
                 </motion.div>
@@ -326,7 +326,7 @@ export function FhirEmrPage({ session }: { session: AuthResponse | null }) {
             >
               <div className="flex items-center justify-between pb-3 border-b border-border">
                 <span className="font-semibold text-foreground text-sm">Sample FHIR Observation</span>
-                <Badge variant="outline" className="text-[10px]">R4</Badge>
+                <Badge variant="outline" className="text-[11px]">R4</Badge>
               </div>
               {[
                 { key: "resourceType", value: '"Observation"', color: "text-violet-400" },

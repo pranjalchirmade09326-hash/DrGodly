@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 
 export interface DrGodlyLogoProps {
   /** Size variant: 'xs' (22px), 'sm' (28px), 'md' (36px), 'lg' (44px), 'xl' (56px) or explicit pixel number */
@@ -14,6 +14,10 @@ export interface DrGodlyLogoProps {
   theme?: 'light' | 'dark' | 'auto';
   /** Optional clinical badge pill (e.g., 'Clinical', 'ABDM', 'FHIR R4') */
   badge?: string;
+  /** Classes for the badge pill — use responsive visibility (e.g. 'hidden md:inline-flex') to keep header lockups narrow on small screens */
+  badgeClassName?: string;
+  /** Classes for the tagline line — same responsive-visibility convention as badgeClassName */
+  taglineClassName?: string;
   /** Optional route to link to (e.g., '/en'). If provided, logo wraps in a Link. */
   linkTo?: string;
   /** Extra CSS classes for outer container */
@@ -23,8 +27,8 @@ export interface DrGodlyLogoProps {
 }
 
 const SIZE_MAP: Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', { px: number; textSize: string; tagSize: string; gap: string }> = {
-  xs: { px: 22, textSize: 'text-sm font-bold', tagSize: 'text-[9px]', gap: 'gap-1.5' },
-  sm: { px: 28, textSize: 'text-base font-extrabold', tagSize: 'text-[10px]', gap: 'gap-2' },
+  xs: { px: 22, textSize: 'text-sm font-bold', tagSize: 'text-[11px]', gap: 'gap-1.5' },
+  sm: { px: 28, textSize: 'text-base font-extrabold', tagSize: 'text-[11px]', gap: 'gap-2' },
   md: { px: 36, textSize: 'text-lg font-black', tagSize: 'text-[11px]', gap: 'gap-2.5' },
   lg: { px: 44, textSize: 'text-xl font-black', tagSize: 'text-xs', gap: 'gap-3' },
   xl: { px: 56, textSize: 'text-2xl font-black', tagSize: 'text-xs', gap: 'gap-3.5' },
@@ -87,6 +91,8 @@ export const DrGodlyLogo: React.FC<DrGodlyLogoProps> = ({
   tagline = 'AI for Better Care',
   theme = 'auto',
   badge,
+  badgeClassName = '',
+  taglineClassName = '',
   linkTo,
   className = '',
   textClassName = '',
@@ -103,9 +109,9 @@ export const DrGodlyLogo: React.FC<DrGodlyLogoProps> = ({
 
   const isDark = theme === 'dark';
   const titleColor = isDark
-    ? 'text-white group-hover:text-cyan-300'
-    : 'text-slate-900 group-hover:text-blue-600';
-  const subtitleColor = isDark ? 'text-slate-400' : 'text-slate-500';
+    ? 'text-white group-hover:text-primary-foreground/80'
+    : 'text-foreground group-hover:text-primary';
+  const subtitleColor = isDark ? 'text-slate-400' : 'text-muted-foreground';
 
   const content = (
     <div className={`inline-flex items-center ${config.gap} group select-none ${className}`}>
@@ -120,14 +126,14 @@ export const DrGodlyLogo: React.FC<DrGodlyLogoProps> = ({
               DrGodly
             </span>
             {badge && (
-              <span className="text-[9px] uppercase tracking-wider font-extrabold bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200/80">
+              <span className={`text-[11px] uppercase tracking-wide font-extrabold bg-primary/10 text-primary px-1.5 py-0.5 rounded border border-primary/20 ${badgeClassName}`}>
                 {badge}
               </span>
             )}
           </div>
           {tagline && (
             <span
-              className={`${config.tagSize} font-medium tracking-tight mt-0.5 transition-colors duration-200 ${subtitleColor}`}
+              className={`${config.tagSize} font-medium tracking-tight mt-0.5 transition-colors duration-200 ${subtitleColor} ${taglineClassName}`}
             >
               {tagline}
             </span>

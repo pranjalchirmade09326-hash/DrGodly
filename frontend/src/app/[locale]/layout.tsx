@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
@@ -24,6 +25,26 @@ export const viewport: Viewport = {
   themeColor: "#102F2A",
 };
 
+/*
+ * Brand typography. These expose the Geist families as the --font-geist-sans /
+ * --font-geist-mono custom properties that globals.css aliases to Tailwind's
+ * --font-sans / --font-mono tokens, so `font-sans` (applied on <body> below and
+ * on every marketing/auth screen) actually resolves. Without this wiring the
+ * var() chain is invalid at computed-value time and the whole app silently
+ * falls back to the UA serif face.
+ */
+const geistSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+  display: "swap",
+});
+
 export default async function RootLayout({
   children,
   params,
@@ -40,7 +61,11 @@ export default async function RootLayout({
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
       <body
         className="font-sans antialiased"
         suppressHydrationWarning

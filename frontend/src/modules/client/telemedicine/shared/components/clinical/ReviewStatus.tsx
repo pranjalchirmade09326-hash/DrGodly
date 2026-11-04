@@ -80,7 +80,7 @@ export function ReviewBadge({
     return (
       <Badge
         variant="secondary"
-        className={cn("gap-1 text-[10px] font-normal", className)}
+        className={cn("gap-1 text-[11px] font-normal", className)}
       >
         In chart
       </Badge>
@@ -91,7 +91,7 @@ export function ReviewBadge({
     <Badge
       variant="outline"
       className={cn(
-        "gap-1 border-amber-300 bg-amber-50 text-[10px] font-normal text-amber-900",
+        "gap-1 border-amber-300 bg-amber-50 text-[11px] font-normal text-amber-900",
         "dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-200",
         className,
       )}
@@ -118,7 +118,7 @@ export function AiGeneratedBadge({ className }: { className?: string }) {
     <Badge
       variant="outline"
       className={cn(
-        "gap-1 border-amber-300 bg-amber-50 text-[10px] font-normal text-amber-900",
+        "gap-1 border-amber-300 bg-amber-50 text-[11px] font-normal text-amber-900",
         "dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-200",
         className,
       )}

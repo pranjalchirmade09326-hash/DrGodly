@@ -134,7 +134,7 @@ export default async function BezsSettingsPage() {
                             {item.title}
                           </p>
                           {!item.href && (
-                            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                            <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
                               Soon
                             </span>
                           )}

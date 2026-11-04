@@ -85,7 +85,7 @@ function FileRow({
     <div className="flex items-center gap-3 rounded-md border bg-muted/20 px-3 py-2.5">
       <Badge
         variant="secondary"
-        className="text-[10px] font-mono shrink-0 min-w-13 justify-center"
+        className="text-[11px] font-mono shrink-0 min-w-13 justify-center"
       >
         {fileExtension(entry.file.name, entry.file.type)}
       </Badge>

@@ -158,7 +158,7 @@ export default function HowItWorks() {
                       </h3>
                       <CheckCircle2 className="w-5 h-5 text-primary hidden lg:block shrink-0" />
                     </div>
-                    <Badge variant="secondary" className="text-[10px] font-semibold mb-2">
+                    <Badge variant="secondary" className="text-[11px] font-semibold mb-2">
                       {step.badge}
                     </Badge>
                     <p className="mt-1 text-muted-foreground leading-relaxed">

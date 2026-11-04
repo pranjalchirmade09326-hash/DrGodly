@@ -138,7 +138,7 @@ export function DigitalSignatureAndQrCard({
               <div className="bg-slate-900 rounded-xs" />
             </div>
           </div>
-          <span className="text-[10px] font-mono text-slate-500 mt-1 font-medium">
+          <span className="text-[11px] font-mono text-slate-500 mt-1 font-medium">
             Scan to Verify Rx
           </span>
         </div>

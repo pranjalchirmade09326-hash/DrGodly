@@ -197,19 +197,22 @@ export default function Hero({ session }: { session: AuthResponse | null }) {
                 transition={{ duration: 1, delay: 0.4 }}
                 className="relative bg-card border border-border rounded-3xl shadow-2xl overflow-hidden z-20"
               >
-                {/* Card header */}
+                {/* Card header — no status badge here: the floating HIPAA card
+                    sits over this corner, so anything on the right edge got
+                    covered. The live dot travels with the title instead. */}
                 <div className="px-6 py-4 border-b border-border bg-muted/40 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
                     <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
                     <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
                   </div>
-                  <span className="text-xs font-mono text-muted-foreground">
+                  <span className="text-xs font-mono text-muted-foreground flex items-center gap-2">
                     DrGodly FHIR EMR — v1.0
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                    </span>
                   </span>
-                  <Badge variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-500">
-                    Live
-                  </Badge>
                 </div>
 
                 {/* FHIR resource table */}
@@ -220,7 +223,6 @@ export default function Hero({ session }: { session: AuthResponse | null }) {
                     </span>
                     <span className="text-xs text-muted-foreground font-mono">4 records</span>
                   </div>
-
                   {fhirRows.map((row, i) => (
                     <motion.div
                       key={row.id}
@@ -236,7 +238,7 @@ export default function Hero({ session }: { session: AuthResponse | null }) {
                           <p className="text-[11px] font-mono text-muted-foreground">{row.id}</p>
                         </div>
                       </div>
-                      <Badge variant="outline" className={`text-[10px] border-border/60 ${row.color}`}>
+                      <Badge variant="outline" className={`text-[11px] border-border/60 ${row.color}`}>
                         {row.status}
                       </Badge>
                     </motion.div>
@@ -258,15 +260,17 @@ export default function Hero({ session }: { session: AuthResponse | null }) {
                 </div>
               </motion.div>
 
-              {/* Floating badge: HIPAA */}
+              {/* Floating badge: HIPAA — anchored to the top-right corner so it
+                  overlaps only the card's curved corner padding, never the
+                  chrome or a data row. */}
               <motion.div
                 variants={floatingVariants}
                 initial="initial"
                 animate="animate"
-                className="absolute -top-4 -right-6 px-4 py-3 bg-card rounded-2xl shadow-xl border border-border z-30 flex items-center gap-2"
+                className="absolute -top-5 -right-3 px-3.5 py-2.5 bg-card rounded-2xl shadow-xl border border-border z-30 flex items-center gap-2"
               >
-                <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                <div className="text-xs">
+                <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0" />
+                <div className="text-xs leading-tight">
                   <p className="font-semibold text-foreground">HIPAA</p>
                   <p className="text-muted-foreground">Compliant</p>
                 </div>
@@ -278,25 +282,27 @@ export default function Hero({ session }: { session: AuthResponse | null }) {
                 initial="initial"
                 animate="animate"
                 transition={{ delay: 1.5 }}
-                className="absolute -bottom-6 -left-6 px-4 py-3 bg-card rounded-2xl shadow-xl border border-border z-30 flex items-center gap-2"
+                className="absolute -bottom-6 -left-6 px-3.5 py-2.5 bg-card rounded-2xl shadow-xl border border-border z-30 flex items-center gap-2"
               >
-                <Server className="w-5 h-5 text-primary" />
-                <div className="text-xs">
+                <Server className="w-5 h-5 text-primary shrink-0" />
+                <div className="text-xs leading-tight">
                   <p className="font-semibold text-foreground">MCP Server</p>
                   <p className="text-muted-foreground">Connected</p>
                 </div>
               </motion.div>
 
-              {/* Floating badge: Voice AI */}
+              {/* Floating badge: Voice AI — moved off the mid-left edge (it used
+                  to sit on top of the Observation row) to the free bottom-right
+                  corner. */}
               <motion.div
                 variants={floatingVariants}
                 initial="initial"
                 animate="animate"
                 transition={{ delay: 0.8 }}
-                className="absolute top-1/2 -left-10 -translate-y-1/2 px-4 py-3 bg-card rounded-2xl shadow-xl border border-border z-30 flex items-center gap-2"
+                className="absolute -bottom-5 -right-3 px-3.5 py-2.5 bg-card rounded-2xl shadow-xl border border-border z-30 flex items-center gap-2"
               >
-                <Mic className="w-5 h-5 text-violet-500" />
-                <div className="text-xs">
+                <Mic className="w-5 h-5 text-violet-500 shrink-0" />
+                <div className="text-xs leading-tight">
                   <p className="font-semibold text-foreground">Voice AI</p>
                   <p className="text-muted-foreground">Active</p>
                 </div>

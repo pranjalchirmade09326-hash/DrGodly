@@ -62,7 +62,7 @@ export function ConsultTabsPanel() {
             <div key={index} className="flex items-start gap-2">
               <Avatar size="sm">
                 <AvatarFallback
-                  className="text-[10px] font-semibold"
+                  className="text-[11px] font-semibold"
                   style={{
                     backgroundColor: line.speaker === "doctor" ? "#93c5fd" : "#fda4af",
                   }}

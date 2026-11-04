@@ -184,7 +184,7 @@ export function PractitionerCard({
         <div className="flex-1 min-w-0 pr-5">
           <div className="flex items-center justify-between gap-1.5">
             <p className="text-sm font-semibold truncate text-slate-900">{name}</p>
-            <div className="flex items-center gap-0.5 text-[10px] text-amber-600 font-semibold shrink-0">
+            <div className="flex items-center gap-0.5 text-[11px] text-amber-600 font-semibold shrink-0">
               <Star className="size-3 fill-amber-400 text-amber-400" />
               <span>4.9</span>
             </div>
@@ -209,7 +209,7 @@ export function PractitionerCard({
 
           {/* Telemedicine support badge */}
           <div className="flex items-center gap-1.5 mt-1">
-            <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-medium border border-emerald-100">
+            <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-medium border border-emerald-100">
               <Video className="size-2.5" /> Telemedicine Ready
             </span>
           </div>
@@ -229,13 +229,13 @@ export function PractitionerCard({
                 <Badge
                   key={lang}
                   variant="outline"
-                  className="text-[10px] px-1.5 h-4 font-normal"
+                  className="text-[11px] px-1.5 h-4 font-normal"
                 >
                   {lang}
                 </Badge>
               ))}
               {langOverflow > 0 && (
-                <span className="text-[10px] text-muted-foreground/60">
+                <span className="text-[11px] text-muted-foreground/60">
                   +{langOverflow} more
                 </span>
               )}
@@ -245,7 +245,7 @@ export function PractitionerCard({
           {!isActive && (
             <Badge
               variant="secondary"
-              className="mt-1 text-[10px] px-1.5 h-4"
+              className="mt-1 text-[11px] px-1.5 h-4"
             >
               Unavailable
             </Badge>

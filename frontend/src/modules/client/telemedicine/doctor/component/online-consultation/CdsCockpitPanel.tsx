@@ -99,7 +99,7 @@ export function CdsCockpitPanel() {
             Clinical Decision Support
           </span>
         </div>
-        <Badge className="bg-teal-50 text-teal-800 text-[10px] font-medium border border-teal-200">
+        <Badge className="bg-teal-50 text-teal-800 text-[11px] font-medium border border-teal-200">
           FastMCP Live
         </Badge>
       </div>
@@ -117,7 +117,7 @@ export function CdsCockpitPanel() {
           <div className="w-full bg-amber-200/60 rounded-full h-1.5 overflow-hidden">
             <div className="bg-amber-500 h-1.5 rounded-full" style={{ width: "65%" }} />
           </div>
-          <p className="text-[10px] text-amber-800 leading-tight">
+          <p className="text-[11px] text-amber-800 leading-tight">
             Stage 2 HTN with acute elevation. Low cardiovascular organ damage risk currently.
           </p>
         </div>
@@ -128,7 +128,7 @@ export function CdsCockpitPanel() {
             <span className="font-semibold text-slate-800 text-xs">
               Suggested Differential Diagnosis
             </span>
-            <span className="text-[10px] text-slate-400">Gemini 2.5 Pro</span>
+            <span className="text-[11px] text-slate-400">Gemini 2.5 Pro</span>
           </div>
 
           <div className="space-y-2">
@@ -149,7 +149,7 @@ export function CdsCockpitPanel() {
                     )}
                     {dx.name}
                   </span>
-                  <Badge variant="outline" className="text-[10px] font-mono border-slate-300">
+                  <Badge variant="outline" className="text-[11px] font-mono border-slate-300">
                     {dx.icd10}
                   </Badge>
                 </div>
@@ -173,7 +173,7 @@ export function CdsCockpitPanel() {
                   </span>
                 </div>
 
-                <p className="text-[10px] text-slate-500 leading-tight">{dx.evidence}</p>
+                <p className="text-[11px] text-slate-500 leading-tight">{dx.evidence}</p>
               </div>
             ))}
           </div>
@@ -185,7 +185,7 @@ export function CdsCockpitPanel() {
             <span className="font-semibold text-slate-800 text-xs">
               Recommended Next Steps
             </span>
-            <span className="text-[10px] text-teal-700 font-medium">JNC-8 / AHA</span>
+            <span className="text-[11px] text-teal-700 font-medium">JNC-8 / AHA</span>
           </div>
 
           <div className="space-y-1.5">
@@ -205,7 +205,7 @@ export function CdsCockpitPanel() {
                   <span className={step.checked ? "font-semibold text-slate-900" : "text-slate-600"}>
                     {step.label}
                   </span>
-                  <span className="block text-[10px] text-teal-700">{step.guideline}</span>
+                  <span className="block text-[11px] text-teal-700">{step.guideline}</span>
                 </div>
               </div>
             ))}

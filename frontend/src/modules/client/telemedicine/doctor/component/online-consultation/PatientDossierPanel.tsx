@@ -79,12 +79,12 @@ export function PatientDossierPanel({
             <div className="p-2 rounded-lg bg-rose-50/60 border border-rose-100">
               <span className="text-slate-500 block">Blood Pressure</span>
               <span className="font-bold text-rose-700 text-sm">150/95</span>
-              <span className="text-[10px] text-slate-500 ml-1">mmHg</span>
+              <span className="text-[11px] text-slate-500 ml-1">mmHg</span>
             </div>
             <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
               <span className="text-slate-500 block">Baseline BP</span>
               <span className="font-semibold text-slate-700 text-sm">128/82</span>
-              <span className="text-[10px] text-slate-500 ml-1">mmHg</span>
+              <span className="text-[11px] text-slate-500 ml-1">mmHg</span>
             </div>
             <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
               <span className="text-slate-500 block">Heart Rate</span>

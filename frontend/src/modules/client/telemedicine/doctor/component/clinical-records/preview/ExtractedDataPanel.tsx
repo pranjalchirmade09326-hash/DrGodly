@@ -626,14 +626,14 @@ function ExtractedRow({
                   </span>
                 )}
                 {row.category && (
-                  <Badge variant="outline" className="text-[10px] font-normal">
+                  <Badge variant="outline" className="text-[11px] font-normal">
                     {row.category}
                   </Badge>
                 )}
                 {row.outOfRange && (
                   <Badge
                     variant="outline"
-                    className="gap-1 border-amber-400/50 text-[10px] font-normal text-amber-700 dark:text-amber-400"
+                    className="gap-1 border-amber-400/50 text-[11px] font-normal text-amber-700 dark:text-amber-400"
                   >
                     <TriangleAlert className="size-2.5" />
                     {row.interpretation ?? "Out of range"}
@@ -649,7 +649,7 @@ function ExtractedRow({
           {row.state === "stored" && (
             <Badge
               variant="secondary"
-              className="gap-1 bg-sky-100 text-[10px] font-normal text-sky-800 dark:bg-sky-950 dark:text-sky-300"
+              className="gap-1 bg-sky-100 text-[11px] font-normal text-sky-800 dark:bg-sky-950 dark:text-sky-300"
             >
               <CheckCircle2 className="size-2.5" />
               In record

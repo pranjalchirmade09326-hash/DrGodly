@@ -80,7 +80,7 @@ export function ClinicalEntryRow({
             {isCoded ? (
               <Badge
                 variant="secondary"
-                className="gap-1 text-[10px] font-mono font-normal shrink-0"
+                className="gap-1 text-[11px] font-mono font-normal shrink-0"
               >
                 <Check className="size-2.5" />
                 {terminologySystem}
@@ -88,7 +88,7 @@ export function ClinicalEntryRow({
             ) : (
               <Badge
                 variant="outline"
-                className="gap-1 text-[10px] font-normal shrink-0 border-amber-500/40 text-amber-600 dark:text-amber-400"
+                className="gap-1 text-[11px] font-normal shrink-0 border-amber-500/40 text-amber-600 dark:text-amber-400"
               >
                 <AlertTriangle className="size-2.5" />
                 No code
@@ -96,7 +96,7 @@ export function ClinicalEntryRow({
             )}
 
             {isPublished && (
-              <Badge variant="outline" className="text-[10px] font-normal shrink-0">
+              <Badge variant="outline" className="text-[11px] font-normal shrink-0">
                 In EMR
               </Badge>
             )}

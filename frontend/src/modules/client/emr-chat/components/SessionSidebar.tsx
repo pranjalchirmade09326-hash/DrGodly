@@ -499,7 +499,7 @@ function SessionRow({
               {wf.workflowName}
             </span>
             {wf.status === "IN_PROGRESS" && (
-              <span className="text-[10px] text-primary font-medium shrink-0">
+              <span className="text-[11px] text-primary font-medium shrink-0">
                 In progress
               </span>
             )}

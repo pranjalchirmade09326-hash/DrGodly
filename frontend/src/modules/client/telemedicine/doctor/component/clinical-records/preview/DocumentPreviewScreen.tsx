@@ -168,7 +168,7 @@ export function DocumentPreviewScreen({
             </p>
             <Badge
               variant="secondary"
-              className="shrink-0 font-mono text-[10px] font-normal"
+              className="shrink-0 font-mono text-[11px] font-normal"
             >
               {fileExtension(title, contentType)}
             </Badge>

@@ -280,7 +280,7 @@ export function McpPage({ session }: { session: AuthResponse | null }) {
                   <Terminal className="w-3.5 h-3.5" />
                   drgodly-mcp-server
                 </div>
-                <Badge variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-500">Running</Badge>
+                <Badge variant="outline" className="text-[11px] border-emerald-500/30 text-emerald-500">Running</Badge>
               </div>
               <div className="p-5 font-mono text-[11px] space-y-2 bg-background/50 min-h-[320px]">
                 {terminalLines.map((line, i) => (

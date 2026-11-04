@@ -277,7 +277,7 @@ export function AiIntakeStudio({
             <h2 className="text-xl font-bold text-slate-900 tracking-tight">
               AI Clinical Intake Studio
             </h2>
-            <Badge className="bg-teal-50 text-teal-700 border-teal-200 text-[10px] font-semibold">
+            <Badge className="bg-teal-50 text-teal-700 border-teal-200 text-[11px] font-semibold">
               ABDM & FHIR R4 Ready
             </Badge>
           </div>
@@ -315,7 +315,7 @@ export function AiIntakeStudio({
               <span className="font-bold text-amber-900 text-sm flex items-center gap-1.5">
                 Clinical Caution: Severe Symptoms Flagged by Triage
               </span>
-              <Badge className="bg-amber-200 text-amber-900 border-amber-300 text-[10px]">
+              <Badge className="bg-amber-200 text-amber-900 border-amber-300 text-[11px]">
                 High Triage Priority
               </Badge>
             </div>
@@ -366,7 +366,7 @@ export function AiIntakeStudio({
                       <div className="flex items-center justify-between">
                         <span className="text-xl">{region.icon}</span>
                         {isSelected && (
-                          <span className="h-4 w-4 rounded-full bg-teal-600 text-white flex items-center justify-center text-[10px]">
+                          <span className="h-4 w-4 rounded-full bg-teal-600 text-white flex items-center justify-center text-[11px]">
                             <Check className="size-2.5 stroke-[3]" />
                           </span>
                         )}
@@ -423,7 +423,7 @@ export function AiIntakeStudio({
                   <Activity className="size-3.5 text-teal-600" />
                   <span>2. Pain Severity & Quality Characteristics</span>
                 </CardTitle>
-                <Badge className={`text-[10px] ${currentPainMeta.text} bg-slate-100 border`}>
+                <Badge className={`text-[11px] ${currentPainMeta.text} bg-slate-100 border`}>
                   {currentPainMeta.label}
                 </Badge>
               </div>
@@ -449,7 +449,7 @@ export function AiIntakeStudio({
                   />
                   <span className="text-lg">😭</span>
                 </div>
-                <div className="flex justify-between text-[10px] text-slate-400 font-medium px-1">
+                <div className="flex justify-between text-[11px] text-slate-400 font-medium px-1">
                   <span>1 - Minimal</span>
                   <span>4 - Annoying</span>
                   <span>7 - Disabling</span>
@@ -505,7 +505,7 @@ export function AiIntakeStudio({
                         <span className="block font-semibold text-[11px] leading-tight">
                           {opt.label}
                         </span>
-                        <span className={`text-[9px] uppercase tracking-wider block mt-0.5 ${isSelected ? "text-teal-100" : "text-slate-400"}`}>
+                        <span className={`text-[10px] uppercase tracking-wider block mt-0.5 ${isSelected ? "text-teal-100" : "text-slate-400"}`}>
                           {opt.tag}
                         </span>
                       </button>
@@ -524,7 +524,7 @@ export function AiIntakeStudio({
                   <Paperclip className="size-3.5 text-teal-600" />
                   <span>3. Grounding Health Documents & Recent Lab Slips</span>
                 </CardTitle>
-                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">
+                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">
                   FastMCP OCR Active
                 </Badge>
               </div>
@@ -539,7 +539,7 @@ export function AiIntakeStudio({
                     <span className="text-xs font-semibold text-slate-800 block">
                       {uploadedFile}
                     </span>
-                    <span className="text-[10px] text-slate-500">
+                    <span className="text-[11px] text-slate-500">
                       Uploaded 24 Oct 2026 • Apollo Diagnostics 12-Lead ECG
                     </span>
                   </div>
@@ -585,7 +585,7 @@ export function AiIntakeStudio({
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[10px] text-slate-500 font-medium">Gemini 2.5 Active</span>
+                  <span className="text-[11px] text-slate-500 font-medium">Gemini 2.5 Active</span>
                 </div>
               </div>
             </CardHeader>
@@ -599,7 +599,7 @@ export function AiIntakeStudio({
                     className={`flex items-start gap-2 ${msg.from === "user" ? "justify-end" : "justify-start"}`}
                   >
                     {msg.from === "assistant" && (
-                      <div className="h-6 w-6 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                      <div className="h-6 w-6 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-[11px] font-bold shrink-0 mt-0.5">
                         DG
                       </div>
                     )}
@@ -611,7 +611,7 @@ export function AiIntakeStudio({
                       }`}
                     >
                       {msg.text}
-                      <span className={`block text-[9px] mt-1 text-right ${msg.from === "user" ? "text-teal-200" : "text-slate-400"}`}>
+                      <span className={`block text-[10px] mt-1 text-right ${msg.from === "user" ? "text-teal-200" : "text-slate-400"}`}>
                         {msg.time}
                       </span>
                     </div>
@@ -633,12 +633,12 @@ export function AiIntakeStudio({
                     {isRecording ? (
                       <>
                         <MicOff className="size-3.5 animate-pulse" />
-                        <span className="text-[10px]">Listening...</span>
+                        <span className="text-[11px]">Listening...</span>
                       </>
                     ) : (
                       <>
                         <Mic className="size-3.5 text-teal-600" />
-                        <span className="text-[10px]">Voice</span>
+                        <span className="text-[11px]">Voice</span>
                       </>
                     )}
                   </Button>
@@ -661,7 +661,7 @@ export function AiIntakeStudio({
                   </Button>
                 </div>
 
-                <div className="flex items-center justify-between text-[10px] text-slate-400 px-1">
+                <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
                   <span>⚡ Voice support in Hindi & English</span>
                   <span>🔒 End-to-end encrypted</span>
                 </div>
@@ -676,7 +676,7 @@ export function AiIntakeStudio({
                 <FileCheck className="size-3.5 text-teal-400" />
                 <span>Pre-Consultation Hand-off Dossier</span>
               </CardTitle>
-              <Badge className="bg-teal-500/20 text-teal-300 border-teal-500/30 text-[10px]">
+              <Badge className="bg-teal-500/20 text-teal-300 border-teal-500/30 text-[11px]">
                 Ready for Doctor
               </Badge>
             </CardHeader>

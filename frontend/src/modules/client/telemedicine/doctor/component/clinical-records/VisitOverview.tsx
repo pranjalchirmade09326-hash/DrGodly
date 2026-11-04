@@ -159,7 +159,7 @@ export function VisitOverview({
             <p className="text-sm font-semibold">Appointment</p>
             <Badge
               variant="outline"
-              className="text-[10px] font-mono font-normal"
+              className="text-[11px] font-mono font-normal"
             >
               Appointment/{appointment.id}
             </Badge>
@@ -271,7 +271,7 @@ export function VisitOverview({
           >
             <MessageSquare className="size-3.5" />
             View consultation conversation
-            <span className="text-[10px] text-muted-foreground">
+            <span className="text-[11px] text-muted-foreground">
               {transcript.length}
             </span>
           </Button>

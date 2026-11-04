@@ -193,7 +193,7 @@ export function AddPharmacyWebModal({
               <strong>Clinical CDS Check Passed:</strong> No severe drug-drug interactions detected with patient&apos;s active FHIR MedicationStatement.
             </span>
           </div>
-          <Badge variant="outline" className="text-[10px] border-amber-500/30 text-amber-400">
+          <Badge variant="outline" className="text-[11px] border-amber-500/30 text-amber-400">
             Formulary Tier 1 ($10 Copay)
           </Badge>
         </div>
@@ -270,7 +270,7 @@ export function AddPharmacyWebModal({
                             {pharmacy.name}
                           </span>
                           {pharmacy.inNetwork && (
-                            <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] py-0 px-1.5">
+                            <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[11px] py-0 px-1.5">
                               In-Network
                             </Badge>
                           )}
@@ -286,7 +286,7 @@ export function AddPharmacyWebModal({
                         <span className="text-xs font-bold text-primary block">
                           {pharmacy.distance}
                         </span>
-                        <span className="text-[10px] text-muted-foreground flex items-center gap-1 justify-end mt-0.5">
+                        <span className="text-[11px] text-muted-foreground flex items-center gap-1 justify-end mt-0.5">
                           <Clock className="h-2.5 w-2.5" />
                           {pharmacy.is24Hour ? "24 Hours" : pharmacy.hours}
                         </span>

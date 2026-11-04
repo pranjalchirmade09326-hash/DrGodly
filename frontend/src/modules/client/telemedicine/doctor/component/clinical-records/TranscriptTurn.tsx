@@ -57,7 +57,7 @@ export function TranscriptTurn({
           {speaker}
         </span>
         {timestamp && (
-          <span className="font-mono text-[10px] text-muted-foreground/60">
+          <span className="font-mono text-[11px] text-muted-foreground/60">
             {timestamp}
           </span>
         )}

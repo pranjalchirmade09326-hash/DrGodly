@@ -43,7 +43,7 @@ export default function AuthPage() {
         <CardHeader className="gap-1">
           <div className="flex items-center gap-2">
             <p className="text-sm font-medium">Option A — OAuth 2.0 Authorization Code + PKCE</p>
-            <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
+            <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">
               Recommended
             </span>
           </div>

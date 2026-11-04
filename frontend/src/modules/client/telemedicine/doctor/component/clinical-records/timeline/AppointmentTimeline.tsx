@@ -175,7 +175,7 @@ export function AppointmentTimeline({ events }: AppointmentTimelineProps) {
                         {event.actor && (
                           <Badge
                             variant="outline"
-                            className="text-[10px] font-normal"
+                            className="text-[11px] font-normal"
                           >
                             {event.actor}
                           </Badge>

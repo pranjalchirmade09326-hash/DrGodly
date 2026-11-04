@@ -86,7 +86,7 @@ export function DifferentialDiagnosisList({ items }: { items: unknown }) {
               </p>
             )}
             {d.likelihood && (
-              <Badge variant="outline" className="text-[10px] w-fit font-normal">
+              <Badge variant="outline" className="text-[11px] w-fit font-normal">
                 {d.likelihood}
               </Badge>
             )}

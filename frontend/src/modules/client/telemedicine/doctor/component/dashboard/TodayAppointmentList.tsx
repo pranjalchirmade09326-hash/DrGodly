@@ -172,7 +172,7 @@ export function TodayAppointmentList({
                 </span>
                 <Badge
                   variant="outline"
-                  className={cn("text-[10px] px-1.5 py-0", statusCfg.className)}
+                  className={cn("text-[11px] px-1.5 py-0", statusCfg.className)}
                 >
                   {statusCfg.label}
                 </Badge>

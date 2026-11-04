@@ -255,7 +255,7 @@ export function AttachmentList({
           >
             <Badge
               variant="secondary"
-              className="min-w-13 shrink-0 justify-center font-mono text-[10px]"
+              className="min-w-13 shrink-0 justify-center font-mono text-[11px]"
             >
               {fileExtension(file.title, file.contentType)}
             </Badge>

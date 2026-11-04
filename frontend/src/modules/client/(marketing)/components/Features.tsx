@@ -126,7 +126,7 @@ export default function Features() {
                     <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-primary/10 group-hover:bg-primary/15 transition-colors">
                       {feature.icon}
                     </div>
-                    <Badge variant="secondary" className="text-[10px] font-semibold">
+                    <Badge variant="secondary" className="text-[11px] font-semibold">
                       {feature.badge}
                     </Badge>
                   </div>

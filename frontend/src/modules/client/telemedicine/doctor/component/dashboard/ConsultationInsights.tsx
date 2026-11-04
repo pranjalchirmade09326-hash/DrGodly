@@ -348,7 +348,7 @@ function ConversationTab({
         <div key={i} className="flex items-start gap-2">
           <span
             className={cn(
-              "text-[10px] font-semibold shrink-0 mt-0.5 uppercase",
+              "text-[11px] font-semibold shrink-0 mt-0.5 uppercase",
               msg.speaker === "DOCTOR" ? "text-primary" : "text-muted-foreground",
             )}
           >
@@ -482,7 +482,7 @@ export function ConsultationInsights({ consultation }: ConsultationInsightsProps
               nobody has read is the case this card must not present as final.
             */}
             <ReviewBadge approved={isApproved} />
-            <Badge variant="outline" className="text-[10px] capitalize">
+            <Badge variant="outline" className="text-[11px] capitalize">
               {consultation.status.toLowerCase()}
             </Badge>
           </div>

@@ -42,20 +42,20 @@ export const GlobalFooter: React.FC<GlobalFooterProps> = ({
               <DrGodlyLogoMark sizePx={32} />
               <div className="flex flex-col">
                 <span className="text-base font-black text-white tracking-tight">DrGodly</span>
-                <span className="text-[10px] text-cyan-400 font-semibold uppercase tracking-wider">Clinical Intelligence OS</span>
+                <span className="text-[11px] text-cyan-400 font-semibold uppercase tracking-wider">Clinical Intelligence OS</span>
               </div>
             </div>
             <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
               Next-generation longitudinal clinical operating system. Ambient AI preparation, board-certified physician consultations, and HL7 FHIR R4 longitudinal context.
             </p>
             <div className="flex flex-wrap items-center gap-2 pt-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[10px] font-semibold text-emerald-400">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] font-semibold text-emerald-400">
                 <CheckCircle2 size={11} /> HIPAA Compliant
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[10px] font-semibold text-blue-400">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] font-semibold text-blue-400">
                 <Lock size={10} /> SOC 2 Type II
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[10px] font-semibold text-purple-400">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] font-semibold text-purple-400">
                 HL7 FHIR R4
               </span>
             </div>

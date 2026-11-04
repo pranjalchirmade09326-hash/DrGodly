@@ -69,10 +69,10 @@ export function EMRChatPanel({ role }: EMRChatPanelProps) {
           <div>
             <div className="flex items-center gap-2">
               <p className="text-sm font-bold text-slate-900 leading-tight">EMR Intelligence Assistant</p>
-              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-semibold py-0">
+              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-semibold py-0">
                 FastMCP :8002 Live
               </Badge>
-              <Badge className="bg-teal-50 text-teal-700 border-teal-200 text-[10px] font-semibold py-0">
+              <Badge className="bg-teal-50 text-teal-700 border-teal-200 text-[11px] font-semibold py-0">
                 FHIR R4 Core
               </Badge>
             </div>

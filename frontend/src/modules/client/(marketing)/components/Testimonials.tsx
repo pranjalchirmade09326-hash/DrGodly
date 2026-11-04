@@ -140,7 +140,7 @@ export default function Testimonials() {
                     </div>
                     <Badge
                       variant="outline"
-                      className={`text-[10px] font-semibold ${pillar.badgeColor}`}
+                      className={`text-[11px] font-semibold ${pillar.badgeColor}`}
                     >
                       {pillar.badge}
                     </Badge>

@@ -155,7 +155,7 @@ export function DateScroller({
                 `}
               >
                 <span
-                  className={`text-[10px] font-semibold uppercase tracking-wide ${
+                  className={`text-[11px] font-semibold uppercase tracking-wide ${
                     isSelected
                       ? "text-primary-foreground"
                       : "text-muted-foreground"
@@ -169,7 +169,7 @@ export function DateScroller({
                   {formatDisplayDayMonth(date)}
                 </span>
                 {isDisabled && (
-                  <span className="text-[9px] text-muted-foreground">
+                  <span className="text-[10px] text-muted-foreground">
                     Unavail.
                   </span>
                 )}

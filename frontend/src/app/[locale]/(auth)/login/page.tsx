@@ -1,13 +1,10 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import { useRouter } from "@/i18n/navigation";
 import {
   ArrowRight,
   Eye,
   EyeOff,
-  Globe2,
   LockKeyhole,
   Mail,
   MessageSquareHeart,
@@ -16,8 +13,11 @@ import {
   FileText,
   Heart,
   Users,
+  Globe2,
+  Home,
 } from "lucide-react";
 import { DrGodlyLogo } from "@/components/shared/DrGodlyLogo";
+import LocaleSwitcher from "@/modules/client/shared/components/LocaleSwitcher";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,14 +25,28 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Link, useRouter } from "@/i18n/navigation";
 import { toast } from "sonner";
+
+/**
+ * Login screen.
+ *
+ * Route: /[locale]/(auth)/login
+ *
+ * Split layout: brand/marketing panel (lg and up) + credential form. Below lg
+ * the marketing panel is dropped and a compact header row takes over, so there
+ * is always a route back home / to sign up / to the language picker — the
+ * previous version left phone users with the brand as inert text and no way
+ * out except the browser back button.
+ *
+ * Colours come from the theme tokens (--primary, --background, --muted,
+ * --border …) rather than hard-coded blue/slate hexes, so the screen follows
+ * the theme picker and dark mode like the rest of the app.
+ *
+ * NOTE: the submit handler is still the built-in demo flow — it simulates a
+ * round trip and lands on /screens. Real credential auth goes through the
+ * external IAM service via <OAuthPkceButton>.
+ */
 
 type UserRole = "patient" | "doctor";
 
@@ -41,128 +55,123 @@ const features = [
     icon: MessageSquareHeart,
     title: "AI Health Intake",
     description: "Share your symptoms in your own words",
-    iconClass: "bg-blue-100 text-blue-600",
+    iconClass: "bg-primary/10 text-primary",
   },
   {
     icon: Stethoscope,
     title: "Consult with Trusted Doctors",
     description: "Connect with licensed medical professionals",
-    iconClass: "bg-emerald-100 text-emerald-600",
+    iconClass: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
   },
   {
     icon: FileText,
     title: "AI Clinical Support",
     description: "Better decisions for better outcomes",
-    iconClass: "bg-violet-100 text-violet-600",
+    iconClass: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
   },
   {
     icon: Heart,
     title: "Your Health Journey",
     description: "Continuous, personalized care",
-    iconClass: "bg-pink-100 text-pink-600",
+    iconClass: "bg-pink-500/10 text-pink-600 dark:text-pink-400",
   },
 ];
 
 const trustStats = [
-  {
-    icon: Users,
-    value: "100,000+",
-    label: "Patients Trust DrGodly",
-  },
-  {
-    icon: ShieldCheck,
-    value: "500+",
-    label: "Licensed Doctors",
-  },
-  {
-    icon: Globe2,
-    value: "Nationwide",
-    label: "Available Across 50 States",
-  },
+  { icon: Users, value: "100,000+", label: "Patients Trust DrGodly" },
+  { icon: ShieldCheck, value: "500+", label: "Licensed Doctors" },
+  { icon: Globe2, value: "Nationwide", label: "Available Across 50 States" },
 ];
+
+const DEMO_ACCOUNTS: Record<UserRole, { email: string; password: string; name: string }> = {
+  patient: {
+    email: "louise.reed@example.com",
+    password: "PatientPass2026!",
+    name: "Louise Reed",
+  },
+  doctor: {
+    email: "dr.wright@drgodly.com",
+    password: "DoctorPass2026!",
+    name: "Dr. Alexander Wright",
+  },
+};
 
 export default function LoginPage() {
   const router = useRouter();
   const [role, setRole] = React.useState<UserRole>("patient");
   const [showPassword, setShowPassword] = React.useState(false);
-  const [email, setEmail] = React.useState("louise.reed@example.com");
-  const [password, setPassword] = React.useState("password123");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [errors, setErrors] = React.useState<{ email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = React.useState(false);
+
+  const validate = () => {
+    const next: { email?: string; password?: string } = {};
+    if (!email.trim()) next.email = "Enter your email or phone number.";
+    else if (email.includes("@") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+      next.email = "That email address doesn't look right.";
+    if (!password) next.password = "Enter your password.";
+    else if (password.length < 8) next.password = "Password must be at least 8 characters.";
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!validate()) return;
+
     setIsLoading(true);
-
     try {
+      // Demo round trip — see the note above about OAuthPkceButton for real auth.
       await new Promise((resolve) => setTimeout(resolve, 600));
-      toast.success(
-        `Welcome to DrGodly, ${role === "doctor" ? "Dr. Alexander Wright" : "Louise Reed"}!`
-      );
-
-      if (role === "doctor") {
-        router.push("/screens");
-      } else {
-        router.push("/screens");
-      }
+      toast.success(`Welcome to DrGodly, ${DEMO_ACCOUNTS[role].name}!`);
+      router.push("/screens");
     } finally {
       setIsLoading(false);
     }
   }
 
-  const fillTestAccount = (selectedRole: UserRole) => {
+  const fillDemoAccount = (selectedRole: UserRole) => {
     setRole(selectedRole);
-    if (selectedRole === "doctor") {
-      setEmail("dr.wright@drgodly.com");
-      setPassword("DoctorPass2026!");
-      toast.info("Loaded Dr. Alexander Wright (Cardiology) test credentials");
-    } else {
-      setEmail("louise.reed@example.com");
-      setPassword("PatientPass2026!");
-      toast.info("Loaded Louise Reed test credentials");
-    }
+    setEmail(DEMO_ACCOUNTS[selectedRole].email);
+    setPassword(DEMO_ACCOUNTS[selectedRole].password);
+    setErrors({});
+    toast.info(
+      `Loaded ${DEMO_ACCOUNTS[selectedRole].name} demo credentials`,
+    );
   };
 
   return (
-    <main className="min-h-screen bg-white text-slate-900">
-      <div className="grid min-h-screen lg:grid-cols-2">
+    <main className="min-h-dvh bg-background text-foreground">
+      <div className="grid min-h-dvh lg:grid-cols-2">
         {/* =========================================================
-            LEFT: DRGODLY BRAND / MARKETING PANEL
+            LEFT: DRGODLY BRAND / MARKETING PANEL (lg and up)
         ========================================================= */}
-        <section className="relative hidden overflow-hidden bg-gradient-to-br from-white via-blue-50/70 to-cyan-50 lg:flex lg:flex-col">
-          {/* Decorative ambient gradients */}
-          <div className="pointer-events-none absolute -left-32 top-20 h-80 w-80 rounded-full bg-blue-200/30 blur-3xl" />
-          <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-emerald-200/30 blur-3xl" />
+        <section className="relative hidden overflow-hidden bg-gradient-to-br from-muted/60 via-background to-primary/10 lg:flex lg:flex-col">
+          <div className="pointer-events-none absolute -left-32 top-20 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
 
-          <div className="relative flex min-h-screen flex-col px-10 py-8 xl:px-16 justify-between">
-            {/* Header / Logo */}
+          <div className="relative flex min-h-dvh flex-col justify-between px-10 py-8 xl:px-16">
             <div>
-              <DrGodlyLogo
-                size="lg"
-                tagline="Care Smarter. Together."
-                linkTo="/en"
-              />
+              <DrGodlyLogo size="lg" tagline="Care Smarter. Together." linkTo="/" />
 
-              {/* Hero Messaging */}
               <div className="mt-14 max-w-2xl">
-                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-[#4056b8]">
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-primary">
                   AI-Native Telemedicine
                 </p>
-
-                <h1 className="text-4xl font-bold leading-[1.08] tracking-tight text-[#10195c] xl:text-5xl">
+                <h1 className="text-4xl font-bold leading-[1.08] tracking-tight text-foreground xl:text-5xl">
                   Better Care.
                   <br />
-                  <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-primary to-cyan-500 bg-clip-text text-transparent">
                     For A Healthier You.
                   </span>
                 </h1>
-
-                <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-600">
+                <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
                   From symptom check to specialist consultation, DrGodly combines AI with licensed
                   medical professionals to deliver high-quality, personalized and accessible care.
                 </p>
               </div>
 
-              {/* Feature list */}
               <div className="mt-8 grid max-w-xl gap-4">
                 {features.map((feature) => {
                   const Icon = feature.icon;
@@ -174,10 +183,8 @@ export default function LoginPage() {
                         <Icon className="h-4 w-4" />
                       </div>
                       <div>
-                        <h3 className="text-sm font-semibold text-[#10195c]">
-                          {feature.title}
-                        </h3>
-                        <p className="text-xs text-slate-500">{feature.description}</p>
+                        <h3 className="text-sm font-semibold text-foreground">{feature.title}</h3>
+                        <p className="text-xs text-muted-foreground">{feature.description}</p>
                       </div>
                     </div>
                   );
@@ -185,33 +192,31 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Team Quote & Physician Visual */}
             <div className="relative mt-8 pt-4">
-              <div className="max-w-xs rounded-2xl border border-white/80 bg-white/95 p-4 shadow-lg backdrop-blur mb-4">
+              <div className="mb-4 max-w-xs rounded-2xl border border-border/70 bg-card/90 p-4 shadow-lg backdrop-blur">
                 <div className="flex gap-2.5">
-                  <span className="text-2xl text-blue-500 leading-none">“</span>
-                  <p className="text-xs leading-relaxed text-slate-700">
+                  <span className="text-2xl leading-none text-primary">“</span>
+                  <p className="text-xs leading-relaxed text-card-foreground">
                     Technology should bring you closer to care, not further away.
                   </p>
                 </div>
-                <p className="pl-5 mt-1 text-[11px] font-semibold text-blue-600">
+                <p className="mt-1 pl-5 text-[11px] font-semibold text-primary">
                   — The DrGodly Team
                 </p>
               </div>
 
-              {/* Trust stats */}
-              <div className="grid grid-cols-3 border-t border-blue-100 pt-5">
+              <div className="grid grid-cols-3 border-t border-border pt-5">
                 {trustStats.map((stat) => {
                   const Icon = stat.icon;
                   return (
                     <div
                       key={stat.value}
-                      className="flex items-center gap-2.5 border-r border-blue-100 px-3 first:pl-0 last:border-0"
+                      className="flex items-center gap-2.5 border-r border-border px-3 first:pl-0 last:border-0"
                     >
-                      <Icon className="h-6 w-6 text-blue-600 shrink-0" />
+                      <Icon className="h-5 w-5 shrink-0 text-primary" />
                       <div>
-                        <div className="font-bold text-sm text-[#10195c]">{stat.value}</div>
-                        <div className="text-[10px] text-slate-500 leading-tight">
+                        <div className="text-sm font-bold text-foreground">{stat.value}</div>
+                        <div className="text-[11px] leading-tight text-muted-foreground">
                           {stat.label}
                         </div>
                       </div>
@@ -220,7 +225,7 @@ export default function LoginPage() {
                 })}
               </div>
 
-              <div className="mt-4 text-center text-[10px] font-medium uppercase tracking-[0.25em] text-slate-400">
+              <div className="mt-4 text-center text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
                 Small steps today. A healthier tomorrow.
               </div>
             </div>
@@ -228,38 +233,37 @@ export default function LoginPage() {
         </section>
 
         {/* =========================================================
-            RIGHT: LOGIN FORM & CARD
+            RIGHT: HEADER ROW + LOGIN CARD
         ========================================================= */}
-        <section className="relative flex min-h-screen flex-col bg-[#f8fbff]">
-          {/* Top navigation */}
-          <header className="flex items-center justify-end gap-3 px-6 py-4 sm:px-10">
-            <Select defaultValue="en">
-              <SelectTrigger className="w-[110px] h-9 border-0 bg-transparent text-xs text-slate-600 shadow-none">
-                <Globe2 className="mr-1.5 h-3.5 w-3.5 text-slate-500" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="hi">हिन्दी</SelectItem>
-                <SelectItem value="ta">தமிழ்</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Link href="/signup">
-              <Button
-                variant="outline"
-                className="rounded-xl border-blue-500 px-4 h-9 text-xs text-blue-600 hover:bg-blue-50"
+        <section className="relative flex min-h-dvh flex-col bg-muted/20">
+          <header className="flex items-center justify-between gap-3 px-4 py-4 sm:px-8 lg:justify-end lg:px-10">
+            {/* Only shown where the marketing panel is hidden — the way back home. */}
+            <div className="flex items-center gap-2 lg:hidden">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 rounded-lg px-1.5 py-1 text-sm font-semibold text-foreground hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                Create an account
-              </Button>
-            </Link>
+                <Home className="h-4 w-4" />
+                DrGodly
+              </Link>
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-3">
+              <LocaleSwitcher />
+              <Link href="/signup" className="hidden sm:inline-flex">
+                <Button
+                  variant="outline"
+                  className="rounded-xl border-primary/40 px-4 h-9 text-sm text-primary hover:bg-primary/5"
+                >
+                  Create an account
+                </Button>
+              </Link>
+            </div>
           </header>
 
-          {/* Login Card */}
           <div className="flex flex-1 items-center justify-center px-4 pb-8 sm:px-8">
-            <Card className="w-full max-w-[500px] rounded-3xl border-0 bg-white shadow-[0_20px_70px_rgba(30,64,175,0.08)]">
+            <Card className="w-full max-w-[500px] rounded-3xl border-border/60 bg-card shadow-xl">
               <CardContent className="p-6 sm:p-9">
-                {/* Logo & Welcome */}
                 <div className="flex flex-col items-center text-center">
                   <DrGodlyLogo
                     size="xl"
@@ -267,33 +271,34 @@ export default function LoginPage() {
                     className="flex-col items-center"
                     textClassName="items-center text-center mt-1"
                   />
-
-                  <h2 className="mt-6 text-2xl font-bold tracking-tight text-[#10195c]">
+                  <h2 className="mt-6 text-2xl font-bold tracking-tight text-card-foreground">
                     Welcome Back
                   </h2>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     Sign in to your DrGodly clinical account
                   </p>
                 </div>
 
-                {/* Role Switcher */}
                 <Tabs
                   value={role}
-                  onValueChange={(value) => fillTestAccount(value as UserRole)}
+                  onValueChange={(value) => {
+                    const next = value as UserRole;
+                    setRole(next);
+                    if (email || password) fillDemoAccount(next);
+                  }}
                   className="mt-6"
                 >
-                  <TabsList className="grid h-12 w-full grid-cols-2 rounded-xl bg-slate-100 p-1">
+                  <TabsList className="grid h-12 w-full grid-cols-2 rounded-xl bg-muted p-1">
                     <TabsTrigger
                       value="patient"
-                      className="h-10 rounded-lg text-xs font-semibold data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                      className="h-10 rounded-lg text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
                     >
                       <Users className="mr-1.5 h-4 w-4" />
                       Patient
                     </TabsTrigger>
-
                     <TabsTrigger
                       value="doctor"
-                      className="h-10 rounded-lg text-xs font-semibold data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                      className="h-10 rounded-lg text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
                     >
                       <Stethoscope className="mr-1.5 h-4 w-4" />
                       Doctor
@@ -301,67 +306,79 @@ export default function LoginPage() {
                   </TabsList>
                 </Tabs>
 
-                {/* Form */}
-                <form onSubmit={handleLogin} className="mt-6 space-y-4">
+                <form onSubmit={handleLogin} noValidate className="mt-6 space-y-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="email" className="text-xs font-medium text-slate-700">
+                    <Label htmlFor="email" className="text-sm font-medium text-foreground">
                       Email or Phone Number
                     </Label>
                     <div className="relative">
-                      <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <Input
                         id="email"
+                        name="email"
                         type="text"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        onBlur={validate}
                         placeholder="Enter your email or phone number"
-                        className="h-11 rounded-xl border-slate-200 pl-10 text-xs focus-visible:ring-blue-500"
+                        aria-invalid={Boolean(errors.email)}
+                        className="h-11 rounded-xl pl-10 text-sm"
                         autoComplete="username"
-                        required
                       />
                     </div>
+                    {errors.email && (
+                      <p className="text-xs font-medium text-destructive">{errors.email}</p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-xs font-medium text-slate-700">
+                    <div className="flex items-center justify-between gap-3">
+                      <Label htmlFor="password" className="text-sm font-medium text-foreground">
                         Password
                       </Label>
-                      <button
-                        type="button"
-                        className="text-xs font-medium text-blue-600 hover:text-blue-700"
+                      <Link
+                        href="/forgot-password"
+                        className="shrink-0 text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
                       >
                         Forgot password?
-                      </button>
+                      </Link>
                     </div>
-
                     <div className="relative">
-                      <LockKeyhole className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      <LockKeyhole className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <Input
                         id="password"
+                        name="password"
                         type={showPassword ? "text" : "password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onBlur={validate}
                         placeholder="Enter your password"
-                        className="h-11 rounded-xl border-slate-200 pl-10 pr-10 text-xs focus-visible:ring-blue-500"
+                        aria-invalid={Boolean(errors.password)}
+                        className="h-11 rounded-xl pl-10 pr-11 text-sm"
                         autoComplete="current-password"
-                        required
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         aria-label={showPassword ? "Hide password" : "Show password"}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
+                    {errors.password && (
+                      <p className="text-xs font-medium text-destructive">{errors.password}</p>
+                    )}
                   </div>
 
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="h-11 w-full rounded-xl bg-blue-600 text-xs font-semibold shadow-md shadow-blue-600/20 hover:bg-blue-700 text-white"
+                    className="h-11 w-full rounded-xl text-sm font-semibold shadow-md shadow-primary/20"
                   >
                     {isLoading ? (
                       "Signing in..."
@@ -374,70 +391,88 @@ export default function LoginPage() {
                   </Button>
                 </form>
 
-                {/* Divider */}
+                {/* Demo helpers — this build ships without the IAM service, so the
+                    quick-fill row is how the flow is exercised. */}
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
+                  <span>Quick fill demo:</span>
+                  <button
+                    type="button"
+                    onClick={() => fillDemoAccount("patient")}
+                    className="rounded-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    Louise Reed
+                  </button>
+                  <span aria-hidden="true">·</span>
+                  <button
+                    type="button"
+                    onClick={() => fillDemoAccount("doctor")}
+                    className="rounded-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    Dr. Alexander Wright
+                  </button>
+                </div>
+
                 <div className="my-5 flex items-center gap-3">
                   <Separator className="flex-1" />
-                  <span className="text-[11px] text-slate-400">or continue with</span>
+                  <span className="text-xs text-muted-foreground">or continue with</span>
                   <Separator className="flex-1" />
                 </div>
 
-                {/* Social Login Buttons */}
                 <div className="grid grid-cols-2 gap-3">
                   <Button
                     variant="outline"
-                    className="h-10 rounded-xl border-slate-200 text-xs"
+                    className="h-10 rounded-xl text-sm"
                     type="button"
-                    onClick={() => {
-                      fillTestAccount("patient");
-                      toast.info("1-Click Google sign-in demo linked!");
-                    }}
+                    onClick={() => fillDemoAccount("patient")}
                   >
                     <GoogleIcon />
                     <span className="ml-2">Google</span>
                   </Button>
-
                   <Button
                     variant="outline"
-                    className="h-10 rounded-xl border-slate-200 text-xs"
+                    className="h-10 rounded-xl text-sm"
                     type="button"
-                    onClick={() => {
-                      fillTestAccount("doctor");
-                      toast.info("1-Click Apple sign-in demo linked!");
-                    }}
+                    onClick={() => fillDemoAccount("doctor")}
                   >
                     <AppleIcon />
                     <span className="ml-2">Apple</span>
                   </Button>
                 </div>
 
-                {/* Registration link */}
-                <p className="mt-5 text-center text-xs text-slate-500">
+                <p className="mt-5 text-center text-sm text-muted-foreground">
                   Don&apos;t have an account?{" "}
                   <Link
                     href="/signup"
-                    className="font-semibold text-blue-600 hover:text-blue-700"
+                    className="font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
                   >
                     Create one
                   </Link>
                 </p>
+                <Link
+                  href="/signup"
+                  className="mt-3 flex w-full sm:hidden"
+                >
+                  <Button variant="outline" className="w-full rounded-xl text-sm">
+                    Create an account
+                  </Button>
+                </Link>
 
-                {/* Security Card */}
-                <div className="mt-5 flex gap-3 rounded-2xl bg-gradient-to-r from-emerald-50 to-blue-50 p-4 border border-emerald-100">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                <div className="mt-5 flex gap-3 rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-4">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
                     <ShieldCheck className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-semibold text-xs text-[#10195c]">
+                    <p className="text-xs font-semibold text-card-foreground">
                       Your health data is secure
                     </p>
-                    <p className="mt-0.5 text-[11px] leading-tight text-slate-500">
+                    <p className="mt-0.5 text-[11px] leading-tight text-muted-foreground">
                       We follow industry-leading security and privacy standards.
                     </p>
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {["HIPAA", "ABDM M1/M2/M3", "ISO 27001"].map((item) => (
                         <span
                           key={item}
-                          className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700 shadow-2xs border border-slate-200/60"
+                          className="rounded-full border border-border bg-background px-2 py-0.5 text-[11px] font-semibold text-muted-foreground"
                         >
                           {item}
                         </span>
@@ -446,19 +481,18 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                {/* Legal Footer */}
-                <div className="mt-6 flex justify-center gap-3 text-[11px] text-slate-400">
-                  <button type="button" className="hover:text-slate-600">
+                <div className="mt-6 flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                  <Link href="/legal" className="hover:text-foreground hover:underline">
                     Terms of Service
-                  </button>
-                  <span>|</span>
-                  <button type="button" className="hover:text-slate-600">
+                  </Link>
+                  <span aria-hidden="true">|</span>
+                  <Link href="/legal#privacy" className="hover:text-foreground hover:underline">
                     Privacy Policy
-                  </button>
-                  <span>|</span>
-                  <button type="button" className="hover:text-slate-600">
-                    Contact Us
-                  </button>
+                  </Link>
+                  <span aria-hidden="true">|</span>
+                  <Link href="/hipaa" className="hover:text-foreground hover:underline">
+                    Security
+                  </Link>
                 </div>
               </CardContent>
             </Card>
@@ -468,7 +502,6 @@ export default function LoginPage() {
     </main>
   );
 }
-
 
 /* ===============================================================
    GOOGLE ICON

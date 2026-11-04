@@ -218,7 +218,7 @@ export function GenericPharmacyCheckout() {
             <h2 className="text-xl font-bold text-slate-900 tracking-tight">
               DrGodly Generic Pharmacy & Wellness Store
             </h2>
-            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-semibold">
+            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-semibold">
               CDSCO Verified Bio-Equivalents
             </Badge>
           </div>
@@ -272,7 +272,7 @@ export function GenericPharmacyCheckout() {
                   <FileCheck2 className="size-3.5 text-teal-600" />
                   <span>Prescribed Medications (from Visit 27 Oct 2026)</span>
                 </CardTitle>
-                <Badge className="bg-teal-50 text-teal-700 border-teal-200 text-[10px]">
+                <Badge className="bg-teal-50 text-teal-700 border-teal-200 text-[11px]">
                   Tamper-Evident QR Validated
                 </Badge>
               </div>
@@ -291,11 +291,11 @@ export function GenericPharmacyCheckout() {
                           {item.isGenericSelected ? item.genericName : item.prescribedBrand}
                         </span>
                         {item.isGenericSelected ? (
-                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[9px] py-0">
+                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] py-0">
                             Generic Bio-Equivalent
                           </Badge>
                         ) : (
-                          <Badge className="bg-slate-100 text-slate-600 border-slate-200 text-[9px] py-0">
+                          <Badge className="bg-slate-100 text-slate-600 border-slate-200 text-[10px] py-0">
                             Branded Original
                           </Badge>
                         )}
@@ -306,7 +306,7 @@ export function GenericPharmacyCheckout() {
                       <button
                         type="button"
                         onClick={() => toggleGeneric(item.id)}
-                        className="text-[10px] text-teal-700 hover:text-teal-900 font-semibold underline decoration-dotted mt-1 block"
+                        className="text-[11px] text-teal-700 hover:text-teal-900 font-semibold underline decoration-dotted mt-1 block"
                       >
                         {item.isGenericSelected
                           ? `Switch to Branded Original (₹${item.brandedPrice})`
@@ -321,7 +321,7 @@ export function GenericPharmacyCheckout() {
                           ₹{item.isGenericSelected ? item.genericPrice * item.quantity : item.brandedPrice * item.quantity}
                         </span>
                         {item.isGenericSelected && (
-                          <span className="text-[10px] text-slate-400 line-through block font-mono">
+                          <span className="text-[11px] text-slate-400 line-through block font-mono">
                             MRP ₹{item.brandedPrice * item.quantity}
                           </span>
                         )}
@@ -374,11 +374,11 @@ export function GenericPharmacyCheckout() {
                       <span className="text-xs font-bold text-slate-900 block leading-tight">
                         {supp.name}
                       </span>
-                      <Badge className="bg-slate-100 text-slate-700 border-slate-200 text-[9px] py-0 shrink-0">
+                      <Badge className="bg-slate-100 text-slate-700 border-slate-200 text-[10px] py-0 shrink-0">
                         {supp.tag}
                       </Badge>
                     </div>
-                    <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">
+                    <p className="text-[11px] text-slate-500 mt-1 line-clamp-2">
                       {supp.description}
                     </p>
                   </div>
@@ -388,7 +388,7 @@ export function GenericPharmacyCheckout() {
                       <span className="text-xs font-extrabold text-slate-900 font-mono">
                         ₹{supp.genericPrice}
                       </span>
-                      <span className="text-[10px] text-slate-400 line-through font-mono">
+                      <span className="text-[11px] text-slate-400 line-through font-mono">
                         ₹{supp.mrp}
                       </span>
                     </div>
@@ -437,7 +437,7 @@ export function GenericPharmacyCheckout() {
                       </span>
                       <span className="font-mono text-[11px]">₹49</span>
                     </div>
-                    <span className="text-[10px] text-slate-500 block mt-0.5">
+                    <span className="text-[11px] text-slate-500 block mt-0.5">
                       Within 4 Hours (Apollo)
                     </span>
                   </button>
@@ -457,7 +457,7 @@ export function GenericPharmacyCheckout() {
                       </span>
                       <span className="font-mono text-[11px] text-emerald-600 font-bold">FREE</span>
                     </div>
-                    <span className="text-[10px] text-slate-500 block mt-0.5">
+                    <span className="text-[11px] text-slate-500 block mt-0.5">
                       Tomorrow Morning
                     </span>
                   </button>
@@ -537,7 +537,7 @@ export function GenericPharmacyCheckout() {
                 <span>Place Order • Pay ₹{grandTotal}</span>
               </Button>
 
-              <div className="flex items-center justify-center gap-1.5 text-[10px] text-slate-400">
+              <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
                 <ShieldCheck className="size-3 text-emerald-500" />
                 <span>100% CDSCO Quality Inspected • Doctor Signed e-Rx</span>
               </div>

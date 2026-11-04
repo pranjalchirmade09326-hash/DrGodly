@@ -187,7 +187,7 @@ export function DashboardOverview({
               placeholder="Search patients, EMR (⌘K)..."
               className="text-xs pl-8 pr-12 h-9 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-teal-500"
             />
-            <kbd className="absolute right-2.5 top-2.5 pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border border-slate-200 bg-white px-1.5 font-mono text-[10px] font-medium text-slate-400">
+            <kbd className="absolute right-2.5 top-2.5 pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border border-slate-200 bg-white px-1.5 font-mono text-[11px] font-medium text-slate-400">
               ⌘K
             </kbd>
           </div>

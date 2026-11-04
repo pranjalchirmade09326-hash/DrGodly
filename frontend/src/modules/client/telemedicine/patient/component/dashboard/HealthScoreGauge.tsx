@@ -66,7 +66,7 @@ export function HealthScoreGauge({
             <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
               {score}
             </span>
-            <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">
+            <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">
               / 100
             </span>
           </div>

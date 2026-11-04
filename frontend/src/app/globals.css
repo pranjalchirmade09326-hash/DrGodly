@@ -26,8 +26,15 @@
 
 /* Dynamic token aliases — resolved at paint time from CSS variables */
 @theme inline {
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
+  /*
+   * Brand fonts. next/font publishes --font-geist-sans / --font-geist-mono on
+   * <html> (see src/app/[locale]/layout.tsx); each alias keeps a full system
+   * fallback inside var() so that any surface where the font loader is absent
+   * (docs layout, global-not-found, a failed font fetch) still renders a
+   * sans face instead of the UA serif.
+   */
+  --font-sans: var(--font-geist-sans, ui-sans-serif, system-ui, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji");
+  --font-mono: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace);
   --font-heading: var(--font-sans);
 
   --color-background: var(--background);
@@ -797,9 +804,25 @@
   }
   body {
     @apply bg-background text-foreground;
+    /*
+     * Safety net for slide-in sections. The marketing pages previously revealed
+     * their columns with framer-motion x-offsets; before the reveal fires that
+     * translateX sits on the element and, once the lg:grid-cols-2 grids stack on
+     * mobile, pushes a few px of the document past the viewport so the whole
+     * page scrolls sideways. Those offsets are now vertical (y), but the clip is
+     * kept so any future horizontal transform, wide table or tooltip cannot
+     * break the mobile viewport. `clip` (rather than `hidden`) does not create a
+     * scroll container, so position: sticky/fixed headers keep working.
+     */
+    overflow-x: clip;
   }
   html {
     @apply font-sans;
+    /* Keep iOS/Android from inflating text on orientation change. */
+    -webkit-text-size-adjust: 100%;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 18%, transparent);
   }
 }
 

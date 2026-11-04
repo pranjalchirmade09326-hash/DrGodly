@@ -196,7 +196,7 @@ function WorkflowCard({ workflow, onTrigger }: WorkflowCardProps) {
             <Badge
               key={tag}
               variant="secondary"
-              className="px-1.5 py-0 text-[10px] font-normal h-4"
+              className="px-1.5 py-0 text-[11px] font-normal h-4"
             >
               {tag}
             </Badge>

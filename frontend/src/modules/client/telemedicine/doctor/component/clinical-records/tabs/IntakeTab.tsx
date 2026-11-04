@@ -165,7 +165,7 @@ function AssessmentView({ report }: { report: IntakeReport }) {
                     {d.likelihood && (
                       <Badge
                         variant="secondary"
-                        className="text-[10px] font-normal capitalize"
+                        className="text-[11px] font-normal capitalize"
                       >
                         {d.likelihood}
                       </Badge>
@@ -263,7 +263,7 @@ function TranscriptTurn({
           {speaker}
         </span>
         {timestamp && (
-          <span className="font-mono text-[10px] text-muted-foreground/60">
+          <span className="font-mono text-[11px] text-muted-foreground/60">
             {timestamp}
           </span>
         )}

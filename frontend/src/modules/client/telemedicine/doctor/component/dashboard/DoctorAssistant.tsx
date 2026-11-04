@@ -489,7 +489,7 @@ function ResultTable({ rows, depth = 0 }: { rows: Record<string, unknown>[]; dep
                           className="sticky left-0 w-max max-w-[min(90cqw,40rem)] border-l-2 border-primary/30 bg-background p-2 shadow-sm"
                           style={{ marginLeft: `${(depth + 1) * 12}px` }}
                         >
-                          <p className="mb-1 px-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                          <p className="mb-1 px-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                             {col}
                           </p>
                           <NestedCellBody value={row[col]} depth={depth + 1} />

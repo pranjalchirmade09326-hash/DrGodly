@@ -225,7 +225,7 @@ export function HipaaPage({ session }: { session: AuthResponse | null }) {
                       <div className="w-11 h-11 rounded-xl bg-background border border-border flex items-center justify-center">
                         {s.icon}
                       </div>
-                      <Badge variant="secondary" className="text-[10px]">{s.badge}</Badge>
+                      <Badge variant="secondary" className="text-[11px]">{s.badge}</Badge>
                     </div>
                     <h3 className="font-bold text-lg text-foreground">{s.title}</h3>
                     <ul className="space-y-2">

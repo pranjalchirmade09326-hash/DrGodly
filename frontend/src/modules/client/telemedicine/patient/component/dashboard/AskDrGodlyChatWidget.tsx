@@ -92,7 +92,7 @@ export function AskDrGodlyChatWidget() {
               }`}
             >
               <div
-                className={`h-6 w-6 rounded-full flex items-center justify-center text-[10px] shrink-0 ${
+                className={`h-6 w-6 rounded-full flex items-center justify-center text-[11px] shrink-0 ${
                   m.sender === "user"
                     ? "bg-slate-900 text-white"
                     : "bg-teal-600 text-white"
@@ -145,7 +145,7 @@ export function AskDrGodlyChatWidget() {
           </Button>
         </div>
 
-        <p className="text-[10px] text-slate-400 text-center">
+        <p className="text-[11px] text-slate-400 text-center">
           DrGodly AI provides health insights, not formal medical diagnosis. In emergencies, call 112.
         </p>
       </CardContent>

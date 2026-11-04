@@ -552,7 +552,7 @@ export function DynamicSelect({
                                 {tags.map((tag, ti) => (
                                   <span
                                     key={ti}
-                                    className="inline-flex items-center rounded-full border px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+                                    className="inline-flex items-center rounded-full border px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground"
                                   >
                                     {tag}
                                   </span>

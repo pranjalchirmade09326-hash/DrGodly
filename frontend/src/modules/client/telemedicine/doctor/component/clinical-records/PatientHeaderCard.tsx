@@ -98,7 +98,7 @@ export function PatientHeaderCard({
         <div className="flex-1 min-w-0 space-y-1.5">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-base font-semibold truncate">{name}</p>
-            <Badge variant="secondary" className="text-[10px] font-mono font-normal">
+            <Badge variant="secondary" className="text-[11px] font-mono font-normal">
               Patient/{patientId}
             </Badge>
           </div>

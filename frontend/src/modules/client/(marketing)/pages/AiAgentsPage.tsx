@@ -211,7 +211,7 @@ export function AiAgentsPage({ session }: { session: AuthResponse | null }) {
                     {agent.icon}
                   </div>
                   <div>
-                    <Badge variant="outline" className={`text-[10px] mb-1 ${agent.badgeColor}`}>
+                    <Badge variant="outline" className={`text-[11px] mb-1 ${agent.badgeColor}`}>
                       {agent.status}
                     </Badge>
                     <h2 className={`text-2xl font-bold ${agent.accentColor}`}>{agent.title}</h2>

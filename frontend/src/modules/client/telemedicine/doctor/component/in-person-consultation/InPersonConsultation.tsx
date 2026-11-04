@@ -753,7 +753,7 @@ export function InPersonConsultation({
                     key={i}
                     className="rounded-lg border bg-muted/40 px-3 py-2 flex gap-2.5 items-start"
                   >
-                    <span className="shrink-0 mt-0.5 text-[10px] font-mono font-semibold text-muted-foreground bg-muted border rounded px-1.5 py-0.5 leading-none">
+                    <span className="shrink-0 mt-0.5 text-[11px] font-mono font-semibold text-muted-foreground bg-muted border rounded px-1.5 py-0.5 leading-none">
                       {i + 1}
                     </span>
                     <p className="text-sm text-foreground leading-relaxed">

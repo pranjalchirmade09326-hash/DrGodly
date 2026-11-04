@@ -167,7 +167,7 @@ export function SlotPicker({
                     : "border-border bg-background hover:bg-accent text-foreground",
                 )}
               >
-                <span className="text-[10px] font-semibold uppercase tracking-wider">
+                <span className="text-[11px] font-semibold uppercase tracking-wider">
                   {isToday
                     ? "TODAY"
                     : formatInTimeZone(d, APP_TIMEZONE, "EEE").toUpperCase()}

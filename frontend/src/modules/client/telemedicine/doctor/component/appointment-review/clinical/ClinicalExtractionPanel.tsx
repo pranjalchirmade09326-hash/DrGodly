@@ -85,7 +85,7 @@ export function ClinicalExtractionPanel({
           <TabsTrigger value="conditions" className="text-xs">
             Conditions
             {conditions.length > 0 && (
-              <span className="ml-1.5 text-[10px] bg-primary/10 text-primary rounded-full px-1.5 py-0.5 leading-none">
+              <span className="ml-1.5 text-[11px] bg-primary/10 text-primary rounded-full px-1.5 py-0.5 leading-none">
                 {conditions.length}
               </span>
             )}
@@ -93,7 +93,7 @@ export function ClinicalExtractionPanel({
           <TabsTrigger value="observations" className="text-xs">
             Observations
             {observations.length > 0 && (
-              <span className="ml-1.5 text-[10px] bg-primary/10 text-primary rounded-full px-1.5 py-0.5 leading-none">
+              <span className="ml-1.5 text-[11px] bg-primary/10 text-primary rounded-full px-1.5 py-0.5 leading-none">
                 {observations.length}
               </span>
             )}
@@ -101,7 +101,7 @@ export function ClinicalExtractionPanel({
           <TabsTrigger value="medications" className="text-xs">
             Medications
             {medications.length > 0 && (
-              <span className="ml-1.5 text-[10px] bg-primary/10 text-primary rounded-full px-1.5 py-0.5 leading-none">
+              <span className="ml-1.5 text-[11px] bg-primary/10 text-primary rounded-full px-1.5 py-0.5 leading-none">
                 {medications.length}
               </span>
             )}
@@ -109,7 +109,7 @@ export function ClinicalExtractionPanel({
           <TabsTrigger value="orders" className="text-xs">
             Orders
             {serviceRequests.length > 0 && (
-              <span className="ml-1.5 text-[10px] bg-primary/10 text-primary rounded-full px-1.5 py-0.5 leading-none">
+              <span className="ml-1.5 text-[11px] bg-primary/10 text-primary rounded-full px-1.5 py-0.5 leading-none">
                 {serviceRequests.length}
               </span>
             )}

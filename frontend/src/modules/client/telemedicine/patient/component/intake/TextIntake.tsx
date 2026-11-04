@@ -469,7 +469,7 @@ export function TextIntake({
             <div>
               <div className="flex items-center gap-2">
                 <p className="font-bold text-sm text-slate-900">DrGodly AI Pre-Visit Intake</p>
-                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-semibold py-0">
+                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-semibold py-0">
                   ABHA Compliant
                 </Badge>
               </div>
@@ -511,7 +511,7 @@ export function TextIntake({
                   Pain Level (1–10):
                 </span>
                 <span className="font-bold text-base text-slate-900">{painLevel}/10</span>
-                <Badge className={`text-[10px] border ${getPainSeverity(painLevel).color}`}>
+                <Badge className={`text-[11px] border ${getPainSeverity(painLevel).color}`}>
                   {getPainSeverity(painLevel).label}
                 </Badge>
               </div>
@@ -602,7 +602,7 @@ export function TextIntake({
                     <div className="flex items-center gap-1.5 text-teal-800 font-semibold truncate">
                       <FileText className="size-3.5 text-teal-600 shrink-0" />
                       <span className="truncate">{file.name}</span>
-                      <span className="text-[10px] text-slate-400 font-normal">({file.size})</span>
+                      <span className="text-[11px] text-slate-400 font-normal">({file.size})</span>
                     </div>
                     <button
                       type="button"

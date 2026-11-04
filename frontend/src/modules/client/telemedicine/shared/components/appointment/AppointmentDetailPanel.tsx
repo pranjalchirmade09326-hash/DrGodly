@@ -435,7 +435,7 @@ export function AppointmentDetailPanel({
                     </span>
                   )}
                   {participant.reference_type && (
-                    <Badge variant="secondary" className="text-[10px]">
+                    <Badge variant="secondary" className="text-[11px]">
                       {participant.reference_type}
                     </Badge>
                   )}
@@ -443,7 +443,7 @@ export function AppointmentDetailPanel({
                     <Badge
                       key={role}
                       variant="outline"
-                      className="text-[10px] font-normal"
+                      className="text-[11px] font-normal"
                     >
                       {role}
                     </Badge>
@@ -670,7 +670,7 @@ function ChipList({ items }: { items: string[] }) {
  */
 function ReferenceChip({ label }: { label: string }) {
   return (
-    <Badge variant="outline" className="font-mono text-[10px] font-normal">
+    <Badge variant="outline" className="font-mono text-[11px] font-normal">
       {label}
     </Badge>
   );

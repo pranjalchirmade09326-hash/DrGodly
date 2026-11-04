@@ -212,7 +212,7 @@ function SessionRow({
             {browser} · {os}
           </p>
           {isCurrent && (
-            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
+            <Badge variant="secondary" className="text-[11px] px-1.5 py-0 h-4">
               This device
             </Badge>
           )}

@@ -79,7 +79,7 @@ export function HealthSnapshotGrid() {
           </div>
           <div className="flex items-baseline justify-between">
             <span className="text-xl font-bold text-slate-900">{systolic}/{diastolic}</span>
-            <span className="text-[10px] text-slate-500">mmHg</span>
+            <span className="text-[11px] text-slate-500">mmHg</span>
           </div>
           <div className="flex items-center gap-1 text-[11px] text-emerald-600 font-medium">
             <CheckCircle2 className="h-3 w-3" /> Normal Target
@@ -96,7 +96,7 @@ export function HealthSnapshotGrid() {
           </div>
           <div className="flex items-baseline justify-between">
             <span className="text-xl font-bold text-slate-900">6.8%</span>
-            <span className="text-[10px] text-slate-500">Last Lab</span>
+            <span className="text-[11px] text-slate-500">Last Lab</span>
           </div>
           <div className="flex items-center gap-1 text-[11px] text-amber-700 font-medium">
             Pre-Diabetic Range
@@ -113,7 +113,7 @@ export function HealthSnapshotGrid() {
           </div>
           <div className="flex items-baseline justify-between">
             <span className="text-xl font-bold text-slate-900">68.2</span>
-            <span className="text-[10px] text-slate-500">kg</span>
+            <span className="text-[11px] text-slate-500">kg</span>
           </div>
           <div className="flex items-center gap-1 text-[11px] text-emerald-600 font-medium">
             <TrendingDown className="h-3 w-3" /> -0.8 kg this month
@@ -130,7 +130,7 @@ export function HealthSnapshotGrid() {
           </div>
           <div className="flex items-baseline justify-between">
             <span className="text-xl font-bold text-slate-900">4,320</span>
-            <span className="text-[10px] text-slate-500">/ 8,000</span>
+            <span className="text-[11px] text-slate-500">/ 8,000</span>
           </div>
           {/* Progress bar */}
           <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">

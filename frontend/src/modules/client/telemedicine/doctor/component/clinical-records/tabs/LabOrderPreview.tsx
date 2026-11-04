@@ -92,10 +92,10 @@ export function LabOrderPreview({
 
       {/* Badge row */}
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="outline" className="text-[10px] font-medium uppercase tracking-wide">
+        <Badge variant="outline" className="text-[11px] font-medium uppercase tracking-wide">
           Official Record
         </Badge>
-        <Badge className="text-[10px] font-medium uppercase tracking-wide">
+        <Badge className="text-[11px] font-medium uppercase tracking-wide">
           Lab / Investigation Request
         </Badge>
         <div className="ml-auto flex items-center gap-3 text-xs text-muted-foreground">
@@ -197,7 +197,7 @@ export function LabOrderPreview({
           {prac?.regNo && (
             <p className="text-[11px] text-muted-foreground">Reg No: {prac.regNo}</p>
           )}
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-[11px] text-muted-foreground">
             Generated on {formatDisplayDateTime(new Date())}
           </p>
         </div>
@@ -211,7 +211,7 @@ function InfoCell({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
   return (
     <div>
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
       <p className="text-sm font-medium">{value}</p>

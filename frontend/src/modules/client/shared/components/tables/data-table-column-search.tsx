@@ -266,7 +266,7 @@ export function DataTableColumnSearch<TData>({
             {!allSelected && (
               <Badge
                 variant="secondary"
-                className="h-4 rounded px-1 font-mono text-[10px] font-normal"
+                className="h-4 rounded px-1 font-mono text-[11px] font-normal"
               >
                 {selectedIds.length}
               </Badge>

@@ -228,7 +228,7 @@ export function HowItWorksPage({ session }: { session: AuthResponse | null }) {
                       {step.icon}
                     </div>
                     <h3 className="text-xl font-bold text-foreground">{step.title}</h3>
-                    <Badge variant="outline" className={`text-[10px] font-mono ml-auto ${step.fhirColor}`}>
+                    <Badge variant="outline" className={`text-[11px] font-mono ml-auto ${step.fhirColor}`}>
                       {step.fhirResource}
                     </Badge>
                   </div>

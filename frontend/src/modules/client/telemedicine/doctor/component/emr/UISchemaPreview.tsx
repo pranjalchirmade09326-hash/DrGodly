@@ -130,7 +130,7 @@ export function UISchemaPreview() {
           <div className="py-2 space-y-3 px-2">
             {grouped.map(([group, keys]) => (
               <div key={group}>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-1 mb-1">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground px-1 mb-1">
                   {group}
                 </p>
                 {keys.map((key) => (
@@ -158,7 +158,7 @@ export function UISchemaPreview() {
           <>
             <div className="px-4 py-2.5 border-b shrink-0 flex items-center gap-2">
               <p className="text-sm font-medium">{schemaLabel(selected)}</p>
-              <Badge variant="secondary" className="text-[10px]">
+              <Badge variant="secondary" className="text-[11px]">
                 {selected}
               </Badge>
             </div>

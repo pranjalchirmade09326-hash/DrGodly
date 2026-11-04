@@ -203,7 +203,18 @@ export default function ScreensShowcasePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans antialiased selection:bg-blue-100 selection:text-blue-900">
+    /*
+     * The clinical workstation (GlobalHeader, cockpit panels, dossier cards) is
+     * authored as a light "chart paper" surface with raw palette classes. Forcing
+     * the light token set on this wrapper keeps every theme-aware class here
+     * resolving to its light values, so the demo stays coherent regardless of the
+     * theme picked in the marketing header. Auth and marketing pages follow the
+     * user's theme; this workspace intentionally does not.
+     */
+    <div
+      data-theme="teal-light"
+      className="flex min-h-screen flex-col bg-background font-sans text-foreground antialiased selection:bg-primary/20 selection:text-foreground"
+    >
       {/* ── 1. Master US HealthTech Header ── */}
       <GlobalHeader
         currentRole={currentRole}
@@ -217,24 +228,24 @@ export default function ScreensShowcasePage() {
       />
 
       {/* ── 2. Modern Clinical Sub-Header & Segmented Dock ── */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 px-4 sm:px-6 py-3.5 sticky top-[64px] z-30 shadow-2xs">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="sticky top-16 z-30 border-b border-border/70 bg-background/80 px-4 py-3.5 backdrop-blur-md sm:px-6">
+        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-3 md:flex-row md:items-center">
           {/* Persona Title & Security Status */}
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200/70 flex items-center justify-center text-blue-600 font-bold shrink-0 shadow-2xs">
-              {currentRole === 'doctor' ? <Stethoscope className="w-5 h-5" /> : <User className="w-5 h-5" />}
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
+              {currentRole === 'doctor' ? <Stethoscope className="size-5" /> : <User className="size-5" />}
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-extrabold tracking-tight text-slate-900">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-base font-extrabold tracking-tight text-foreground sm:text-lg">
                   {currentRole === 'doctor' ? 'Clinician Telehealth Cockpit' : 'Personal Health & Virtual Care'}
                 </h1>
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/80">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="hidden items-center gap-1.5 rounded-full border border-emerald-200/80 bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-800 sm:inline-flex">
+                  <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
                   {currentRole === 'doctor' ? '1080p WebRTC Session Ready' : 'Active Care Membership'}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="mt-0.5 text-xs font-medium text-muted-foreground">
                 {currentRole === 'doctor'
                   ? 'Longitudinal EHR Interoperability • Ambient AI Clinical Scribe & Decision Support'
                   : 'Board-Certified Virtual Care • On-Demand Prescriptions & Vitals Tracking'}
@@ -251,11 +262,11 @@ export default function ScreensShowcasePage() {
                   onClick={() => setDoctorTab('telemedicine')}
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     doctorTab === 'telemedicine'
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'border border-border bg-card text-card-foreground hover:bg-muted'
                   }`}
                 >
-                  <Video className="w-3.5 h-3.5 text-blue-400" />
+                  <Video className="size-3.5 opacity-70" />
                   <span>Telehealth Cockpit (3-Panel)</span>
                 </button>
                 <button
@@ -263,8 +274,8 @@ export default function ScreensShowcasePage() {
                   onClick={() => setDoctorTab('queue')}
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     doctorTab === 'queue'
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'border border-border bg-card text-card-foreground hover:bg-muted'
                   }`}
                 >
                   <LayoutDashboard className="w-3.5 h-3.5" />
@@ -275,8 +286,8 @@ export default function ScreensShowcasePage() {
                   onClick={() => setDoctorTab('rx-soap')}
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     doctorTab === 'rx-soap'
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'border border-border bg-card text-card-foreground hover:bg-muted'
                   }`}
                 >
                   <FileCheck2 className="w-3.5 h-3.5" />
@@ -290,11 +301,11 @@ export default function ScreensShowcasePage() {
                   onClick={() => setPatientTab('dashboard')}
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     patientTab === 'dashboard'
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'border border-border bg-card text-card-foreground hover:bg-muted'
                   }`}
                 >
-                  <HeartPulse className="w-3.5 h-3.5 text-rose-400" />
+                  <HeartPulse className="size-3.5 opacity-70" />
                   <span>Health Chart & Vitals</span>
                 </button>
                 <button
@@ -302,11 +313,11 @@ export default function ScreensShowcasePage() {
                   onClick={() => setPatientTab('intake')}
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     patientTab === 'intake'
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'border border-border bg-card text-card-foreground hover:bg-muted'
                   }`}
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+                  <Sparkles className="size-3.5 opacity-70" />
                   <span>AI Symptom Assessment</span>
                 </button>
                 <button
@@ -314,8 +325,8 @@ export default function ScreensShowcasePage() {
                   onClick={() => setPatientTab('marketplace')}
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     patientTab === 'marketplace'
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'border border-border bg-card text-card-foreground hover:bg-muted'
                   }`}
                 >
                   <Building2 className="w-3.5 h-3.5" />
@@ -326,11 +337,11 @@ export default function ScreensShowcasePage() {
                   onClick={() => setPatientTab('pharmacy')}
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     patientTab === 'pharmacy'
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/70'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'border border-border bg-card text-card-foreground hover:bg-muted'
                   }`}
                 >
-                  <Pill className="w-3.5 h-3.5 text-teal-400" />
+                  <Pill className="size-3.5 opacity-70" />
                   <span>Prescription Delivery</span>
                 </button>
               </>
@@ -472,7 +483,7 @@ export default function ScreensShowcasePage() {
                             </>
                           )}
                         </button>
-                        <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-[10px]">
+                        <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-[11px]">
                           Gemini 2.5 Medical Synthesizer
                         </Badge>
                       </div>
@@ -597,7 +608,7 @@ export default function ScreensShowcasePage() {
                     </div>
 
                     <div className="flex items-center gap-4 bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/15 shrink-0 shadow-lg">
-                      <HealthScoreGauge score={86} maxScore={100} />
+                      <HealthScoreGauge score={86} label="Excellent" changeNote="+3 pts since last visit" />
                       <div>
                         <div className="text-[11px] text-slate-300 uppercase tracking-wider font-bold">Health Score</div>
                         <div className="text-2xl font-black text-white">86 / 100</div>
@@ -616,7 +627,7 @@ export default function ScreensShowcasePage() {
                           <Activity className="size-5 text-blue-600" />
                           <h3 className="text-sm font-extrabold text-slate-900">Connected Device Telemetry</h3>
                         </div>
-                        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-bold">
+                        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-bold">
                           Live Sync
                         </Badge>
                       </div>
@@ -639,7 +650,7 @@ export default function ScreensShowcasePage() {
                     <Card className="rounded-3xl border-slate-200/80 shadow-[0_2px_16px_rgba(0,0,0,0.02)] p-6 bg-white space-y-3">
                       <div className="flex items-center justify-between">
                         <h3 className="text-sm font-extrabold text-slate-900">Scheduled Virtual Visit</h3>
-                        <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-[10px] font-bold">Today</Badge>
+                        <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-[11px] font-bold">Today</Badge>
                       </div>
                       <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
                         <div className="flex items-center gap-3">
@@ -671,7 +682,7 @@ export default function ScreensShowcasePage() {
                     <Card className="rounded-3xl border-slate-200/80 shadow-[0_2px_16px_rgba(0,0,0,0.02)] p-6 bg-white space-y-3">
                       <div className="flex items-center justify-between">
                         <h3 className="text-sm font-extrabold text-slate-900">Prescription Fulfillment</h3>
-                        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-bold">
+                        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-bold">
                           Free Delivery
                         </Badge>
                       </div>
@@ -679,14 +690,14 @@ export default function ScreensShowcasePage() {
                         <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                           <div>
                             <div className="font-bold text-slate-900">Amlodipine 5mg</div>
-                            <div className="text-[10px] text-slate-500">1 Tablet Daily &middot; 30-Day Supply</div>
+                            <div className="text-[11px] text-slate-500">1 Tablet Daily &middot; 30-Day Supply</div>
                           </div>
                           <span className="text-xs font-bold text-emerald-700">$0 Copay</span>
                         </div>
                         <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
                           <div>
                             <div className="font-bold text-slate-900">Lisinopril 10mg</div>
-                            <div className="text-[10px] text-slate-500">1 Tablet Daily &middot; 90-Day Supply</div>
+                            <div className="text-[11px] text-slate-500">1 Tablet Daily &middot; 90-Day Supply</div>
                           </div>
                           <span className="text-xs font-bold text-emerald-700">$5 Copay</span>
                         </div>
@@ -733,7 +744,7 @@ export default function ScreensShowcasePage() {
                           </div>
                           <div>
                             <h3 className="text-xs font-extrabold text-slate-900">DrGodly Virtual Triage</h3>
-                            <p className="text-[10px] text-slate-500">Evidence-based clinical intake protocol</p>
+                            <p className="text-[11px] text-slate-500">Evidence-based clinical intake protocol</p>
                           </div>
                         </div>
                       </CardHeader>
@@ -781,7 +792,7 @@ export default function ScreensShowcasePage() {
                     <Card className="rounded-3xl border-slate-200/80 shadow-[0_2px_16px_rgba(0,0,0,0.02)] p-5 bg-white space-y-4">
                       <div className="flex items-center justify-between">
                         <h3 className="text-xs font-extrabold text-slate-900">Visual Severity Scale</h3>
-                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${getPainSeverity(intakePainLevel).color}`}>
+                        <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${getPainSeverity(intakePainLevel).color}`}>
                           {getPainSeverity(intakePainLevel).label}
                         </span>
                       </div>
@@ -810,7 +821,7 @@ export default function ScreensShowcasePage() {
                               key={chip}
                               type="button"
                               onClick={() => sendIntakeMessage(chip)}
-                              className="px-2.5 py-1 rounded-xl bg-white border border-slate-200/80 hover:border-blue-400 text-slate-800 text-[10px] font-bold transition shadow-2xs"
+                              className="px-2.5 py-1 rounded-xl bg-white border border-slate-200/80 hover:border-blue-400 text-slate-800 text-[11px] font-bold transition shadow-2xs"
                             >
                               + {chip}
                             </button>
@@ -942,7 +953,7 @@ export default function ScreensShowcasePage() {
               </div>
               <div className="flex flex-col gap-1 py-1.5">
                 <span className="text-slate-500">SHA-256 Tamper-Proof Digital Fingerprint:</span>
-                <span className="font-mono text-[10px] bg-slate-100 p-2.5 rounded-xl text-slate-700 break-all border border-slate-200">
+                <span className="font-mono text-[11px] bg-slate-100 p-2.5 rounded-xl text-slate-700 break-all border border-slate-200">
                   e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
                 </span>
               </div>

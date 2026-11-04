@@ -341,7 +341,7 @@ export function DataTableExportDialog<TData>({
         <div className="flex flex-col gap-5 py-1">
           {/* ── Scope ──────────────────────────────────────────────────────── */}
           <div className="flex flex-col gap-2">
-            <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+            <Label className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
               Export scope
             </Label>
             <div className="flex flex-col gap-1.5">
@@ -371,7 +371,7 @@ export function DataTableExportDialog<TData>({
           {/* ── Columns ────────────────────────────────────────────────────── */}
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <Label className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
                 Columns
               </Label>
               <div className="flex gap-2">
@@ -379,7 +379,7 @@ export function DataTableExportDialog<TData>({
                   <button
                     type="button"
                     onClick={selectAllColumns}
-                    className="text-[10px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                    className="text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                   >
                     Select all
                   </button>
@@ -388,7 +388,7 @@ export function DataTableExportDialog<TData>({
                   <button
                     type="button"
                     onClick={clearAllColumns}
-                    className="text-[10px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+                    className="text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                   >
                     Clear
                   </button>
@@ -428,14 +428,14 @@ export function DataTableExportDialog<TData>({
               </div>
             </ScrollArea>
 
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground">
               {enabledColIds.size} of {allExportColumns.length} columns included
             </p>
           </div>
 
           {/* ── Format ─────────────────────────────────────────────────────── */}
           <div className="flex flex-col gap-2">
-            <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+            <Label className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
               Format
             </Label>
             <div className="flex gap-1.5">
@@ -455,7 +455,7 @@ export function DataTableExportDialog<TData>({
           <div className="flex flex-col gap-2">
             <Label
               htmlFor="export-filename"
-              className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground"
+              className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground"
             >
               Filename
             </Label>

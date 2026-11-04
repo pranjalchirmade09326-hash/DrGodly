@@ -112,21 +112,21 @@ export function PatientPrescriptionsCard({
                 <DropdownMenuItem onSelect={() => void handleDownload("pdf")}>
                   <FileText className="size-3.5" />
                   PDF
-                  <span className="ml-auto text-[10px] text-muted-foreground">
+                  <span className="ml-auto text-[11px] text-muted-foreground">
                     .pdf
                   </span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => void handleDownload("word")}>
                   <FileType className="size-3.5" />
                   Word
-                  <span className="ml-auto text-[10px] text-muted-foreground">
+                  <span className="ml-auto text-[11px] text-muted-foreground">
                     .doc
                   </span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => void handleDownload("text")}>
                   <FileCode className="size-3.5" />
                   Plain text
-                  <span className="ml-auto text-[10px] text-muted-foreground">
+                  <span className="ml-auto text-[11px] text-muted-foreground">
                     .txt
                   </span>
                 </DropdownMenuItem>
