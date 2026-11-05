@@ -226,8 +226,8 @@ export default function Hero({ session }: { session: AuthResponse | null }) {
                   {fhirRows.map((row, i) => (
                     <motion.div
                       key={row.id}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, y: -14 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.6 + i * 0.1 }}
                       className="flex items-center justify-between px-4 py-3 rounded-xl bg-muted/40 border border-border/50"
                     >

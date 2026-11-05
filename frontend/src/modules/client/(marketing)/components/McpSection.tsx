@@ -97,8 +97,8 @@ export default function McpSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Left: capabilities */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: -14 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
             className="space-y-8"
@@ -126,8 +126,8 @@ export default function McpSection() {
               {capabilities.map((cap, i) => (
                 <motion.li
                   key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: -10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.5 }}
                   className="flex items-start gap-3"
@@ -157,8 +157,8 @@ export default function McpSection() {
 
           {/* Right: terminal */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: -14 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
             className="bg-card border border-border rounded-2xl overflow-hidden shadow-xl"
@@ -184,8 +184,8 @@ export default function McpSection() {
               {terminalLogs.map((log, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, x: 8 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: -8 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.08, duration: 0.4 }}
                   className="flex gap-3 leading-relaxed"

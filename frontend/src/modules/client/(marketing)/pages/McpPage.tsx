@@ -225,8 +225,8 @@ export function McpPage({ session }: { session: AuthResponse | null }) {
         <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: -14 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
             >
@@ -264,8 +264,8 @@ export function McpPage({ session }: { session: AuthResponse | null }) {
 
             {/* Terminal */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: -14 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
               className="bg-card border border-border rounded-2xl overflow-hidden shadow-xl"
