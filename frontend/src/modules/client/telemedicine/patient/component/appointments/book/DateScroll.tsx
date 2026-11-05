@@ -169,7 +169,7 @@ export function DateScroller({
                   {formatDisplayDayMonth(date)}
                 </span>
                 {isDisabled && (
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-[11px] text-muted-foreground">
                     Unavail.
                   </span>
                 )}

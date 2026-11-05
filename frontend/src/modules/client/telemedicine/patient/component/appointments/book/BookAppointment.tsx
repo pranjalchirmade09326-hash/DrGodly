@@ -809,7 +809,7 @@ export function BookAppointment({
                                     }`}
                                   >
                                     <span className="font-semibold text-xs">{time}</span>
-                                    {duration && <span className="text-[10px] opacity-75">{duration} min</span>}
+                                    {duration && <span className="text-[11px] opacity-75">{duration} min</span>}
                                   </Button>
                                 );
                               })}
@@ -841,7 +841,7 @@ export function BookAppointment({
                                     }`}
                                   >
                                     <span className="font-semibold text-xs">{time}</span>
-                                    {duration && <span className="text-[10px] opacity-75">{duration} min</span>}
+                                    {duration && <span className="text-[11px] opacity-75">{duration} min</span>}
                                   </Button>
                                 );
                               })}
@@ -873,7 +873,7 @@ export function BookAppointment({
                                     }`}
                                   >
                                     <span className="font-semibold text-xs">{time}</span>
-                                    {duration && <span className="text-[10px] opacity-75">{duration} min</span>}
+                                    {duration && <span className="text-[11px] opacity-75">{duration} min</span>}
                                   </Button>
                                 );
                               })}

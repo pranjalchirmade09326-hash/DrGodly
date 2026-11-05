@@ -164,7 +164,7 @@ export default function AppearanceSettings() {
                   <div className="size-2.5 rounded-full bg-destructive/60" />
                   <div className="size-2.5 rounded-full bg-yellow-400/60" />
                   <div className="size-2.5 rounded-full bg-green-500/60" />
-                  <div className="mx-auto h-5 w-32 rounded-md bg-background/80 border text-[10px] flex items-center justify-center text-muted-foreground font-mono">
+                  <div className="mx-auto h-5 w-32 rounded-md bg-background/80 border text-[11px] flex items-center justify-center text-muted-foreground font-mono">
                     app.drgodly.com
                   </div>
                 </div>
@@ -203,7 +203,7 @@ export default function AppearanceSettings() {
                     ))}
                   </div>
                   <div className="space-y-1">
-                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                    <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                       <span>Progress</span>
                       <span>67%</span>
                     </div>

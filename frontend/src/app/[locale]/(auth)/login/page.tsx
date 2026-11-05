@@ -17,6 +17,7 @@ import {
   Home,
 } from "lucide-react";
 import { DrGodlyLogo } from "@/components/shared/DrGodlyLogo";
+import { ClinicalBackdrop } from "@/components/shared/ClinicalBackdrop";
 import LocaleSwitcher from "@/modules/client/shared/components/LocaleSwitcher";
 
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,10 @@ import { toast } from "sonner";
  * NOTE: the submit handler is still the built-in demo flow — it simulates a
  * round trip and lands on /screens. Real credential auth goes through the
  * external IAM service via <OAuthPkceButton>.
+ *
+ * The "Demo Doctor" / "Demo Patient" buttons fill the credentials for the
+ * chosen persona and complete that simulated round trip in one click, which is
+ * how both workspaces are meant to be reached from a cold start.
  */
 
 type UserRole = "patient" | "doctor";
@@ -137,9 +142,30 @@ export default function LoginPage() {
     setEmail(DEMO_ACCOUNTS[selectedRole].email);
     setPassword(DEMO_ACCOUNTS[selectedRole].password);
     setErrors({});
-    toast.info(
-      `Loaded ${DEMO_ACCOUNTS[selectedRole].name} demo credentials`,
-    );
+  };
+
+  /**
+   * One-click demo access: fill the persona's credentials, then run the same
+   * simulated round trip the form does, and open that persona's workspace.
+   */
+  async function startDemoSession(selectedRole: UserRole) {
+    fillDemoAccount(selectedRole);
+    setIsLoading(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      toast.success(`Welcome to DrGodly, ${DEMO_ACCOUNTS[selectedRole].name}!`);
+      router.push(`/screens?role=${selectedRole}`);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  /**
+   * Social buttons are placeholders in this build: the IAM/PKCE service is not
+   * part of the frontend-only demo, so say so instead of silently prefilling.
+   */
+  const socialUnavailable = () => {
+    toast.info("Social sign-in needs the IAM service. Use a demo account in this build.");
   };
 
   return (
@@ -149,8 +175,7 @@ export default function LoginPage() {
             LEFT: DRGODLY BRAND / MARKETING PANEL (lg and up)
         ========================================================= */}
         <section className="relative hidden overflow-hidden bg-gradient-to-br from-muted/60 via-background to-primary/10 lg:flex lg:flex-col">
-          <div className="pointer-events-none absolute -left-32 top-20 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
-          <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
+          <ClinicalBackdrop className="opacity-80" />
 
           <div className="relative flex min-h-dvh flex-col justify-between px-10 py-8 xl:px-16">
             <div>
@@ -392,25 +417,65 @@ export default function LoginPage() {
                   </Button>
                 </form>
 
-                {/* Demo helpers — this build ships without the IAM service, so the
-                    quick-fill row is how the flow is exercised. */}
-                <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
-                  <span>Quick fill demo:</span>
-                  <button
-                    type="button"
-                    onClick={() => fillDemoAccount("patient")}
-                    className="rounded-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    Louise Reed
-                  </button>
-                  <span aria-hidden="true">·</span>
-                  <button
-                    type="button"
-                    onClick={() => fillDemoAccount("doctor")}
-                    className="rounded-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    Dr. Alexander Wright
-                  </button>
+                {/* Demo access — this build ships without the IAM service, so these
+                    two buttons are how the clinician and patient workflows get
+                    exercised. Each one fills the credentials and signs straight in. */}
+                <div className="mt-5 rounded-2xl border border-border/70 bg-muted/40 p-3.5">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                      Demo credentials
+                    </p>
+                    <span className="rounded-full border border-border bg-background px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                      No setup needed
+                    </span>
+                  </div>
+
+                  <div className="mt-2.5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => startDemoSession("doctor")}
+                      disabled={isLoading}
+                      className="flex min-w-0 items-center gap-2.5 rounded-xl border border-border bg-card px-3 py-2.5 text-left transition-colors hover:border-primary/40 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <Stethoscope className="size-4.5" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-sm font-semibold text-card-foreground">
+                          Demo Doctor
+                        </span>
+                        <span className="block truncate text-[11px] text-muted-foreground">
+                          {DEMO_ACCOUNTS.doctor.email}
+                        </span>
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => startDemoSession("patient")}
+                      disabled={isLoading}
+                      className="flex min-w-0 items-center gap-2.5 rounded-xl border border-border bg-card px-3 py-2.5 text-left transition-colors hover:border-primary/40 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <Users className="size-4.5" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-sm font-semibold text-card-foreground">
+                          Demo Patient
+                        </span>
+                        <span className="block truncate text-[11px] text-muted-foreground">
+                          {DEMO_ACCOUNTS.patient.email}
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+
+                  <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                    Password for both demo accounts:{" "}
+                    <span className="font-mono font-semibold text-foreground">DoctorPass2026!</span>{" "}
+                    /{" "}
+                    <span className="font-mono font-semibold text-foreground">PatientPass2026!</span>
+                  </p>
                 </div>
 
                 <div className="my-5 flex items-center gap-3">
@@ -424,7 +489,7 @@ export default function LoginPage() {
                     variant="outline"
                     className="h-10 rounded-xl text-sm"
                     type="button"
-                    onClick={() => fillDemoAccount("patient")}
+                    onClick={socialUnavailable}
                   >
                     <GoogleIcon />
                     <span className="ml-2">Google</span>
@@ -433,7 +498,7 @@ export default function LoginPage() {
                     variant="outline"
                     className="h-10 rounded-xl text-sm"
                     type="button"
-                    onClick={() => fillDemoAccount("doctor")}
+                    onClick={socialUnavailable}
                   >
                     <AppleIcon />
                     <span className="ml-2">Apple</span>

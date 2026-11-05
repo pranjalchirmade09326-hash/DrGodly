@@ -76,7 +76,7 @@ export default function MetricsRibbon() {
                 <div className="w-7 h-7 rounded-lg bg-background/80 flex items-center justify-center border border-border/60">
                   {metric.icon}
                 </div>
-                <span className="text-[10px] font-mono font-bold text-muted-foreground bg-background/80 px-2 py-0.5 rounded-md border border-border/50">
+                <span className="text-[11px] font-mono font-bold text-muted-foreground bg-background/80 px-2 py-0.5 rounded-md border border-border/50">
                   {metric.trend}
                 </span>
               </div>

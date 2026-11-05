@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
 import {
   LayoutDashboard,
   Video,
@@ -48,12 +49,11 @@ import { DrGodlyLogo } from '@/components/shared/DrGodlyLogo';
 // Clinical Workstation Modules
 import { DoctorSearchMarketplace } from '@/modules/client/doctor-search/DoctorSearchMarketplace';
 import { DashboardOverview } from '@/modules/client/telemedicine/doctor/component/dashboard-overview/DashboardOverview';
+import { DoctorWeekSchedule } from '@/modules/client/telemedicine/doctor/component/dashboard-overview/DoctorWeekSchedule';
 import { DoctorTelemedicineCockpit } from '@/modules/client/telemedicine/doctor/component/online-consultation/DoctorTelemedicineCockpit';
-import { PatientDashboard } from '@/modules/client/telemedicine/patient/component/dashboard/PatientDashboard';
 import { AiIntakeStudio } from '@/modules/client/telemedicine/patient/component/ai-intake/AiIntakeStudio';
 import { GenericPharmacyCheckout } from '@/modules/client/telemedicine/patient/component/pharmacy/GenericPharmacyCheckout';
 import { DigitalSignatureAndQrCard } from '@/modules/client/telemedicine/doctor/component/appointment-review/DigitalSignatureAndQrCard';
-import { PatientCarePanel } from '@/modules/client/telemedicine/patient/component/online-consultation/PatientCarePanel';
 import { HealthScoreGauge } from '@/modules/client/telemedicine/patient/component/dashboard/HealthScoreGauge';
 import { HealthSnapshotGrid } from '@/modules/client/telemedicine/patient/component/dashboard/HealthSnapshotGrid';
 import { CarePlanChecklist } from '@/modules/client/telemedicine/patient/component/dashboard/CarePlanChecklist';
@@ -423,19 +423,22 @@ function ScreensShowcaseContent() {
             {/* Screen 2: Outpatient Queue & Triage */}
             {doctorTab === 'queue' && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-200/70">
+                <div className="flex flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h2 className="text-xl font-black text-slate-900 tracking-tight">
+                    <h2 className="text-xl font-black tracking-tight text-foreground">
                       Active Telehealth Waiting Room & Triage
                     </h2>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       Pre-screened patients with AI symptom briefs & continuous vitals sync
                     </p>
                   </div>
-                  <Badge className="bg-blue-50 text-blue-700 border-blue-200/80 text-xs py-1 px-3">
+                  <Badge variant="outline" className="w-fit border-primary/25 bg-primary/5 text-[11px] font-bold text-primary">
                     3 Patients Scheduled for Next Hour
                   </Badge>
                 </div>
+                {/* Seven-day agenda strip above the day view, so the schedule
+                    question is answered before the queue scrolls off-screen. */}
+                <DoctorWeekSchedule />
                 <DashboardOverview
                   doctorName="Dr. Alexander Wright, MD, FACC"
                   specialties={['Cardiovascular Medicine', 'Preventive Cardiology']}
@@ -652,6 +655,28 @@ function ScreensShowcaseContent() {
                       <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
                         Your connected blood pressure monitor synced 42 minutes ago. Your readings are within standard baseline parameters.
                       </p>
+
+                      {/* Booking is the single most common patient task, so it is
+                          reachable from the banner instead of hunting for a tab. */}
+                      <div className="flex flex-wrap gap-2.5 pt-1">
+                        <Button
+                          size="sm"
+                          onClick={() => setPatientTab('marketplace')}
+                          className="h-9 rounded-xl bg-white text-xs font-bold text-slate-900 hover:bg-slate-100"
+                        >
+                          <CalendarCheck className="mr-1.5 size-4" />
+                          Book an Appointment
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setPatientTab('intake')}
+                          className="h-9 rounded-xl border-white/25 bg-white/10 text-xs font-bold text-white hover:bg-white/15 hover:text-white"
+                        >
+                          <Sparkles className="mr-1.5 size-4" />
+                          Describe My Symptoms
+                        </Button>
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-4 bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/15 shrink-0 shadow-lg">
@@ -691,70 +716,158 @@ function ScreensShowcaseContent() {
                       </div>
                       <CarePlanChecklist />
                     </Card>
+
+                    {/* Chat is wide enough only in the main column; in the rail it
+                        would collapse the composer to a single glyph. */}
+                    <Card className="rounded-3xl border-border bg-card p-6 shadow-xs">
+                      <div className="mb-4 flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <Send className="size-5 text-primary" />
+                          <h3 className="text-sm font-extrabold text-foreground">Ask DrGodly</h3>
+                        </div>
+                        <Badge variant="outline" className="border-primary/25 bg-primary/5 text-[11px] font-bold text-primary">
+                          AI + clinician reviewed
+                        </Badge>
+                      </div>
+                      <AskDrGodlyChatWidget />
+                    </Card>
                   </div>
 
                   <div className="lg:col-span-4 space-y-6">
-                    <Card className="rounded-3xl border-slate-200/80 shadow-[0_2px_16px_rgba(0,0,0,0.02)] p-6 bg-white space-y-3">
+                    <Card className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-3">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-extrabold text-slate-900">Scheduled Virtual Visit</h3>
-                        <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-[11px] font-bold">Today</Badge>
+                        <h3 className="text-sm font-extrabold text-foreground">Upcoming Visits</h3>
+                        <Badge variant="outline" className="border-primary/25 bg-primary/5 text-[11px] font-bold text-primary">
+                          3 scheduled
+                        </Badge>
                       </div>
-                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center text-xs shadow-xs">
-                            AW
+
+                      <ul className="space-y-2.5">
+                        <li className="rounded-2xl border border-primary/30 bg-primary/5 p-4 space-y-2.5">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold uppercase tracking-wider text-primary">Today · 10:30 AM</p>
+                              <p className="mt-1 text-xs font-bold text-foreground">Video consult</p>
+                            </div>
+                            <Video className="size-4 shrink-0 text-primary" />
                           </div>
-                          <div>
-                            <div className="text-xs font-bold text-slate-900">Dr. Alexander Wright, MD</div>
-                            <div className="text-[11px] text-slate-500">Harvard Medical School &middot; Cardiology</div>
+                          <div className="flex items-center gap-3">
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow-xs">
+                              AW
+                            </div>
+                            <div className="min-w-0">
+                              <div className="truncate text-xs font-bold text-foreground">Dr. Alexander Wright, MD</div>
+                              <div className="truncate text-[11px] text-muted-foreground">Cardiology · Starts in 20 mins</div>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex items-center justify-between text-xs text-slate-600 pt-2 border-t border-slate-200/60">
-                          <span>Appointment Time:</span>
-                          <span className="font-bold text-blue-600">10:30 AM EST (In 20 mins)</span>
-                        </div>
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            setCurrentRole('doctor');
-                            setDoctorTab('telemedicine');
-                          }}
-                          className="w-full mt-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-xs"
-                        >
-                          Launch Virtual Exam Room
-                        </Button>
-                      </div>
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              setCurrentRole('doctor');
+                              setDoctorTab('telemedicine');
+                            }}
+                            className="mt-1 h-9 w-full rounded-xl text-xs font-bold"
+                          >
+                            Launch Virtual Exam Room
+                          </Button>
+                        </li>
+
+                        <li className="flex items-center gap-3 rounded-2xl bg-muted/50 p-3.5 ring-1 ring-border/60">
+                          <PhoneCall className="size-4 shrink-0 text-muted-foreground" />
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-xs font-bold text-foreground">Follow-up call · Dr. Priya Nair</p>
+                            <p className="text-[11px] text-muted-foreground">Tomorrow · 04:00 PM · 15 min</p>
+                          </div>
+                        </li>
+
+                        <li className="flex items-center gap-3 rounded-2xl bg-muted/50 p-3.5 ring-1 ring-border/60">
+                          <FileCheck2 className="size-4 shrink-0 text-muted-foreground" />
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-xs font-bold text-foreground">Lab draw · Abdi Wellness Center</p>
+                            <p className="text-[11px] text-muted-foreground">In 6 days · 09:15 AM · Fasting</p>
+                          </div>
+                        </li>
+                      </ul>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPatientTab('marketplace')}
+                        className="mt-1 h-9 w-full rounded-xl text-xs font-bold"
+                      >
+                        <CalendarCheck className="mr-1.5 size-4" />
+                        Book Another Visit
+                      </Button>
                     </Card>
 
-                    <Card className="rounded-3xl border-slate-200/80 shadow-[0_2px_16px_rgba(0,0,0,0.02)] p-6 bg-white space-y-3">
+                    <Card className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-3">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-extrabold text-slate-900">Prescription Fulfillment</h3>
-                        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-bold">
+                        <h3 className="text-sm font-extrabold text-foreground">Health Records</h3>
+                        <Badge variant="outline" className="text-[11px] font-semibold text-muted-foreground">
+                          Last 30 days
+                        </Badge>
+                      </div>
+
+                      <ul className="space-y-1.5 text-xs">
+                        {[
+                          { label: 'SOAP note · Dr. Wright', meta: 'Today · Visit summary', icon: FileText },
+                          { label: 'Lipid panel results', meta: '12 Oct · Lab report', icon: CheckCircle2 },
+                          { label: 'Chest X-ray imaging', meta: '28 Sep · Radiology', icon: Activity },
+                          { label: 'Immunisation history', meta: 'On file · 6 records', icon: ShieldCheck },
+                        ].map((record) => (
+                          <li key={record.label} className="flex items-center gap-2.5 rounded-xl px-2 py-2 hover:bg-muted/60">
+                            <record.icon className="size-4 shrink-0 text-primary" />
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate font-bold text-foreground">{record.label}</p>
+                              <p className="truncate text-[11px] text-muted-foreground">{record.meta}</p>
+                            </div>
+                            <button
+                              type="button"
+                              aria-label={`Download ${record.label}`}
+                              onClick={() =>
+                                toast.success('Download requested', {
+                                  description: `${record.label} streams from the FHIR document store once the backend is connected.`,
+                                })
+                              }
+                              className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            >
+                              <Download className="size-4" />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </Card>
+
+                    <Card className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-extrabold text-foreground">Active Prescriptions</h3>
+                        <Badge variant="outline" className="border-emerald-500/30 bg-emerald-500/10 text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
                           Free Delivery
                         </Badge>
                       </div>
                       <div className="space-y-2.5 text-xs">
-                        <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                          <div>
-                            <div className="font-bold text-slate-900">Amlodipine 5mg</div>
-                            <div className="text-[11px] text-slate-500">1 Tablet Daily &middot; 30-Day Supply</div>
+                        <div className="p-3 rounded-2xl bg-muted/50 ring-1 ring-border/60 flex items-center justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="font-bold text-foreground">Amlodipine 5mg</div>
+                            <div className="text-[11px] text-muted-foreground">1 Tablet Daily · 30-Day Supply</div>
                           </div>
-                          <span className="text-xs font-bold text-emerald-700">$0 Copay</span>
+                          <span className="shrink-0 text-xs font-bold text-emerald-700 dark:text-emerald-400">$0 Copay</span>
                         </div>
-                        <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                          <div>
-                            <div className="font-bold text-slate-900">Lisinopril 10mg</div>
-                            <div className="text-[11px] text-slate-500">1 Tablet Daily &middot; 90-Day Supply</div>
+                        <div className="p-3 rounded-2xl bg-muted/50 ring-1 ring-border/60 flex items-center justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="font-bold text-foreground">Lisinopril 10mg</div>
+                            <div className="text-[11px] text-muted-foreground">1 Tablet Daily · 90-Day Supply</div>
                           </div>
-                          <span className="text-xs font-bold text-emerald-700">$5 Copay</span>
+                          <span className="shrink-0 text-xs font-bold text-emerald-700 dark:text-emerald-400">$5 Copay</span>
                         </div>
                       </div>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => setPatientTab('pharmacy')}
-                        className="w-full mt-2 text-xs font-bold text-slate-800 border-slate-200 hover:bg-slate-50 rounded-xl"
+                        className="mt-1 h-9 w-full rounded-xl text-xs font-bold"
                       >
+                        <Pill className="mr-1.5 size-4" />
                         Manage Prescriptions & Refills
                       </Button>
                     </Card>

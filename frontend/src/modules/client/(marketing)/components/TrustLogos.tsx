@@ -92,11 +92,11 @@ export default function TrustLogos() {
                   {net.name}
                 </span>
               </div>
-              <span className="text-[10px] text-muted-foreground font-medium leading-tight">
+              <span className="text-[11px] text-muted-foreground font-medium leading-tight">
                 {net.tagline}
               </span>
               <span
-                className={`mt-1.5 text-[9px] font-bold px-2 py-0.5 rounded-full border ${net.iconBg}`}
+                className={`mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full border ${net.iconBg}`}
               >
                 {net.badge}
               </span>

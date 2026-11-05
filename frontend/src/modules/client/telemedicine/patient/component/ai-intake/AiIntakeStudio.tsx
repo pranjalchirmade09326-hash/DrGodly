@@ -505,7 +505,7 @@ export function AiIntakeStudio({
                         <span className="block font-semibold text-[11px] leading-tight">
                           {opt.label}
                         </span>
-                        <span className={`text-[10px] uppercase tracking-wider block mt-0.5 ${isSelected ? "text-teal-100" : "text-slate-400"}`}>
+                        <span className={`text-[11px] uppercase tracking-wider block mt-0.5 ${isSelected ? "text-teal-100" : "text-slate-400"}`}>
                           {opt.tag}
                         </span>
                       </button>
@@ -611,7 +611,7 @@ export function AiIntakeStudio({
                       }`}
                     >
                       {msg.text}
-                      <span className={`block text-[10px] mt-1 text-right ${msg.from === "user" ? "text-teal-200" : "text-slate-400"}`}>
+                      <span className={`block text-[11px] mt-1 text-right ${msg.from === "user" ? "text-teal-200" : "text-slate-400"}`}>
                         {msg.time}
                       </span>
                     </div>

@@ -381,9 +381,9 @@ export function DoctorClinicalRecordsWorkspace({
               <span className="text-lg font-bold text-foreground">
                 {initialVitals.bpSystolic}/{initialVitals.bpDiastolic}
               </span>
-              <span className="text-[10px] text-muted-foreground">mmHg</span>
+              <span className="text-[11px] text-muted-foreground">mmHg</span>
             </div>
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Optimal Control</span>
+            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">Optimal Control</span>
           </div>
 
           <div className="rounded-lg border border-border/50 bg-muted/30 p-2.5">
@@ -393,9 +393,9 @@ export function DoctorClinicalRecordsWorkspace({
             </div>
             <div className="mt-1 flex items-baseline gap-1">
               <span className="text-lg font-bold text-foreground">{initialVitals.heartRate}</span>
-              <span className="text-[10px] text-muted-foreground">bpm</span>
+              <span className="text-[11px] text-muted-foreground">bpm</span>
             </div>
-            <span className="text-[10px] text-muted-foreground font-medium">Regular sinus</span>
+            <span className="text-[11px] text-muted-foreground font-medium">Regular sinus</span>
           </div>
 
           <div className="rounded-lg border border-border/50 bg-muted/30 p-2.5">
@@ -405,45 +405,45 @@ export function DoctorClinicalRecordsWorkspace({
             </div>
             <div className="mt-1 flex items-baseline gap-1">
               <span className="text-lg font-bold text-foreground">{initialVitals.spo2}%</span>
-              <span className="text-[10px] text-muted-foreground">RA</span>
+              <span className="text-[11px] text-muted-foreground">RA</span>
             </div>
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Room air</span>
+            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">Room air</span>
           </div>
 
           <div className="rounded-lg border border-border/50 bg-muted/30 p-2.5">
             <div className="flex items-center justify-between text-[11px] font-medium text-muted-foreground">
               <span>Oral Temp</span>
-              <span className="text-[10px] text-muted-foreground">°F</span>
+              <span className="text-[11px] text-muted-foreground">°F</span>
             </div>
             <div className="mt-1 flex items-baseline gap-1">
               <span className="text-lg font-bold text-foreground">{initialVitals.temperature}</span>
-              <span className="text-[10px] text-muted-foreground">°F</span>
+              <span className="text-[11px] text-muted-foreground">°F</span>
             </div>
-            <span className="text-[10px] text-muted-foreground font-medium">Afebrile</span>
+            <span className="text-[11px] text-muted-foreground font-medium">Afebrile</span>
           </div>
 
           <div className="rounded-lg border border-border/50 bg-muted/30 p-2.5">
             <div className="flex items-center justify-between text-[11px] font-medium text-muted-foreground">
               <span>Respiration</span>
-              <span className="text-[10px] text-muted-foreground">bpm</span>
+              <span className="text-[11px] text-muted-foreground">bpm</span>
             </div>
             <div className="mt-1 flex items-baseline gap-1">
               <span className="text-lg font-bold text-foreground">{initialVitals.respiratoryRate}</span>
-              <span className="text-[10px] text-muted-foreground">/min</span>
+              <span className="text-[11px] text-muted-foreground">/min</span>
             </div>
-            <span className="text-[10px] text-muted-foreground font-medium">Unlabored</span>
+            <span className="text-[11px] text-muted-foreground font-medium">Unlabored</span>
           </div>
 
           <div className="rounded-lg border border-border/50 bg-muted/30 p-2.5">
             <div className="flex items-center justify-between text-[11px] font-medium text-muted-foreground">
               <span>BMI / Weight</span>
-              <span className="text-[10px] text-muted-foreground">{initialVitals.weightLbs} lbs</span>
+              <span className="text-[11px] text-muted-foreground">{initialVitals.weightLbs} lbs</span>
             </div>
             <div className="mt-1 flex items-baseline gap-1">
               <span className="text-lg font-bold text-foreground">{initialVitals.bmi}</span>
-              <span className="text-[10px] text-muted-foreground">kg/m²</span>
+              <span className="text-[11px] text-muted-foreground">kg/m²</span>
             </div>
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Healthy range</span>
+            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">Healthy range</span>
           </div>
         </div>
       </div>
@@ -477,7 +477,7 @@ export function DoctorClinicalRecordsWorkspace({
                       Onset: {p.onsetDate} • Verified by {p.verifiedBy}
                     </p>
                   </div>
-                  <Badge variant="outline" className="text-[10px] font-medium border-emerald-500/30 text-emerald-600">
+                  <Badge variant="outline" className="text-[11px] font-medium border-emerald-500/30 text-emerald-600">
                     {p.status}
                   </Badge>
                 </div>
@@ -510,7 +510,7 @@ export function DoctorClinicalRecordsWorkspace({
                     </span>
                   </div>
                   <p className="text-[11px] text-muted-foreground">{m.frequency}</p>
-                  <div className="flex items-center justify-between text-[10px] text-muted-foreground border-t border-border/40 pt-1 mt-1">
+                  <div className="flex items-center justify-between text-[11px] text-muted-foreground border-t border-border/40 pt-1 mt-1">
                     <span>Refills remaining: <strong className="text-foreground">{m.refillsRemaining}</strong></span>
                     <span>Started: {m.startDate}</span>
                   </div>
@@ -534,15 +534,15 @@ export function DoctorClinicalRecordsWorkspace({
             <CardContent className="space-y-2 pt-0 text-xs">
               <div className="flex items-center justify-between py-1 border-b border-border/40">
                 <span className="text-muted-foreground">Influenza (2025–2026)</span>
-                <Badge variant="secondary" className="text-[10px] text-emerald-600 font-medium">Up to Date</Badge>
+                <Badge variant="secondary" className="text-[11px] text-emerald-600 font-medium">Up to Date</Badge>
               </div>
               <div className="flex items-center justify-between py-1 border-b border-border/40">
                 <span className="text-muted-foreground">Tdap Booster</span>
-                <Badge variant="secondary" className="text-[10px] text-emerald-600 font-medium">Administered 2024</Badge>
+                <Badge variant="secondary" className="text-[11px] text-emerald-600 font-medium">Administered 2024</Badge>
               </div>
               <div className="flex items-center justify-between py-1">
                 <span className="text-muted-foreground">Lipid Screen (Annual)</span>
-                <Badge variant="secondary" className="text-[10px] text-blue-600 font-medium">Completed Today</Badge>
+                <Badge variant="secondary" className="text-[11px] text-blue-600 font-medium">Completed Today</Badge>
               </div>
             </CardContent>
           </Card>
@@ -657,7 +657,7 @@ export function DoctorClinicalRecordsWorkspace({
                               </div>
                               <Badge
                                 variant={isHigh ? 'destructive' : 'secondary'}
-                                className={`text-[10px] font-medium shrink-0 ${
+                                className={`text-[11px] font-medium shrink-0 ${
                                   isHigh
                                     ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40'
                                     : 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40'
@@ -742,7 +742,7 @@ export function DoctorClinicalRecordsWorkspace({
                       <strong>Legally Signed & Committed:</strong> Authenticated by {doctorName} (NPI #1982736450). Record locked for tamper-proof audit trail.
                     </span>
                   </div>
-                  <Badge className="bg-emerald-600 text-white text-[10px]">FHIR DocumentReference #DOC-4981</Badge>
+                  <Badge className="bg-emerald-600 text-white text-[11px]">FHIR DocumentReference #DOC-4981</Badge>
                 </div>
               )}
 
@@ -755,7 +755,7 @@ export function DoctorClinicalRecordsWorkspace({
                       <User className="size-3.5" />
                       Subjective (S) — Patient History & Symptoms
                     </span>
-                    <span className="text-[10px] text-muted-foreground font-mono">CC & HPI</span>
+                    <span className="text-[11px] text-muted-foreground font-mono">CC & HPI</span>
                   </div>
                   <textarea
                     rows={3}
@@ -773,7 +773,7 @@ export function DoctorClinicalRecordsWorkspace({
                       <Stethoscope className="size-3.5" />
                       Objective (O) — Physical Exam & Vitals
                     </span>
-                    <span className="text-[10px] text-muted-foreground font-mono">Exam Findings</span>
+                    <span className="text-[11px] text-muted-foreground font-mono">Exam Findings</span>
                   </div>
                   <textarea
                     rows={4}
@@ -791,7 +791,7 @@ export function DoctorClinicalRecordsWorkspace({
                       <Activity className="size-3.5" />
                       Assessment (A) — Differential Diagnoses
                     </span>
-                    <span className="text-[10px] text-muted-foreground font-mono">ICD-10 Links</span>
+                    <span className="text-[11px] text-muted-foreground font-mono">ICD-10 Links</span>
                   </div>
                   <textarea
                     rows={3}
@@ -809,7 +809,7 @@ export function DoctorClinicalRecordsWorkspace({
                       <FileCheck2 className="size-3.5" />
                       Plan (P) — Medical Decision Making & Follow-up
                     </span>
-                    <span className="text-[10px] text-muted-foreground font-mono">Orders & Rx</span>
+                    <span className="text-[11px] text-muted-foreground font-mono">Orders & Rx</span>
                   </div>
                   <textarea
                     rows={4}

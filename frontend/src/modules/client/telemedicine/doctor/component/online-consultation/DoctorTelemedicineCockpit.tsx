@@ -314,21 +314,21 @@ export function DoctorTelemedicineCockpit({
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> BP
                   </span>
                   <span className="font-bold text-slate-900 block mt-0.5">118/76</span>
-                  <span className="text-[10px] text-slate-400">mmHg</span>
+                  <span className="text-[11px] text-slate-400">mmHg</span>
                 </div>
                 <div className="bg-white p-1.5 rounded-lg border border-slate-200/70">
                   <span className="text-[11px] text-slate-400 flex items-center justify-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> HR
                   </span>
                   <span className="font-bold text-slate-900 block mt-0.5">72</span>
-                  <span className="text-[10px] text-slate-400">bpm</span>
+                  <span className="text-[11px] text-slate-400">bpm</span>
                 </div>
                 <div className="bg-white p-1.5 rounded-lg border border-slate-200/70">
                   <span className="text-[11px] text-slate-400 flex items-center justify-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Temp
                   </span>
                   <span className="font-bold text-slate-900 block mt-0.5">98.1°F</span>
-                  <span className="text-[10px] text-slate-400">(36.7°C)</span>
+                  <span className="text-[11px] text-slate-400">(36.7°C)</span>
                 </div>
               </div>
               <div className="text-center pt-0.5">
@@ -433,7 +433,7 @@ export function DoctorTelemedicineCockpit({
                   AM
                 </div>
               </div>
-              <span className="text-[10px] text-center font-semibold text-slate-200 truncate">
+              <span className="text-[11px] text-center font-semibold text-slate-200 truncate">
                 Dr. Arjun Mehta (You)
               </span>
             </div>

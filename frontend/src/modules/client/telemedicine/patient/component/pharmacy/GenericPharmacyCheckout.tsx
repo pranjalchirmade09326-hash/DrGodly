@@ -291,11 +291,11 @@ export function GenericPharmacyCheckout() {
                           {item.isGenericSelected ? item.genericName : item.prescribedBrand}
                         </span>
                         {item.isGenericSelected ? (
-                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] py-0">
+                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] py-0">
                             Generic Bio-Equivalent
                           </Badge>
                         ) : (
-                          <Badge className="bg-slate-100 text-slate-600 border-slate-200 text-[10px] py-0">
+                          <Badge className="bg-slate-100 text-slate-600 border-slate-200 text-[11px] py-0">
                             Branded Original
                           </Badge>
                         )}
@@ -374,7 +374,7 @@ export function GenericPharmacyCheckout() {
                       <span className="text-xs font-bold text-slate-900 block leading-tight">
                         {supp.name}
                       </span>
-                      <Badge className="bg-slate-100 text-slate-700 border-slate-200 text-[10px] py-0 shrink-0">
+                      <Badge className="bg-slate-100 text-slate-700 border-slate-200 text-[11px] py-0 shrink-0">
                         {supp.tag}
                       </Badge>
                     </div>

@@ -251,7 +251,7 @@ export default function InteractiveSimulatorSection() {
                 >
                   <span className={`w-2 h-2 rounded-full bg-gradient-to-tr ${c.avatarColor}`} />
                   <span>{c.patientName}</span>
-                  <span className="text-[10px] opacity-70 font-normal">({c.specialty})</span>
+                  <span className="text-[11px] opacity-70 font-normal">({c.specialty})</span>
                 </button>
               ))}
             </div>
@@ -272,7 +272,7 @@ export default function InteractiveSimulatorSection() {
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm font-bold text-foreground">{activeCase.patientName}</h4>
                   <span className="text-[11px] text-muted-foreground font-mono">{activeCase.ageGender}</span>
-                  <Badge variant="outline" className="border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
+                  <Badge variant="outline" className="border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold">
                     Live Telehealth Active
                   </Badge>
                 </div>
@@ -293,7 +293,7 @@ export default function InteractiveSimulatorSection() {
                       : "bg-background/80 border-border/70 text-foreground"
                   }`}
                 >
-                  <span className="text-[10px] text-muted-foreground block">{v.label}</span>
+                  <span className="text-[11px] text-muted-foreground block">{v.label}</span>
                   <span className="font-bold">{v.value}</span>
                 </div>
               ))}
@@ -345,7 +345,7 @@ export default function InteractiveSimulatorSection() {
                     <Radio className="w-3.5 h-3.5 text-blue-500 animate-pulse" />
                     <span>Ambient Multi-Modal Dialogue</span>
                   </div>
-                  <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
+                  <span className="text-[11px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
                     1080p Diarizing
                   </span>
                 </div>
@@ -362,11 +362,11 @@ export default function InteractiveSimulatorSection() {
                           : "bg-emerald-500/10 text-foreground border border-emerald-500/20 font-medium"
                       }`}
                     >
-                      <div className="flex items-center justify-between text-[10px] font-bold opacity-70 mb-1">
+                      <div className="flex items-center justify-between text-[11px] font-bold opacity-70 mb-1">
                         <span className="flex items-center gap-1">
                           {d.speaker === "Doctor" ? "👨‍⚕️" : d.speaker === "Patient" ? "👤" : "⚡"} {d.speaker}
                         </span>
-                        <span className="font-mono text-[9px]">{d.time}</span>
+                        <span className="font-mono text-[10px]">{d.time}</span>
                       </div>
                       <p className="text-[11px] leading-snug">{d.text}</p>
                     </div>
@@ -395,7 +395,7 @@ export default function InteractiveSimulatorSection() {
                     <Database className="w-3.5 h-3.5 text-teal-500" />
                     <span>Extracted FHIR R4 Schemas</span>
                   </div>
-                  <Badge variant="outline" className="text-[10px] font-bold border-teal-500/30 text-teal-600 dark:text-teal-400">
+                  <Badge variant="outline" className="text-[11px] font-bold border-teal-500/30 text-teal-600 dark:text-teal-400">
                     Validated
                   </Badge>
                 </div>
@@ -407,10 +407,10 @@ export default function InteractiveSimulatorSection() {
                       className="p-2.5 rounded-lg bg-muted/30 border border-border/60 hover:border-border transition-colors"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 px-1.5 py-0.5 rounded">
+                        <span className="text-[11px] font-mono font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 px-1.5 py-0.5 rounded">
                           {item.resource}
                         </span>
-                        <span className="text-[10px] font-mono font-semibold text-muted-foreground">{item.code}</span>
+                        <span className="text-[11px] font-mono font-semibold text-muted-foreground">{item.code}</span>
                       </div>
                       <p className="text-xs font-bold text-foreground mt-1">{item.display}</p>
                     </div>
@@ -436,13 +436,13 @@ export default function InteractiveSimulatorSection() {
                     <Brain className="w-3.5 h-3.5 text-indigo-500" />
                     <span>Clinical Decision Support (CDS)</span>
                   </div>
-                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20">
+                  <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20">
                     Medical RAG
                   </span>
                 </div>
 
                 <div className="mt-3 space-y-2">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                     Differential Diagnosis Probabilities
                   </div>
                   {activeCase.differential.map((diff, idx) => (

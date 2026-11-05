@@ -1053,3 +1053,73 @@
   border-color: rgba(203, 213, 225, 0.9);
 }
 
+/* ─── Marketing hero: abstract clinical backdrop ───────────────────────────
+   The landing/auth hero is built from theme tokens rather than a photograph:
+   it reads as a clean clinical surface in every one of the nine themes, needs
+   no network fetch, and cannot wash out the headline contrast the way a photo
+   would. `color-mix` keeps each layer tinted from --primary, so switching the
+   accent re-tints the whole backdrop.
+   ------------------------------------------------------------------------ */
+.hero-clinical-mesh {
+  background-image:
+    radial-gradient(58% 52% at 12% 6%, color-mix(in oklab, var(--primary) 16%, transparent) 0%, transparent 62%),
+    radial-gradient(46% 48% at 88% 4%, color-mix(in oklab, var(--primary) 11%, transparent) 0%, transparent 60%),
+    radial-gradient(52% 54% at 74% 96%, color-mix(in oklab, var(--primary) 10%, transparent) 0%, transparent 64%),
+    radial-gradient(40% 44% at 4% 92%, color-mix(in oklab, var(--primary) 8%, transparent) 0%, transparent 66%);
+}
+
+/* Monochrome ECG-style lattice, faded out toward the edges so it never turns
+   into a busy grid behind body copy. */
+.hero-clinical-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--border) 70%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 70%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(72% 58% at 50% 38%, black 24%, transparent 78%);
+  mask-image: radial-gradient(72% 58% at 50% 38%, black 24%, transparent 78%);
+}
+
+/* Keeps the left column readable where the mesh is densest. */
+.hero-clinical-scrim {
+  background-image: linear-gradient(
+    to right,
+    color-mix(in oklab, var(--background) 82%, transparent) 0%,
+    color-mix(in oklab, var(--background) 34%, transparent) 46%,
+    transparent 72%
+  );
+}
+
+.ecg-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Traces the waveform in, holds it, then releases it off the leading edge so
+   the loop reads as a monitor sweep instead of a blinking line. */
+.ecg-line--sweep {
+  stroke-dasharray: 2200;
+  stroke-dashoffset: 2200;
+  animation: ecg-sweep 14s linear infinite;
+}
+
+@keyframes ecg-sweep {
+  0% {
+    stroke-dashoffset: 2200;
+  }
+  55% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -2200;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ecg-line--sweep {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

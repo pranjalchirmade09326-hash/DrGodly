@@ -121,7 +121,7 @@ export default function ClinicalPipelineSection() {
                   </span>
                 </div>
 
-                <Badge variant="outline" className="text-[10px] font-mono mb-2 border-border/60">
+                <Badge variant="outline" className="text-[11px] font-mono mb-2 border-border/60">
                   {s.badge}
                 </Badge>
 

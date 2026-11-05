@@ -4,8 +4,9 @@
  * Layer: client / (marketing) / components
  *
  * Positions DrGodly as an AI-native, HIPAA-compliant FHIR R4 EMR platform
- * with MCP server integration. Includes animated badge row, headline, CTA
- * buttons, a mock EMR card visual, and a key-metric stat row.
+ * with MCP server integration. Sits on the abstract ClinicalBackdrop, and
+ * includes an animated badge row, headline, Sign Up / Sign In CTAs, a mock EMR
+ * card visual, and a key-metric stat row.
  */
 
 "use client";
@@ -13,6 +14,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
+import { ClinicalBackdrop } from "@/components/shared/ClinicalBackdrop";
 import { OAuthPkceButton } from "@/modules/client/auth/components/OAuthPkceButton";
 import { motion } from "framer-motion";
 import {
@@ -24,6 +26,7 @@ import {
   FileText,
   Brain,
   CheckCircle2,
+  LogIn,
 } from "lucide-react";
 import type { AuthResponse } from "@/modules/server/auth/types";
 
@@ -72,12 +75,10 @@ const fhirRows = [
  */
 export default function Hero({ session }: { session: AuthResponse | null }) {
   return (
-    <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-32 overflow-hidden bg-background">
-      {/* Background blobs */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
-        <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl opacity-60 animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-3xl opacity-40" />
-      </div>
+    <section className="relative isolate overflow-hidden bg-background pt-32 pb-20 sm:pt-40 sm:pb-32">
+      {/* Abstract clinical surface (mesh, lattice, pulse rings, ECG sweep).
+          Token-driven, so it needs no per-theme retuning and no image request. */}
+      <ClinicalBackdrop />
 
       <div className="max-w-[110rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
@@ -105,7 +106,7 @@ export default function Hero({ session }: { session: AuthResponse | null }) {
               className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.08]"
             >
               Healthcare that{" "}
-              <span className="bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent dark:from-blue-400 dark:via-teal-300 dark:to-cyan-300">
                 knows your story.
               </span>
             </motion.h1>
@@ -119,27 +120,39 @@ export default function Hero({ session }: { session: AuthResponse | null }) {
               and real doctors — so every healthcare conversation starts with context.
             </motion.p>
 
-            {/* CTA buttons */}
+            {/* CTA buttons — Sign Up leads, Sign In is given equal weight since it
+                is the primary path for returning clinicians and patients. Stacked
+                full-width on phones so neither button can be clipped. */}
             <motion.div
               variants={itemVariants}
               className="mt-8 flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-4"
             >
               {!session ? (
                 <>
-                  <Link href="/signup">
+                  <Link href="/signup" className="w-full sm:w-auto">
                     <Button
                       size="lg"
-                      className="rounded-full px-8 h-12 text-base shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all font-semibold"
+                      className="h-12 w-full rounded-full px-8 text-base font-semibold shadow-lg shadow-primary/20 transition-all hover:shadow-primary/30 sm:w-auto"
                     >
                       Start Your Health Journey
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
+                  <Link href="/login" className="w-full sm:w-auto">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="h-12 w-full rounded-full border-primary/25 bg-card/70 px-8 text-base font-semibold backdrop-blur transition-all hover:bg-primary/5 sm:w-auto"
+                    >
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Sign In
+                    </Button>
+                  </Link>
                   <Link href="/screens">
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="lg"
-                      className="rounded-full px-8 h-12 text-base border-primary/20 hover:bg-primary/5 font-semibold"
+                      className="h-12 rounded-full px-5 text-base font-semibold text-muted-foreground hover:text-foreground"
                     >
                       See How It Works
                     </Button>

@@ -306,7 +306,7 @@ export default function ContextFlywheelSection() {
                           />
                           <Badge
                             variant={isSelected ? "default" : "outline"}
-                            className={`text-[10px] py-0 ${
+                            className={`text-[11px] py-0 ${
                               isSelected ? "bg-teal-600 text-white" : "text-muted-foreground"
                             }`}
                           >
