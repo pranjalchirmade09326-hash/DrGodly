@@ -55,32 +55,32 @@ export function AiClinicalAssistantWidget() {
   };
 
   return (
-    <Card className="border border-teal-200/60 bg-gradient-to-br from-white via-teal-50/20 to-emerald-50/30 shadow-xs rounded-2xl overflow-hidden">
-      <CardHeader className="pb-3 border-b border-teal-100/60 bg-white/70">
+    <Card className="dash-card border border-border/80 bg-gradient-to-br from-card via-card to-teal-500/5 shadow-xs hover:shadow-md transition-all rounded-2xl overflow-hidden">
+      <CardHeader className="pb-3 border-b border-border/60 bg-card">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-teal-600 text-white shadow-xs">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 shadow-2xs">
               <Sparkles className="h-4 w-4" />
             </div>
             <div>
-              <CardTitle className="text-base font-semibold text-slate-900">
+              <CardTitle className="dash-section-title text-foreground">
                 AI Clinical Assistant
               </CardTitle>
-              <p className="text-xs text-slate-500">
+              <p className="dash-caption text-xs text-muted-foreground mt-0.5">
                 Ambient clinical decision support & EMR insights
               </p>
             </div>
           </div>
-          <Badge className="bg-teal-100/80 text-teal-800 hover:bg-teal-100 text-[11px] font-medium border border-teal-300/50">
+          <Badge className="bg-teal-500/10 text-teal-700 dark:text-teal-400 text-xs font-semibold border border-teal-500/20 px-2.5 py-0.5 rounded-full">
             Gemini 2.5 Pro Grounded
           </Badge>
         </div>
       </CardHeader>
 
-      <CardContent className="pt-4 space-y-4">
+      <CardContent className="pt-4 pb-4 space-y-4">
         {/* Suggested Prompt Chips */}
         <div>
-          <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+          <p className="dash-caption text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">
             Suggested Clinical Prompts
           </p>
           <div className="flex flex-wrap gap-2">
@@ -91,10 +91,10 @@ export function AiClinicalAssistantWidget() {
                   setSelectedPrompt(prompt);
                   setCustomAnswer(null);
                 }}
-                className={`text-xs px-3 py-1.5 rounded-xl border text-left transition-all duration-150 flex items-center gap-1.5 ${
+                className={`text-xs px-3 py-1.5 rounded-xl border text-left transition-all duration-150 flex items-center gap-1.5 shadow-2xs active:scale-[0.98] ${
                   selectedPrompt?.id === prompt.id
                     ? "bg-teal-600 text-white border-teal-600 shadow-xs"
-                    : "bg-white text-slate-700 border-slate-200 hover:border-teal-400 hover:bg-teal-50/50"
+                    : "bg-card text-foreground border-border hover:border-teal-500/50 hover:bg-muted/40"
                 }`}
               >
                 <span>{prompt.label}</span>
@@ -106,26 +106,26 @@ export function AiClinicalAssistantWidget() {
 
         {/* Answer Display */}
         {(selectedPrompt || customAnswer || loading) && (
-          <div className="p-3.5 rounded-xl bg-white border border-teal-200/80 shadow-xs animate-in fade-in duration-200 space-y-2">
-            <div className="flex items-center justify-between text-xs text-teal-800 font-semibold border-b border-teal-100 pb-1.5">
+          <div className="p-4 rounded-xl bg-card border border-teal-200/80 dark:border-teal-800/60 shadow-xs animate-in fade-in duration-200 space-y-2">
+            <div className="flex items-center justify-between text-xs text-teal-700 dark:text-teal-400 font-semibold border-b border-border/60 pb-2">
               <span className="flex items-center gap-1.5">
-                <Bot className="h-3.5 w-3.5 text-teal-600" />
+                <Bot className="h-4 w-4 text-teal-600 dark:text-teal-400" />
                 {loading ? "Synthesizing EMR data..." : "Clinical Copilot Response"}
               </span>
               {!loading && (
-                <span className="flex items-center gap-1 text-[11px] text-emerald-600">
-                  <CheckCircle2 className="h-3 w-3" /> Evidence Verified
+                <span className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400">
+                  <CheckCircle2 className="h-3.5 w-3.5" /> Evidence Verified
                 </span>
               )}
             </div>
 
             {loading ? (
-              <div className="flex items-center gap-2 py-4 justify-center text-xs text-slate-500">
-                <Loader2 className="h-4 w-4 animate-spin text-teal-600" />
+              <div className="flex items-center gap-2 py-4 justify-center text-xs text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin text-teal-600 dark:text-teal-400" />
                 Querying FastMCP & FHIR clinical repositories...
               </div>
             ) : (
-              <p className="text-xs leading-relaxed text-slate-700">
+              <p className="text-xs sm:text-sm leading-relaxed text-foreground">
                 {customAnswer || selectedPrompt?.response}
               </p>
             )}
@@ -139,15 +139,15 @@ export function AiClinicalAssistantWidget() {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="Ask DrGodly anything about your patients, schedule, or medications..."
-            className="text-xs h-9 bg-white border-slate-200 focus-visible:ring-teal-500 rounded-xl"
+            className="text-xs sm:text-sm h-10 bg-card border-border/80 focus-visible:ring-2 focus-visible:ring-teal-500 rounded-xl"
           />
           <Button
             size="sm"
             onClick={handleSend}
             disabled={!query.trim() || loading}
-            className="h-9 px-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white shrink-0"
+            className="dash-btn-primary h-10 px-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white shrink-0 shadow-xs active:scale-[0.97]"
           >
-            <Send className="h-3.5 w-3.5" />
+            <Send className="h-4 w-4" />
           </Button>
         </div>
       </CardContent>

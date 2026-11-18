@@ -79,39 +79,39 @@ export function StatCard({
   href,
 }: StatCardProps) {
   return (
-    <Card className={cn("gap-0 p-0", cardBg[colorVariant])}>
-      <CardHeader className="flex flex-row items-center justify-between py-3">
-        <h3 className="text-sm font-medium">{title}</h3>
+    <Card className={cn("dash-kpi-card border border-border/70 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all gap-0 flex flex-col justify-between h-full", cardBg[colorVariant])}>
+      <CardHeader className="flex flex-row items-center justify-between p-0 pb-3">
+        <h3 className="dash-card-title text-xs font-semibold text-muted-foreground uppercase tracking-wider">{title}</h3>
         {href && (
           <Button
             asChild
             size="sm"
             variant="ghost"
-            className="text-xs h-auto p-0 font-normal opacity-70 hover:opacity-100 hover:bg-transparent hover:underline"
+            className="text-xs h-auto p-0 font-medium opacity-80 hover:opacity-100 hover:bg-transparent hover:underline transition-opacity"
           >
             <Link href={href}>See details</Link>
           </Button>
         )}
       </CardHeader>
 
-      <CardContent className="pb-3">
-        <div className="flex items-center gap-4">
+      <CardContent className="p-0 pb-3">
+        <div className="flex items-center gap-3.5">
           <div
             className={cn(
-              "h-10 w-10 rounded-full flex items-center justify-center shrink-0",
+              "h-10 w-10 rounded-xl flex items-center justify-center shrink-0 shadow-2xs transition-transform duration-200 group-hover:scale-105",
               iconBg[colorVariant],
             )}
           >
             <Icon className="h-5 w-5" />
           </div>
-          <span className="text-2xl font-semibold tabular-nums">
+          <span className="dash-metric-text text-2xl font-bold tracking-tight text-foreground">
             {value.toLocaleString()}
           </span>
         </div>
       </CardContent>
 
-      <CardFooter className="pb-3">
-        <p className="text-xs text-muted-foreground">{note}</p>
+      <CardFooter className="p-0 pt-1">
+        <p className="dash-caption text-xs text-muted-foreground leading-tight">{note}</p>
       </CardFooter>
     </Card>
   );

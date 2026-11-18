@@ -84,7 +84,7 @@ export function DoctorWeekSchedule() {
   const weekCount = days.reduce((sum, day) => sum + day.slots.length, 0);
 
   return (
-    <Card className='rounded-3xl border border-border bg-card shadow-xs'>
+    <Card className='dash-card rounded-2xl border border-border/80 bg-card shadow-xs hover:shadow-md transition-all'>
       <CardContent className='p-4 sm:p-5'>
         <div className='flex flex-wrap items-center justify-between gap-3 pb-3'>
           <div className='flex min-w-0 items-center gap-2.5'>

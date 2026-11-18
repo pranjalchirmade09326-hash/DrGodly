@@ -106,14 +106,14 @@ function formatTime(iso: string): string {
  */
 export function RecentAppointmentsTable({ appointments }: RecentAppointmentsTableProps) {
   return (
-    <Card className="p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base font-semibold">Recent Appointments</h2>
+    <Card className="dash-card p-5 sm:p-6 rounded-2xl border border-border shadow-xs hover:shadow-md transition-all">
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/60">
+        <h2 className="dash-section-title text-foreground">Recent Appointments</h2>
         <Button
           asChild
           size="sm"
           variant="ghost"
-          className="text-xs h-auto p-0 font-normal opacity-70 hover:opacity-100 hover:bg-transparent hover:underline"
+          className="text-xs h-auto p-0 font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 hover:bg-transparent hover:underline transition-colors"
         >
           <Link href="/bezs/telemedicine/patient/appointments">See all</Link>
         </Button>
@@ -124,48 +124,50 @@ export function RecentAppointmentsTable({ appointments }: RecentAppointmentsTabl
           No appointments yet.
         </p>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Time</TableHead>
-              <TableHead>Doctor</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {appointments.map((appt) => {
-              const statusCfg =
-                STATUS_CONFIG[appt.status ?? ""] ?? {
-                  label: appt.status ?? "Unknown",
-                  className:
-                    "bg-gray-500/10 text-gray-500 border-gray-500/20",
-                };
+        <div className="dash-table-container rounded-xl overflow-hidden border border-border/60">
+          <Table className="dash-table w-full">
+            <TableHeader>
+              <TableRow className="bg-muted/40 border-b border-border/60">
+                <TableHead className="font-semibold text-xs text-muted-foreground py-2.5 px-3">Date</TableHead>
+                <TableHead className="font-semibold text-xs text-muted-foreground py-2.5 px-3">Time</TableHead>
+                <TableHead className="font-semibold text-xs text-muted-foreground py-2.5 px-3">Doctor</TableHead>
+                <TableHead className="font-semibold text-xs text-muted-foreground py-2.5 px-3 text-right">Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-border/40">
+              {appointments.map((appt) => {
+                const statusCfg =
+                  STATUS_CONFIG[appt.status ?? ""] ?? {
+                    label: appt.status ?? "Unknown",
+                    className:
+                      "bg-gray-500/10 text-gray-500 border-gray-500/20",
+                  };
 
-              return (
-                <TableRow key={appt.id}>
-                  <TableCell className="text-sm">
-                    {appt.date ? formatDate(appt.date) : "—"}
-                  </TableCell>
-                  <TableCell className="text-sm">
-                    {appt.date ? formatTime(appt.date) : "—"}
-                  </TableCell>
-                  <TableCell className="text-sm">
-                    {appt.doctorName ?? "—"}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={cn("text-xs capitalize", statusCfg.className)}
-                    >
-                      {statusCfg.label}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                return (
+                  <TableRow key={appt.id} className="hover:bg-muted/50 transition-colors">
+                    <TableCell className="text-xs sm:text-sm font-medium py-3 px-3">
+                      {appt.date ? formatDate(appt.date) : "—"}
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground py-3 px-3">
+                      {appt.date ? formatTime(appt.date) : "—"}
+                    </TableCell>
+                    <TableCell className="text-xs sm:text-sm font-semibold text-foreground py-3 px-3">
+                      {appt.doctorName ?? "—"}
+                    </TableCell>
+                    <TableCell className="py-3 px-3 text-right">
+                      <Badge
+                        variant="outline"
+                        className={cn("text-xs capitalize font-semibold px-2.5 py-0.5 rounded-full border shadow-2xs", statusCfg.className)}
+                      >
+                        {statusCfg.label}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
       )}
     </Card>
   );

@@ -254,20 +254,20 @@ export function DoctorDashboard({
     // relative height here instead. Same 132px offset (navbar + breadcrumb +
     // page padding) already used by AppointmentReview.tsx and the
     // consultation/intake screens for exactly this reason.
-    <div className="flex flex-col gap-0 h-[calc(100dvh-132px)]">
+    <div className="dash-view-container clinician-dashboard flex flex-col gap-0 h-[calc(100dvh-132px)]">
       {/* ── Header ── */}
-      <div className="flex flex-wrap items-center justify-between gap-2 px-1 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-1 pb-4">
         <div>
-          <h1 className="text-2xl font-semibold">
+          <h1 className="dash-page-title text-foreground">
             Good {getGreeting()}, {doctorName}
           </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">{todayLabel}</p>
+          <p className="dash-caption text-xs text-muted-foreground mt-0.5">{todayLabel}</p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <CalendarDays className="size-4" />
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted/60 px-3 py-1.5 rounded-xl border border-border/60 shadow-2xs">
+            <CalendarDays className="size-4 text-teal-600 dark:text-teal-400" />
             <span>
-              <strong className="text-foreground">{appointments.length}</strong>{" "}
+              <strong className="text-foreground font-bold">{appointments.length}</strong>{" "}
               appointment{appointments.length !== 1 ? "s" : ""} today
             </span>
           </div>
@@ -287,19 +287,19 @@ export function DoctorDashboard({
         {/* ── Left: appointment list — fixed height while stacked (mobile)
             so it doesn't claim the whole viewport above the detail panel;
             fixed width and full available height once side-by-side. ── */}
-        <div className="h-85 lg:h-auto w-full lg:w-68 shrink-0 border rounded-xl overflow-hidden bg-card flex flex-col">
-          <div className="flex items-center gap-2 px-3 py-2.5 border-b shrink-0">
+        <div className="h-85 lg:h-auto w-full lg:w-72 shrink-0 border border-border/80 rounded-2xl overflow-hidden bg-card shadow-xs flex flex-col transition-all">
+          <div className="flex items-center gap-2 px-3.5 py-3 border-b border-border/60 shrink-0 bg-muted/30">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground pointer-events-none" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search patient name…"
-                className="h-8 pl-8 text-xs"
+                className="h-8 pl-8 text-xs rounded-xl bg-card border-border/80 focus-visible:ring-2 focus-visible:ring-teal-500"
               />
             </div>
             {isAppointmentsPending && (
-              <Loader2 className="size-3.5 shrink-0 animate-spin text-muted-foreground" />
+              <Loader2 className="size-3.5 shrink-0 animate-spin text-teal-600" />
             )}
           </div>
           <div className="flex-1 min-h-0">
@@ -335,14 +335,14 @@ export function DoctorDashboard({
                   doesn't have to leave the dashboard to act on the appointment
                   they already have open here. */}
               <div className="flex items-center justify-between gap-2 px-1 pb-3">
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className="text-xs sm:text-sm font-semibold text-foreground">
                   {selectedAppointment && getPatientName(selectedAppointment)}
                 </p>
                 <div className="flex items-center gap-1.5 flex-wrap justify-end">
                   {isSelectedBooked && (
                     <Button
                       size="sm"
-                      className="h-8 gap-1.5"
+                      className="dash-btn-primary h-8 px-3 rounded-lg text-xs gap-1.5 shadow-xs"
                       onClick={() =>
                         selectedAppointment &&
                         router.push(
@@ -358,7 +358,7 @@ export function DoctorDashboard({
                     <Button
                       variant="secondary"
                       size="sm"
-                      className="h-8 gap-1.5"
+                      className="dash-btn-inline h-8 px-3 rounded-lg text-xs gap-1.5 shadow-2xs"
                       onClick={() =>
                         selectedAppointment &&
                         router.push(

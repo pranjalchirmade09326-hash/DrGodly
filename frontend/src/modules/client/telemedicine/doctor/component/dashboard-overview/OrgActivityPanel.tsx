@@ -136,10 +136,10 @@ function ActivityRow({
  */
 export function OrgActivityPanel({ intake, consultation }: OrgActivityPanelProps) {
   return (
-    <Card className="p-4 space-y-5">
-      <div>
-        <h2 className="text-base font-semibold">Organization AI Activity</h2>
-        <p className="text-xs text-muted-foreground">
+    <Card className="dash-card p-5 sm:p-6 rounded-2xl border border-border/80 shadow-xs hover:shadow-md transition-all space-y-5">
+      <div className="pb-3 border-b border-border/60">
+        <h2 className="dash-section-title text-foreground">Organization AI Activity</h2>
+        <p className="dash-caption text-xs text-muted-foreground mt-0.5">
           Across all practitioners in your organization
         </p>
       </div>

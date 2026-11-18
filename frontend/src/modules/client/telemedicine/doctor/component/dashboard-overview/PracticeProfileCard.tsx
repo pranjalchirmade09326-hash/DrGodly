@@ -63,27 +63,27 @@ export function PracticeProfileCard({
   editHref,
 }: PracticeProfileCardProps) {
   return (
-    <Card className="p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-base font-semibold flex items-center gap-1.5">
-          <Stethoscope className="size-4 text-muted-foreground" />
+    <Card className="dash-card p-5 sm:p-6 rounded-2xl border border-border/80 shadow-xs hover:shadow-md transition-all space-y-4">
+      <div className="flex items-center justify-between pb-3 border-b border-border/60">
+        <h2 className="dash-section-title text-foreground flex items-center gap-2">
+          <Stethoscope className="size-4 text-teal-600 dark:text-teal-400" />
           Practice Profile
         </h2>
         <Button
           asChild
           size="sm"
           variant="ghost"
-          className="text-xs h-auto p-0 font-normal opacity-70 hover:opacity-100 hover:bg-transparent hover:underline"
+          className="text-xs h-auto p-0 font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 hover:bg-transparent hover:underline transition-colors"
         >
           <Link href={editHref}>Edit</Link>
         </Button>
       </div>
 
       {/* Specialty + active status */}
-      <div className="flex flex-wrap items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-2">
         {specialties.length > 0 ? (
           specialties.map((s) => (
-            <Badge key={s} variant="secondary" className="text-xs">
+            <Badge key={s} variant="secondary" className="text-xs font-medium px-2.5 py-0.5 rounded-lg bg-muted text-foreground border border-border/60">
               {s}
             </Badge>
           ))
@@ -95,10 +95,10 @@ export function PracticeProfileCard({
         <Badge
           variant="outline"
           className={cn(
-            "text-xs ml-auto",
+            "text-xs ml-auto font-semibold px-2.5 py-0.5 rounded-full border shadow-2xs",
             active
-              ? "border-emerald-600/20 bg-emerald-600/10 text-emerald-600"
-              : "border-gray-500/20 bg-gray-500/10 text-gray-500",
+              ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+              : "border-border bg-muted text-muted-foreground",
           )}
         >
           {active ? "Active" : "Inactive"}
@@ -106,9 +106,9 @@ export function PracticeProfileCard({
       </div>
 
       {/* Weekly availability */}
-      <div>
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
-          <CalendarCheck2 className="size-3.5" />
+      <div className="pt-1">
+        <p className="dash-caption text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+          <CalendarCheck2 className="size-3.5 text-teal-600 dark:text-teal-400" />
           Weekly Availability
         </p>
         {availableDays.size === 0 ? (
@@ -124,10 +124,10 @@ export function PracticeProfileCard({
                   key={code}
                   title={code}
                   className={cn(
-                    "flex-1 h-8 rounded-md flex items-center justify-center text-xs font-semibold",
+                    "flex-1 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all shadow-2xs select-none",
                     isAvailable
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground/50",
+                      ? "bg-teal-600 dark:bg-teal-700 text-white hover:scale-105"
+                      : "bg-muted/70 text-muted-foreground/50",
                   )}
                 >
                   {label}

@@ -86,39 +86,39 @@ export function TodayAppointmentsQueue({
   const queue = SAMPLE_QUEUE;
 
   return (
-    <Card className="border border-slate-200/80 bg-white rounded-2xl shadow-xs overflow-hidden">
-      <CardHeader className="pb-3 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <Card className="dash-card border border-border/80 bg-card rounded-2xl shadow-xs hover:shadow-md transition-all overflow-hidden">
+      <CardHeader className="pb-3.5 border-b border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-card">
         <div>
-          <CardTitle className="text-base font-semibold text-slate-900">
+          <CardTitle className="dash-section-title text-foreground">
             Today&apos;s Appointments Queue
           </CardTitle>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="dash-caption text-xs text-muted-foreground mt-0.5">
             Patients scheduled for today with real-time AI intake status
           </p>
         </div>
 
         {/* Tab Filters */}
-        <div className="flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl text-xs">
+        <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-xl text-xs border border-border/40">
           <button
             onClick={() => setFilter("all")}
-            className={`px-3 py-1 rounded-lg font-medium transition-all ${
-              filter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+            className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+              filter === "all" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground hover:bg-card/50"
             }`}
           >
             All Today ({queue.length})
           </button>
           <button
             onClick={() => setFilter("upcoming")}
-            className={`px-3 py-1 rounded-lg font-medium transition-all ${
-              filter === "upcoming" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+            className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+              filter === "upcoming" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground hover:bg-card/50"
             }`}
           >
             Upcoming (3)
           </button>
           <button
             onClick={() => setFilter("completed")}
-            className={`px-3 py-1 rounded-lg font-medium transition-all ${
-              filter === "completed" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+            className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+              filter === "completed" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground hover:bg-card/50"
             }`}
           >
             Completed (1)
@@ -126,33 +126,33 @@ export function TodayAppointmentsQueue({
         </div>
       </CardHeader>
 
-      <CardContent className="p-0 overflow-x-auto">
-        <table className="w-full text-left text-xs">
-          <thead className="bg-slate-50/70 border-b border-slate-100 text-slate-500 font-medium">
+      <CardContent className="p-0 overflow-x-auto dash-table-container border-0 rounded-none">
+        <table className="dash-table w-full text-left text-xs">
+          <thead className="bg-muted/40 border-b border-border/60 text-muted-foreground font-semibold uppercase text-[11px] tracking-wider">
             <tr>
-              <th className="py-2.5 px-4">Time & Type</th>
-              <th className="py-2.5 px-4">Patient Details</th>
-              <th className="py-2.5 px-4">Reason for Visit</th>
-              <th className="py-2.5 px-4">AI Intake Status</th>
-              <th className="py-2.5 px-4">Triage</th>
-              <th className="py-2.5 px-4 text-right">Actions</th>
+              <th className="py-3 px-4">Time & Type</th>
+              <th className="py-3 px-4">Patient Details</th>
+              <th className="py-3 px-4">Reason for Visit</th>
+              <th className="py-3 px-4">AI Intake Status</th>
+              <th className="py-3 px-4">Triage</th>
+              <th className="py-3 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-border/40">
             {queue.map((item) => (
-              <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
+              <tr key={item.id} className="hover:bg-muted/50 transition-colors duration-150 group cursor-default">
                 {/* Time & Type */}
-                <td className="py-3 px-4 whitespace-nowrap">
-                  <div className="font-semibold text-slate-900">{item.time}</div>
-                  <div className="flex items-center gap-1 text-[11px] text-slate-500 mt-0.5">
+                <td className="py-3.5 px-4 whitespace-nowrap">
+                  <div className="font-bold text-foreground text-xs sm:text-sm">{item.time}</div>
+                  <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground mt-0.5">
                     {item.type === "video" ? (
                       <>
-                        <Video className="h-3 w-3 text-teal-600" />
+                        <Video className="h-3 w-3 text-teal-600 dark:text-teal-400 shrink-0" />
                         <span>Video Consult</span>
                       </>
                     ) : (
                       <>
-                        <Stethoscope className="h-3 w-3 text-indigo-600" />
+                        <Stethoscope className="h-3 w-3 text-indigo-600 dark:text-indigo-400 shrink-0" />
                         <span>In-Person</span>
                       </>
                     )}
@@ -160,73 +160,73 @@ export function TodayAppointmentsQueue({
                 </td>
 
                 {/* Patient Details */}
-                <td className="py-3 px-4 whitespace-nowrap">
+                <td className="py-3.5 px-4 whitespace-nowrap">
                   <div className="flex items-center gap-2.5">
                     {item.avatarUrl ? (
                       <img
                         src={item.avatarUrl}
                         alt={item.patientName}
-                        className="h-9 w-9 rounded-full object-cover ring-1 ring-slate-200 shrink-0 shadow-2xs"
+                        className="h-9 w-9 rounded-full object-cover ring-1 ring-border shrink-0 shadow-2xs"
                         loading="lazy"
                       />
                     ) : (
-                      <div className="h-9 w-9 rounded-full bg-teal-100 text-teal-800 font-semibold flex items-center justify-center text-xs shrink-0">
+                      <div className="h-9 w-9 rounded-full bg-teal-500/10 text-teal-700 dark:text-teal-400 font-bold flex items-center justify-center text-xs shrink-0">
                         {item.patientName.charAt(0)}
                       </div>
                     )}
                     <div>
-                      <div className="font-semibold text-slate-900">{item.patientName}</div>
-                      <div className="text-[11px] text-slate-500 font-medium">{item.patientAgeGender}</div>
+                      <div className="font-semibold text-foreground text-xs sm:text-sm">{item.patientName}</div>
+                      <div className="text-[11px] text-muted-foreground font-medium">{item.patientAgeGender}</div>
                     </div>
                   </div>
                 </td>
 
                 {/* Reason */}
-                <td className="py-3 px-4 max-w-[200px] truncate text-slate-700">
+                <td className="py-3.5 px-4 max-w-[200px] truncate text-xs text-muted-foreground group-hover:text-foreground transition-colors">
                   {item.reason}
                 </td>
 
                 {/* AI Intake Status */}
-                <td className="py-3 px-4 whitespace-nowrap">
+                <td className="py-3.5 px-4 whitespace-nowrap">
                   {item.intakeStatus === "completed" && (
-                    <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/60 font-medium text-[11px] flex items-center gap-1 w-fit">
-                      <CheckCircle2 className="h-3 w-3" />
+                    <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-semibold text-[11px] flex items-center gap-1.5 px-2.5 py-0.5 rounded-full shadow-2xs w-fit">
+                      <CheckCircle2 className="h-3 w-3 shrink-0" />
                       AI Intake Complete
                     </Badge>
                   )}
                   {item.intakeStatus === "in-progress" && (
-                    <Badge className="bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200/60 font-medium text-[11px] flex items-center gap-1 w-fit">
-                      <Clock className="h-3 w-3" />
+                    <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-semibold text-[11px] flex items-center gap-1.5 px-2.5 py-0.5 rounded-full shadow-2xs w-fit">
+                      <Clock className="h-3 w-3 shrink-0" />
                       In Progress
                     </Badge>
                   )}
                   {item.intakeStatus === "not-started" && (
-                    <Badge variant="outline" className="bg-slate-50 text-slate-500 border-slate-200 font-medium text-[11px] w-fit">
+                    <Badge variant="outline" className="bg-muted text-muted-foreground border-border/80 font-medium text-[11px] px-2.5 py-0.5 rounded-full w-fit">
                       Not Started
                     </Badge>
                   )}
                 </td>
 
                 {/* Priority */}
-                <td className="py-3 px-4 whitespace-nowrap">
+                <td className="py-3.5 px-4 whitespace-nowrap">
                   {item.priority === "urgent" ? (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/60">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 shadow-2xs">
                       Urgent
                     </span>
                   ) : (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200/60">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-2xs">
                       Routine
                     </span>
                   )}
                 </td>
 
                 {/* Actions */}
-                <td className="py-3 px-4 whitespace-nowrap text-right">
+                <td className="py-3.5 px-4 whitespace-nowrap text-right">
                   <div className="flex items-center justify-end gap-2">
                     <Link href={`${consultationBaseHref}?appointmentId=${item.id}`}>
                       <Button
                         size="sm"
-                        className="h-7 text-xs px-3 rounded-lg bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white shadow-xs font-medium"
+                        className="dash-btn-inline h-8 text-xs px-3.5 rounded-lg bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white shadow-xs font-semibold tracking-wide transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-teal-500"
                       >
                         Start Consultation
                       </Button>

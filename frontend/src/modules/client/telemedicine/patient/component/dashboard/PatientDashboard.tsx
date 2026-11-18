@@ -99,69 +99,69 @@ export function PatientDashboard({ userName, appointments, patientId }: PatientD
   }, [appointments]);
 
   return (
-    <div className="space-y-6">
+    <div className="dash-view-container patient-dashboard space-y-6">
       {/* ── Patient Welcome Header with ABHA Verification ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+      <div className="dash-header-card patient-hero-banner bg-card text-card-foreground p-5 sm:p-6 rounded-2xl border border-border/80 shadow-xs transition-all hover:shadow-md">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="dash-page-title text-foreground tracking-tight">
               Hello, {userName} 👋
             </h1>
-            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs font-semibold flex items-center gap-1">
+            <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-xs font-semibold flex items-center gap-1 px-2.5 py-0.5 rounded-full shadow-2xs">
               <ShieldCheck className="h-3.5 w-3.5" />
               ABHA Verified
             </Badge>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Age: 42 • Female • ABHA ID: <span className="font-mono font-medium text-slate-700">91-4821-9032-1104</span>
+          <p className="dash-caption text-muted-foreground mt-1.5 flex items-center gap-2 flex-wrap">
+            <span>Age: 42</span> • <span>Female</span> • <span>ABHA ID: <span className="font-mono font-medium text-foreground">91-4821-9032-1104</span></span>
           </p>
         </div>
 
         <Link href="/patient/appointments/book">
-          <Button size="sm" className="h-9 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium shadow-xs text-xs">
-            <Plus className="h-3.5 w-3.5 mr-1" />
+          <Button size="sm" className="dash-btn-primary patient-action-hero h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold tracking-wide shadow-xs transition-all hover:shadow-md active:scale-[0.98] focus-visible:ring-2">
+            <Plus className="h-4 w-4 mr-1.5 shrink-0" />
             Book New Consultation
           </Button>
         </Link>
       </div>
 
       {/* ── Health Score Gauge & Next Visit Spotlight ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-7">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-stretch">
+        <div className="lg:col-span-7 flex flex-col">
           <HealthScoreGauge score={78} label="Good Condition" changeNote="+5 pts for blood pressure adherence" />
         </div>
 
         {/* Next Visit Launcher Card */}
-        <div className="lg:col-span-5">
-          <Card className="border border-teal-200/80 bg-gradient-to-br from-teal-600 to-emerald-700 text-white rounded-2xl shadow-xs p-5 flex flex-col justify-between h-full">
+        <div className="lg:col-span-5 flex flex-col">
+          <Card className="dash-card border border-teal-200/80 dark:border-teal-700/50 bg-gradient-to-br from-teal-600 to-emerald-700 text-white rounded-2xl shadow-xs hover:shadow-md p-5 sm:p-6 flex flex-col justify-between h-full transition-all">
             <div>
               <div className="flex items-center justify-between text-teal-100 text-xs font-medium">
                 <span className="flex items-center gap-1.5 uppercase tracking-wider font-semibold">
                   <Video className="h-4 w-4" /> Next Appointment
                 </span>
-                <span className="bg-white/20 backdrop-blur-xs px-2.5 py-0.5 rounded-full text-[11px] text-white">
+                <span className="bg-white/20 backdrop-blur-xs px-2.5 py-0.5 rounded-full text-[11px] font-medium text-white shadow-2xs">
                   Today, 10:30 AM
                 </span>
               </div>
 
-              <div className="mt-3.5 space-y-1">
-                <h3 className="text-lg font-bold">Dr. Priya Sharma</h3>
-                <p className="text-xs text-teal-100">
+              <div className="mt-4 space-y-1">
+                <h3 className="text-xl font-bold tracking-tight">Dr. Priya Sharma</h3>
+                <p className="text-xs text-teal-100 leading-relaxed">
                   Cardiology & Internal Medicine • Apollo Clinic
                 </p>
               </div>
 
-              <div className="mt-3 flex items-center gap-2">
-                <Badge className="bg-emerald-400/30 text-white border-white/20 text-[11px]">
+              <div className="mt-3.5 flex items-center gap-2">
+                <Badge className="bg-emerald-400/30 text-white border-white/20 text-[11px] font-medium px-2.5 py-0.5">
                   ✓ AI Intake Submitted
                 </Badge>
               </div>
             </div>
 
-            <div className="mt-5 pt-3 border-t border-white/20 flex items-center justify-between">
-              <span className="text-xs text-teal-100">Room opens 10m before visit</span>
+            <div className="mt-5 pt-4 border-t border-white/20 flex flex-wrap items-center justify-between gap-3">
+              <span className="text-xs text-teal-100 font-medium">Room opens 10m before visit</span>
               <Link href="/patient/appointments/online-consultation?appointmentId=101">
-                <Button size="sm" className="bg-white text-teal-900 hover:bg-teal-50 font-semibold rounded-xl text-xs shadow-xs h-8 px-3">
+                <Button size="sm" className="dash-btn-inline bg-white text-teal-900 hover:bg-teal-50 font-semibold rounded-xl text-xs shadow-xs h-9 px-4 transition-all hover:scale-[1.02] active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-white">
                   Join Video Visit →
                 </Button>
               </Link>
@@ -171,55 +171,63 @@ export function PatientDashboard({ userName, appointments, patientId }: PatientD
       </div>
 
       {/* ── 4 Patient Status KPI Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="dash-kpi-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Next Appointment */}
-        <Card className="border border-teal-100 bg-white rounded-2xl p-4 shadow-2xs space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-600">Next Visit</span>
-            <div className="p-1.5 rounded-lg bg-teal-50 text-teal-700">
+        <Card className="dash-kpi-card border border-teal-200/50 dark:border-teal-800/40 bg-card hover:border-teal-500/40 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between h-full">
+          <div className="flex items-center justify-between gap-2">
+            <span className="dash-card-title text-xs font-semibold text-muted-foreground uppercase tracking-wider">Next Visit</span>
+            <div className="p-2 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 shrink-0">
               <Calendar className="h-4 w-4" />
             </div>
           </div>
-          <div className="text-base font-bold text-slate-900">Today, 10:30 AM</div>
-          <p className="text-[11px] text-teal-700 font-medium">Dr. Priya Sharma (Video)</p>
+          <div className="mt-3">
+            <div className="dash-metric-text text-base sm:text-lg font-bold text-foreground">Today, 10:30 AM</div>
+            <p className="dash-caption text-[11px] text-teal-600 dark:text-teal-400 font-medium mt-1">Dr. Priya Sharma (Video)</p>
+          </div>
         </Card>
 
         {/* Card 2: AI Intake Status */}
-        <Card className="border border-emerald-100 bg-white rounded-2xl p-4 shadow-2xs space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-600">AI Intake Status</span>
-            <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
+        <Card className="dash-kpi-card border border-emerald-200/50 dark:border-emerald-800/40 bg-card hover:border-emerald-500/40 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between h-full">
+          <div className="flex items-center justify-between gap-2">
+            <span className="dash-card-title text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Intake Status</span>
+            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
               <Sparkles className="h-4 w-4" />
             </div>
           </div>
-          <div className="text-base font-bold text-emerald-700 flex items-center gap-1.5">
-            <CheckCircle2 className="h-4 w-4" /> Completed
+          <div className="mt-3">
+            <div className="dash-metric-text text-base sm:text-lg font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4 shrink-0" /> Completed
+            </div>
+            <p className="dash-caption text-[11px] text-muted-foreground mt-1">Submitted 15 mins ago</p>
           </div>
-          <p className="text-[11px] text-slate-500">Submitted 15 mins ago</p>
         </Card>
 
         {/* Card 3: Care Plan Goals */}
-        <Card className="border border-indigo-100 bg-white rounded-2xl p-4 shadow-2xs space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-600">Care Plan Goals</span>
-            <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-700">
+        <Card className="dash-kpi-card border border-indigo-200/50 dark:border-indigo-800/40 bg-card hover:border-indigo-500/40 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between h-full">
+          <div className="flex items-center justify-between gap-2">
+            <span className="dash-card-title text-xs font-semibold text-muted-foreground uppercase tracking-wider">Care Plan Goals</span>
+            <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shrink-0">
               <Award className="h-4 w-4" />
             </div>
           </div>
-          <div className="text-base font-bold text-slate-900">4 of 6 (67%)</div>
-          <p className="text-[11px] text-indigo-600 font-medium">Daily walks on track</p>
+          <div className="mt-3">
+            <div className="dash-metric-text text-base sm:text-lg font-bold text-foreground">4 of 6 (67%)</div>
+            <p className="dash-caption text-[11px] text-indigo-600 dark:text-indigo-400 font-medium mt-1">Daily walks on track</p>
+          </div>
         </Card>
 
         {/* Card 4: Medications Due */}
-        <Card className="border border-amber-100 bg-white rounded-2xl p-4 shadow-2xs space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-600">Medications Due</span>
-            <div className="p-1.5 rounded-lg bg-amber-50 text-amber-700">
+        <Card className="dash-kpi-card border border-amber-200/50 dark:border-amber-800/40 bg-card hover:border-amber-500/40 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between h-full">
+          <div className="flex items-center justify-between gap-2">
+            <span className="dash-card-title text-xs font-semibold text-muted-foreground uppercase tracking-wider">Medications Due</span>
+            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0">
               <Pill className="h-4 w-4" />
             </div>
           </div>
-          <div className="text-base font-bold text-slate-900">2 Doses Remaining</div>
-          <p className="text-[11px] text-amber-700 font-medium">Next: Metformin at 8 PM</p>
+          <div className="mt-3">
+            <div className="dash-metric-text text-base sm:text-lg font-bold text-foreground">2 Doses Remaining</div>
+            <p className="dash-caption text-[11px] text-amber-600 dark:text-amber-400 font-medium mt-1">Next: Metformin at 8 PM</p>
+          </div>
         </Card>
       </div>
 
@@ -227,14 +235,19 @@ export function PatientDashboard({ userName, appointments, patientId }: PatientD
       <HealthSnapshotGrid />
 
       {/* ── Two-Column Layout: Care Plan & Ask DrGodly AI ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div className="lg:col-span-6 space-y-6">
           <CarePlanChecklist />
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
-            <h3 className="text-base font-semibold text-slate-900 border-b border-slate-100 pb-2">
-              Monthly Visit Trends
-            </h3>
-            <div className="h-64">
+          <div className="dash-card bg-card p-5 sm:p-6 rounded-2xl border border-border shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-border/60 pb-3">
+              <h3 className="dash-section-title text-foreground">
+                Monthly Visit Trends
+              </h3>
+              <Badge variant="outline" className="text-xs text-teal-600 dark:text-teal-400 border-teal-200 dark:border-teal-800">
+                Past 6 Months
+              </Badge>
+            </div>
+            <div className="h-64 w-full">
               <AppointmentBarChart data={monthlyData} />
             </div>
           </div>

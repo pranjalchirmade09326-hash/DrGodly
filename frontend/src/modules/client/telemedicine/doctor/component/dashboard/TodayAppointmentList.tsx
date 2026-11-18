@@ -159,8 +159,10 @@ export function TodayAppointmentList({
               type="button"
               onClick={() => onSelect(appt.id)}
               className={cn(
-                "w-full text-left rounded-lg px-3 py-2.5 transition-colors hover:bg-accent",
-                isSelected && "bg-accent border border-primary/20",
+                "w-full text-left rounded-xl px-3.5 py-2.5 transition-all duration-150 border border-transparent hover:bg-muted/60 active:scale-[0.99]",
+                isSelected
+                  ? "bg-teal-500/10 dark:bg-teal-500/15 border-teal-500/30 shadow-2xs"
+                  : "hover:border-border/60",
               )}
             >
               {/* Date + time row */}
@@ -172,20 +174,20 @@ export function TodayAppointmentList({
                 </span>
                 <Badge
                   variant="outline"
-                  className={cn("text-[11px] px-1.5 py-0", statusCfg.className)}
+                  className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full border shadow-2xs", statusCfg.className)}
                 >
                   {statusCfg.label}
                 </Badge>
               </div>
 
               {/* Patient name */}
-              <p className="text-sm font-medium leading-snug truncate">
+              <p className="text-xs sm:text-sm font-semibold leading-snug truncate text-foreground">
                 {patientName}
               </p>
 
               {/* Appointment type */}
               {appt.appointment_type_display && (
-                <p className="text-xs text-muted-foreground truncate mt-0.5">
+                <p className="dash-caption text-[11px] text-muted-foreground truncate mt-0.5">
                   {appt.appointment_type_display}
                 </p>
               )}
